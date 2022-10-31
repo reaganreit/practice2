@@ -1,14 +1,14 @@
+
 import Header from "../Components/Header"
 
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
-const columns = [
-  {field: 'id', headerName: 'ID', flex: 1, hide:true},
-  {field: 'item', headerName: 'Item', flex: 1},
-  {field: 'quantity', headerName: 'Quantity', flex: 1},
-  {field: 'sales', headerName: 'Sales', flex: 1}
-]
+import { createTheme, ThemeProvider } from "@mui/material";
+import ThreeColRow from "../Components/ThreeColRow";
+
+
+
 
 const rows = [
   {id:1, item: "Butter Chicken", quantity: 20, sales: 30},
@@ -23,7 +23,24 @@ const rows = [
   {id:10, item: "Butter Chicken", quantity: 20, sales: 30}
 ]
 
-
+const myTheme = createTheme({
+  components: {
+    //@ts-ignore - this isn't in the TS because DataGird is not exported from `@mui/material`
+    MuiDataGrid: {
+      styleOverrides: {
+        row: {
+          "&.Mui-selected": {
+            backgroundColor: "rebeccapurple",
+            color: "yellow",
+            "&:hover": {
+              backgroundColor: "purple"
+            }
+          }
+        }
+      }
+    }
+  }
+});
 
 const POSReport = ()=> {
   return (
@@ -46,25 +63,34 @@ const POSReport = ()=> {
             <TextField size="small" label="End Date" variant="outlined"/>
           </div>
 
-          {/* Start grid here */}
-          <div style={{ height: 450, marginTop:20}}>
-            <DataGrid
-              style={{backgroundColor:"blue", color:"white"}}
+          {/* Start table here */}
+          <div style={{height:"500px", overflowY:"scroll", border:"solid", borderWidth:2, borderColor:"blue", backgroundColor:"blue", marginTop:20}}>
 
-              hideFooter
-              disableColumnMenu
-              
-              rows={rows}
-              columns={columns}
+            <div style={{borderBottom:'solid white 3px', position:"sticky",  top:0}}>
+              <ThreeColRow item = {"Item"} quantity = {"Quantity"} price = {"Sales"} />
+            </div>
+            
+
+            {rows.map( (row) =>{
+              return (
+                <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.sales}/>
+              )
+            })}
 
 
-              
-              
-            />
           </div>
 
         </div>
       </div>
+
+
+      <br/>
+      <br/>
+
+      <br/>
+
+      <br/>
+
 
       
       
@@ -73,3 +99,7 @@ const POSReport = ()=> {
 }
 
 export default POSReport;
+
+
+
+
