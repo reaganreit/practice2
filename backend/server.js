@@ -1,15 +1,19 @@
 
 
-// adding new items to menu
+// adding new items to menu - will probably change this to an event listener tied to a button
 function addMenu() {
     // have text entry points - will get these from front end code
     // get text from these fields
+    let itemName = // get name from entry
+    let itemPrice = // get from entry
+    let itemIngreds = // get from entry
     // connect to database
     // send in query
+    let query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
 }
 
 // send orders to database
-function sendOrder() {
+function sendOrder(orderItems) {
     // get order items
     // get time
     // get name
