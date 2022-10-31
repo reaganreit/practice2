@@ -1,4 +1,8 @@
-
+// connect to the database
+var pg = require('pg');
+var connectionString = "postgres://csce315_905_keener:530003826@csce-315-db.engr.tamu.edu/ip:5432/csce315_905_51";
+var pgClient = new pg.Client(connectionString);
+pgClient.connect();
 
 // adding new items to menu - will probably change this to an event listener tied to a button
 function addMenu() {
@@ -10,6 +14,7 @@ function addMenu() {
     // connect to database
     // send in query
     const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
+    let result = pgClient.query(query);
 }
 
 // send orders to database
