@@ -9,7 +9,7 @@ function addMenu() {
     let itemIngreds = // get from entry
     // connect to database
     // send in query
-    let query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
+    const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
 }
 
 // send orders to database
