@@ -35,18 +35,14 @@ const Inventory = () => {
                 {/* Start grid here */}
                 <div style={{ height: 600, marginTop:20}}>
                     <DataGrid
-
-                    sx = {{
-                        backgroundColor : 'blue',
-                        color: 'white',
-                    }}
-
-                    hideFooter
-                    disableColumnMenu
-                    
-                    rows={rows}
-                    columns={columns} 
-                    
+                        sx = {{
+                            backgroundColor : 'blue',
+                            color: 'white',
+                        }}
+                        hideFooter
+                        disableColumnMenu
+                        rows={rows}
+                        columns={columns} 
                     />
                 </div>
             </div>
