@@ -23,30 +23,12 @@ const rows = [
   {id:10, item: "Butter Chicken", quantity: 20, sales: 30}
 ]
 
-const myTheme = createTheme({
-  components: {
-    //@ts-ignore - this isn't in the TS because DataGird is not exported from `@mui/material`
-    MuiDataGrid: {
-      styleOverrides: {
-        row: {
-          "&.Mui-selected": {
-            backgroundColor: "rebeccapurple",
-            color: "yellow",
-            "&:hover": {
-              backgroundColor: "purple"
-            }
-          }
-        }
-      }
-    }
-  }
-});
+
 
 const POSReport = ()=> {
   return (
     <div style={{ height: "100%"}}>
       <Header title = "Point of Sales Report"/>
-
       
 
       {/* A div which will have slight margins on both sides
@@ -77,22 +59,15 @@ const POSReport = ()=> {
               )
             })}
 
-
           </div>
 
         </div>
       </div>
 
-
       <br/>
       <br/>
-
       <br/>
-
       <br/>
-
-
-      
       
     </div>
   );
