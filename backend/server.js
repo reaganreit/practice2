@@ -15,24 +15,6 @@ const pool = new Pool({
     port: process.env.PSQL_PORT,
     ssl: {rejectUnauthorized: false}
 });
-let price;
-let test = new Date().toString("dd-MM-yyyy HH:mm");
-let date = new Date().toLocaleDateString();
-let time = new Date().toLocaleTimeString();
-time.substring(0, time.length-4);
-let updatedDate = date + " " + time;
-console.log("Date: " + test);
-teammembers = [];
-    pool
-    .query("SELECT item_price FROM menu WHERE item_name ='Garlic Fries';")
-        .then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
-                console.log(i);
-                teammembers.push(query_res.rows[i]);
-                console.log(query_res.rows[i]);
-                price = query_res.rows[i][0];
-            }});
-           
 
 const Order = (()=>{
     let orderItems = "";
@@ -70,6 +52,27 @@ const Order = (()=>{
         // may have to make these variables global variables
         let result = {orderTotal, taxPrice};
     }
+
+    // send orders to database
+    function sendOrder() {
+        // get order items
+        // get time
+        let date = new Date().toLocaleDateString();
+        let time = new Date().toLocaleTimeString();
+        time = time.substring(0, 8);
+        let updatedDate = date + " " + time;
+        // get name
+        // format query
+        // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
+        // for orders: order_id, total, timestamp
+        let query = "INSERT INTO orders values(" + orderID + "," + paymentType + "," + orderTotal + "," + updatedDate + "," + orderItems + "," 
+                                                 + custName + "," + cardNum + "," + empName + ";";
+        // execute query
+        pool.query(query);
+
+        // call updateInventory
+        updateInventory(orderItems);
+    }
 });
 
 // adding new items to menu - will probably change this to an event listener tied to a button
@@ -84,21 +87,4 @@ const Order = (()=>{
 //     const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
 //     let result = pgClient.query(query);
 // }
-
-// send orders to database
-function sendOrder(orderItems) {
-    // get order items
-    // get time
-    let date = new Date().toLocaleDateString();
-    // get name
-    // format query
-    // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
-    // for orders: order_id, total, timestamp
-    let query = "INSERT INTO orders values";
-    // execute query
-    pool.query(query);
-
-    // call updateInventory
-    updateInventory(orderItems);
-}
 
