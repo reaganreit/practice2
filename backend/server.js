@@ -21,7 +21,7 @@ const Order = (()=>{
     let rawPrice = 0.00;
     let tax = 0.00;
     let totalPrice = 0.00;
-    const orderID = getID(); // TODO: MAKE THIS FUNCTION
+    let orderID; // TODO: MAKE THIS FUNCTION
     const customerName = "";
 
 
@@ -33,16 +33,16 @@ const Order = (()=>{
     const updatePrice = (itemName) => {
         // calculate item total
         let itemPrice = 0.00;
-            // get new order item's price from database
-            let price;
-            pool
-            .query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
-            .then(query_res => {
-                for (let i = 0; i < query_res.rowCount; i++){
-                    price = query_res.rows[i];
-                    console.log(query_res.rows[i]);
-                }});
-            itemPrice = price.item_price;
+        // get new order item's price from database
+        let price;
+        pool
+        .query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                price = query_res.rows[i];
+                console.log(query_res.rows[i]);
+            }});
+        itemPrice = price.item_price;
         // calculate tax
         currTotal += itemPrice;
         let taxPrice = currTotal * 0.0825;
@@ -65,6 +65,7 @@ const Order = (()=>{
         // format query
         // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
         // for orders: order_id, total, timestamp
+        orderID = getID();
         let query = "INSERT INTO orders values(" + orderID + "," + paymentType + "," + orderTotal + "," + updatedDate + "," + orderItems + "," 
                                                  + custName + "," + cardNum + "," + empName + ";";
         // execute query
@@ -72,6 +73,18 @@ const Order = (()=>{
 
         // call updateInventory
         updateInventory(orderItems);
+    }
+
+    function getID() {
+        let newID;
+        pool
+        .query("SELECT max(order_id) FROM receipts;")
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                newID = query_res.rows[i];
+                console.log(query_res.rows[i]);
+            }});
+        orderID = newID.order_id + 1;
     }
 });
 
