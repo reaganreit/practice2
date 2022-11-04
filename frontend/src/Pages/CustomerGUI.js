@@ -1,15 +1,35 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
 import BowlMenuGrid from "../Components/BowlMenuGrid";
+import { useState } from "react";
 
-function bowlMenu() {
+const bowlList = [
+    {id: 1, itemName: "Butter Chicken Bowl"},
+    {id: 2, itemName: "Lemon Chicken Bowl"},
+    {id: 3, itemName: "Veggie Bowl"},
+    {id: 4, itemName: "Butter Chicken Bowl"},
+    {id: 5, itemName: "Butter Chicken Bowl"}
+]
 
-    console.log("bowl button clicked");
-}
+const gyroList = [
+    {id: 1, itemName: "Butter Chicken Gyro"},
+    {id: 2, itemName: "Lemon Chicken Gyro"},
+    {id: 3, itemName: "Veggie Gyro"},
+    {id: 4, itemName: "Butter Chicken Gyro"},
+    {id: 5, itemName: "Butter Chicken Gyro"}
+]
 
-function gyroMenu() {
-    console.log("gyro button clicked");
-}
+const extraList = [
+    {id: 1, itemName: "Hummus"},
+    {id: 2, itemName: "Pita Bread"},
+    {id: 3, itemName: "Falafel"},
+]
+
+const drinkList = [
+    {id: 1, itemName: "Water"},
+    {id: 2, itemName: "Fountain Drink"},
+]
+
 
 function extraMenu() {
     console.log("extra button clicked");
@@ -20,6 +40,24 @@ function drinkMenu() {
 }
 
 const CustomerGUI = () => {
+    const [results, setResults] = useState([])
+
+    function bowlMenu() {
+        setResults([...bowlList]);
+    }
+
+    function gyroMenu() {
+        setResults([...gyroList]);
+    }
+
+    function extraMenu() {
+        setResults([...extraList]);
+    }
+
+    function drinkMenu() {
+        setResults([...drinkList]);
+    }
+
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
@@ -29,27 +67,16 @@ const CustomerGUI = () => {
                 <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}>Drink</Button>
             </div>
             <div style = {{ height: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
-                <BowlMenuGrid />
-                {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
-                    <Grid item xs = {3}>
-                        <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>xs = 4</Button>
-                    </Grid>
-                    <Grid item xs = {3}>
-                        <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>xs = 4</Button>
-                    </Grid>
-                    <Grid item xs = {3}>
-                        <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>xs = 4</Button>
-                    </Grid>
-                    <Grid item xs = {3}>
-                        <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>xs = 4</Button>
-                    </Grid>
-                    <Grid item xs = {3}>
-                        <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>xs = 4</Button>
-                    </Grid>
-                    <Grid item xs = {3}>
-                        <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>xs = 4</Button>
-                    </Grid>
-                </Grid> */}
+                {/* <BowlMenuGrid /> */}
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
+                {results.map( elem => {
+                     return (
+                            <Grid item xs = {3} style={{ height: "20vw" }}>
+                                <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
+                            </Grid>
+                        );
+                    })}
+                </Grid>
             </div>
             <div style = {{ display: "flex", height: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ height: "90%", width: "60%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
