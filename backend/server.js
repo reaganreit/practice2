@@ -53,7 +53,7 @@ const Order = (()=>{
     }
 });
 
-
+/*
 // adding new items to menu - will probably change this to an event listener tied to a button
 function addMenu() {
     // have text entry points - will get these from front end code
@@ -75,4 +75,4 @@ function sendOrder(orderItems) {
     // format query
     // execute query
 }
-
+*/
