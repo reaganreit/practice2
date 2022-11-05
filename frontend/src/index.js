@@ -5,6 +5,7 @@ import App from './App';
 import POSReport from './Pages/POSReport';
 import Pinpad from './Pages/Pinpad';
 import Checkout from './Pages/Checkout'
+import Inventory from './Pages/Inventory';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -13,7 +14,8 @@ root.render(
   <div style={{height:"100vh", margin: 0}}>
     {/* <App /> */}
       {/* <POSReport/> */}
-      <Checkout/>
+      {/* <Checkout/> */}
+      <Inventory/>
   </div>
     
   </>
