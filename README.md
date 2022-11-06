@@ -32,6 +32,7 @@ FRONTEND
 First, navigate to /frontend (the folder), and in the terminal run
 
     npm install
+    npm install @mui/x-data-grid
 
 If this gives an error, you have to install node/npm (idk how to do that lol, you gotta google it, good luck)
 If this works, in order to run the react app go back to terminal and type

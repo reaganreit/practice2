@@ -1,8 +1,11 @@
+import Header from "./Components/Header"
 
-function App() {
+const App= ()=> {
   return (
-    <div>
-      <h1 style = {{textAlign: "center"}}>YEEHAW</h1>
+    <div style={{backgroundColor:"teal", height: "100%"}}>
+      <Header title = "This is a title"/>
+
+      <h1 style = {{textAlign: "center"}}>App Starts here</h1>
     </div>
   );
 }
