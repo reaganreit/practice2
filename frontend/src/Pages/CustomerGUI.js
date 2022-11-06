@@ -40,6 +40,7 @@ function drinkMenu() {
 
 const CustomerGUI = () => {
     const [results, setResults] = useState([])
+    const [receipt, setReceipt] = useState([])
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -57,6 +58,10 @@ const CustomerGUI = () => {
         setResults([...drinkList]);
     }
 
+    const handleClick = (itemName) => {
+        setReceipt([...receipt,itemName]);
+    };
+
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
@@ -71,7 +76,7 @@ const CustomerGUI = () => {
                 {results.map( elem => {
                      return (
                             <Grid item xs = {3} style={{ height: "20vw" }}>
-                                <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
+                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
                             </Grid>
                         );
                     })}
@@ -79,7 +84,13 @@ const CustomerGUI = () => {
             </div>
             <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ minHeight: "90%", width: "60%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
-                    Itemized Receipt
+                    {receipt.map( elem => {
+                        return (
+                            <p>
+                                {elem}
+                            </p>
+                        );
+                    })}
                 </div>
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
