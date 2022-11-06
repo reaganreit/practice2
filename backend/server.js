@@ -30,8 +30,16 @@ const Order = (()=>{
     let tax = 0.00;
     let totalPrice = 0.00;
     let orderID;
-    const customerName = "";
+    const customerName = getName();
 
+    function getName() {
+        let numFirst = getRandomInt(firstName.length)
+        let numLast = getRandomInt(lastName.length)
+    
+        let fullName = firstName[numFirst] + " " + lastName[numLast];
+    
+        return fullName;
+    }
 
     const addItem = () =>{
 
@@ -126,5 +134,17 @@ function addMenu() {
             newID = query_res.rows[i];
             console.log(query_res.rows[i]);
         }});
+}
+
+function getItemID() {
+    let newID;
+    pool
+    .query("SELECT max(item_id) FROM menu;")
+    .then(query_res => {
+        for (let i = 0; i < query_res.rowCount; i++){
+            newID = query_res.rows[i];
+            console.log(query_res.rows[i]);
+        }});
+    return newID+1;
 }
 
