@@ -21,7 +21,7 @@ const Order = (()=>{
     let rawPrice = 0.00;
     let tax = 0.00;
     let totalPrice = 0.00;
-    let orderID; // TODO: MAKE THIS FUNCTION
+    let orderID;
     const customerName = "";
 
 
@@ -55,7 +55,6 @@ const Order = (()=>{
 
     // send orders to database
     function sendOrder() {
-        // get order items
         // get time
         let date = new Date().toLocaleDateString();
         let time = new Date().toLocaleTimeString();
@@ -71,7 +70,7 @@ const Order = (()=>{
         // execute query
         pool.query(query);
 
-        // call updateInventory
+        // Subtracts inventory items used up in this order
         updateInventory(orderItems);
     }
 
@@ -89,15 +88,21 @@ const Order = (()=>{
 });
 
 // adding new items to menu - will probably change this to an event listener tied to a button
-// function addMenu() {
-//     // have text entry points - will get these from front end code
-//     // get text from these fields
-//     let itemName = // get name from entry
-//     let itemPrice = // get from entry
-//     let itemIngreds = // get from entry
-//     // connect to database
-//     // send in query
-//     const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
-//     let result = pgClient.query(query);
-// }
+function addMenu() {
+    // have text entry points - will get these from front end code
+    // get text from these fields
+    let itemName = "";// get name from entry
+    let itemPrice = 0;// get from entry
+    let itemIngreds = "";// get from entry
+    // check if each item ingredient exists in the database
+    let individuals = itemIngreds.split(',');
+    for(let i = 0; i < individuals.size(); i++){
+        let name = individuals[i];
+        pool.query("SELECT EXISTS()")
+    }
+    
+    // send in query
+    const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
+    pool.query(query);
+}
 
