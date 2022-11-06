@@ -16,6 +16,14 @@ const pool = new Pool({
     ssl: {rejectUnauthorized: false}
 });
 
+let exists;
+        pool.query("SELECT EXISTS(SELECT FROM ingredients where name = 'Fries');").then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                exists = query_res.rows[i];
+                console.log(query_res.rows[i]);
+            }
+            console.log(exists.exists);});
+
 const Order = (()=>{
     let orderItems = "";
     let rawPrice = 0.00;
@@ -87,10 +95,11 @@ const Order = (()=>{
     }
 });
 
-// adding new items to menu - will probably change this to an event listener tied to a button
+// adding new items to menu
 function addMenu() {
     // have text entry points - will get these from front end code
     // get text from these fields
+    const itemID = getItemID();
     let itemName = "";// get name from entry
     let itemPrice = 0;// get from entry
     let itemIngreds = "";// get from entry
@@ -98,11 +107,24 @@ function addMenu() {
     let individuals = itemIngreds.split(',');
     for(let i = 0; i < individuals.size(); i++){
         let name = individuals[i];
-        pool.query("SELECT EXISTS()")
+        let exists;
+        pool.query("SELECT EXISTS(SELECT FROM ingredients where ingredient_name = '" + name + "');").then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                exists = query_res.rows[i];
+                console.log(query_res.rows[i]);
+            }
+            if(!exists.exists){
+                addInventoryItem(name);
+            }
+        });
     }
     
     // send in query
     const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
-    pool.query(query);
+    pool.query(query).then(query_res => {
+        for (let i = 0; i < query_res.rowCount; i++){
+            newID = query_res.rows[i];
+            console.log(query_res.rows[i]);
+        }});
 }
 
