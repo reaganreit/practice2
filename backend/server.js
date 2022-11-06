@@ -16,14 +16,6 @@ const pool = new Pool({
     ssl: {rejectUnauthorized: false}
 });
 
-let exists;
-        pool.query("SELECT EXISTS(SELECT FROM ingredients where name = 'Fries');").then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
-                exists = query_res.rows[i];
-                console.log(query_res.rows[i]);
-            }
-            console.log(exists.exists);});
-
 const Order = (()=>{
     let orderItems = "";
     let rawPrice = 0.00;
@@ -70,7 +62,7 @@ const Order = (()=>{
     }
 
     // send orders to database
-    function sendOrder() {
+    function sendOrder(paymentType) {
         // get time
         let date = new Date().toLocaleDateString();
         let time = new Date().toLocaleTimeString();
@@ -102,6 +94,10 @@ const Order = (()=>{
         orderID = newID.order_id + 1;
     }
 });
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
 
 // adding new items to menu
 function addMenu() {
