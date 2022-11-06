@@ -22,3 +22,9 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   vertical-align: baseline;
   background: transparent;
 }
+
+/* styling for statistics Table */
+th, td {
+  border:1px solid black;
+  height: 10vh;
+}
