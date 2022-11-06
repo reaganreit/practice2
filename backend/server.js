@@ -87,15 +87,6 @@ const Order = (()=>{
     }
 });
 
-// send orders to database
-function sendOrder(orderItems) {
-    // get order items
-    // get time
-    // get name
-    // format query
-    // execute query
-    updateInventory(orderItems);
-}
 
 //will probably delete this later
 async function doWait(ingredients_str){
@@ -117,7 +108,7 @@ async function doWait(ingredients_str){
         resolve();
     })
 }
-
+updateInventory("Butter Chicken Bowl,Fries")
 //Update inventory table when orders sent
 async function updateInventory(orderItems){
     items = orderItems.split(",");
@@ -140,9 +131,9 @@ async function updateInventory(orderItems){
             // get current value of item
            quant_str = "";
            console.log("Ingredient: ", ingred[j]);
-           query = "SELECT quantity FROM ingredients WHERE name ='" + ingred[j] +"';";
+           query_str = "SELECT quantity FROM ingredients WHERE name ='" + ingred[j] +"';";
            await pool
-            .query(query)
+            .query(query_str)
             .then(query_res => {
                 for (let i = 0; i < query_res.rowCount; i++){
                     quant_str=query_res.rows[i];
@@ -152,9 +143,9 @@ async function updateInventory(orderItems){
             quant-=1; //update
             console.log(quant);
             // Update value of that item
-            query = "UPDATE ingredients SET quantity = " + quant+ " WHERE name = '" + ingred[j] + "';";
-            console.log(query);
-            await pool.query(query)
+            query_str = "UPDATE ingredients SET quantity = " + quant+ " WHERE name = '" + ingred[j] + "';";
+            console.log(query_str);
+            await pool.query(query_str)
         }
     }
 }
