@@ -1,6 +1,7 @@
 
 import Header from "../Components/Header"
 
+import { useState } from "react";
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
@@ -26,6 +27,9 @@ const rows = [
 
 
 const Inventory = ()=> {
+  const [startDate, setStartDate] = useState("2022-09-20");
+  const [endDate, setEndDate] = useState("2022-10-05")
+
   return (
     <div style={{ height: "100%"}}>
       <Header title = "Inventory"/>
@@ -40,9 +44,30 @@ const Inventory = ()=> {
 
           {/* A grid div which will contain the two text boxes */}
           <div style={{display:"flex", justifyContent:"space-evenly"}}>
-            <TextField size="small" label="Start Date" variant="outlined"/>
+            <TextField
+                id="date"
+                label="Starting Date"
+                type="date"
+                //defaultValue="2022-05-24"
+                value = {startDate}
+                onChange = { ( event ) => setStartDate(event.target.value)}
+                sx={{ width: 220 }}
+                InputLabelProps={{
+                shrink: true,
+                }}
+            />
 
-            <TextField size="small" label="End Date" variant="outlined"/>
+            <TextField
+                id="date"
+                label="Ending Date"
+                type="date"
+                value = {endDate}
+                onChange = { ( event ) => setEndDate(event.target.value)}
+                sx={{ width: 220 }}
+                InputLabelProps={{
+                shrink: true,
+                }}
+            />
           </div>
 
           {/* Start table here */}

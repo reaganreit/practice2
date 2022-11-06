@@ -6,6 +6,7 @@ import POSReport from './Pages/POSReport';
 import Pinpad from './Pages/Pinpad';
 import Checkout from './Pages/Checkout'
 import Inventory from './Pages/Inventory';
+import PopularCombos from './Pages/PopularCombos';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,7 +16,8 @@ root.render(
     {/* <App /> */}
       {/* <POSReport/> */}
       {/* <Checkout/> */}
-      <Inventory/>
+      {/* <Inventory/> */}
+      <PopularCombos/>
   </div>
     
   </>
