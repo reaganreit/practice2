@@ -99,6 +99,16 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+function cardNumberGenerator(cardlen){
+    cardNumber = "\'"
+    for (let i = 0; i < cardlen; i++){
+        cardNumber += getRandomInt(10) 
+    }
+    cardNumber += "\'"
+
+    return cardNumber
+}
+
 // adding new items to menu
 function addMenu() {
     // have text entry points - will get these from front end code
