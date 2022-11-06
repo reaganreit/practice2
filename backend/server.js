@@ -14,14 +14,16 @@ const pool = new Pool({
     port: process.env.PSQL_PORT,
     ssl: {rejectUnauthorized: false}
 });
-teammembers = [];
-    pool
-        .query('SELECT * FROM teammembers;')
-        .then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
-                teammembers.push(query_res.rows[i]);
-                console.log(query_res.rows[i]);
-            }});
+// teammembers = [];
+//     pool
+//         .query('SELECT * FROM menu;')
+//         .then(query_res => {
+//             for (let i = 0; i < query_res.rowCount; i++){
+//                 teammembers.push(query_res.rows[i]);
+//                 console.log(query_res.rows[i]);
+//             }});
+
+updateInventory("Veggie Bowl,Butter Chicken Bowl");
 
 
 const Order = (()=>{
@@ -55,17 +57,17 @@ const Order = (()=>{
 
 
 // adding new items to menu - will probably change this to an event listener tied to a button
-function addMenu() {
-    // have text entry points - will get these from front end code
-    // get text from these fields
-    let itemName = // get name from entry
-    let itemPrice = // get from entry
-    let itemIngreds = // get from entry
-    // connect to database
-    // send in query
-    const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
-    let result = pgClient.query(query);
-}
+// function addMenu() {
+//     // have text entry points - will get these from front end code
+//     // get text from these fields
+//     let itemName = // get name from entry
+//     let itemPrice = // get from entry
+//     let itemIngreds = // get from entry
+//     // connect to database
+//     // send in query
+//     const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
+//     let result = pgClient.query(query);
+// }
 
 // send orders to database
 function sendOrder(orderItems) {
@@ -74,5 +76,70 @@ function sendOrder(orderItems) {
     // get name
     // format query
     // execute query
+    updateInventory(orderItems);
+}
+
+//will probably delete this later
+async function doWait(ingredients_str){
+    return await new Promise((resolve,reject)=>{
+        // if(err){
+        //     throw err
+        // }
+        pool
+            .query('SELECT ingredients_used FROM menu WHERE item_name = \'' +items[i] +'\';')
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    //console.log(query_res.rowCount);
+                    ingredients.push(query_res.rows[i]);
+                    ingredients_str=query_res.rows[i];
+                   // console.log("here",ingredients[ingredients.size-1]);
+                    console.log(query_res.rows[i]);
+                    //resolve();
+                }});//.then( () => resolve())
+        resolve();
+    })
+}
+
+//Update inventory table when orders sent
+async function updateInventory(orderItems){
+    items = orderItems.split(",");
+    console.log(items[0]);
+    ingredients=[];
+    for(i = 0; i < items.length; i++){
+        await pool
+            .query('SELECT ingredients_used FROM menu WHERE item_name = \'' +items[i] +'\';')
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    ingredients.push(query_res.rows[i]);
+                    console.log(query_res.rows[i]);
+                }});
+    }
+    for(i = 0; i < ingredients.length; i++){
+        ingredients_str=ingredients[i].ingredients_used;
+        console.log(ingredients_str);
+        ingred=ingredients_str.split(",");
+        for(j = 0; j < ingred.length; j++){
+            // get current value of item
+           quant_str = "";
+           console.log("Ingredient: ", ingred[j]);
+           query = "SELECT quantity FROM ingredients WHERE name ='" + ingred[j] +"';";
+           await pool
+            .query(query)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    quant_str=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                }});
+            quant=quant_str.quantity; //int
+            quant-=1; //update
+            console.log(quant);
+            // Update value of that item
+            query = "UPDATE ingredients SET quantity = " + quant+ " WHERE name = '" + ingred[j] + "';";
+            console.log(query);
+            await pool.query(query)
+        }
+    }
+
+    
 }
 
