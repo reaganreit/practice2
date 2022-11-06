@@ -103,6 +103,15 @@ function addMenu() {
     
     // send in query
     const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
-    pool.query(query);
+    let result = pgClient.query(query);
+}
+
+// send orders to database
+function sendOrder(orderItems) {
+    // get order items
+    // get time
+    // get name
+    // format query
+    // execute query
 }
 
