@@ -2,14 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+//import CashierGUI from './Pages/POSReport'
 import POSReport from './Pages/POSReport';
-import Pinpad from './Pages/Pinpad';
-import Checkout from './Pages/Checkout'
 import Inventory from './Pages/Inventory';
-import PopularCombos from './Pages/PopularCombos';
-import ExcessReport from  './Pages/ExcessReport';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import Statistics from './Pages/Statistics';
+import ExcessReport from  './Pages/ExcessReport';import CashierGUI from './Pages/CashierGUI';
+import CustomerGUI from './Pages/CustomerGUI'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -34,7 +32,10 @@ root.render(
 
     </div>
 
+  <div style={{height:"100vh", margin: 0}}>
+    {/* <App /> */}
+    <CustomerGUI />
+  </div>
+    
   </>
 );
-
-

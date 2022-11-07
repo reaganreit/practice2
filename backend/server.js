@@ -8,6 +8,8 @@ const jsonParser = bodyParser.json();
 // Create express app
 const app = express();
 const port = 5000;
+const cors = require("cors")
+app.use(cors());
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -23,7 +25,7 @@ firstName = ["\'Bob","\'Dylan","\'Brother","\'Bear","\'Guy","\'Ur","\'My","\'Sam
 lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","Ashtray\'","Asatryan\'",
             "Reitmeyer\'","Ha\'","Hak\'","Hawk\'","Mmmmmmmm\'","White\'","Mom\'"];
 
-
+    // Attributes for the Order
     let orderItems = "";
     let rawPrice = 0.00;
     let tax = 0.00;
@@ -31,21 +33,18 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     let orderID;
     const customerName = getName();
 
-    function getName() {
-        let numFirst = getRandomInt(firstName.length)
-        let numLast = getRandomInt(lastName.length)
-    
-        let fullName = firstName[numFirst] + " " + lastName[numLast];
-    
-        return fullName;
+
+// ***************** Functions directly related to the current Order *****************
+    async function addItem(itemName){
+        if(orderItems = ""){
+            orderItems += itemName;
+        }else{
+            orderItems += "," + itemName;
+        }
     }
 
-    // async function
-
-    // }
-
     // get price and tax details
-    const updatePrice = (itemName) => {
+    async function updatePrice(itemName) {
         // calculate item total
         let itemPrice = 0.00;
         // get new order item's price from database
@@ -56,14 +55,19 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             for (let i = 0; i < query_res.rowCount; i++){
                 price = query_res.rows[i];
                 console.log(query_res.rows[i]);
-            }});
-        itemPrice = price.item_price;
-        // calculate tax
-        currTotal += itemPrice;
-        let taxPrice = currTotal * 0.0825;
-        // calculate order total
-        totalPrice = currTotal + taxPrice;
-        // return tax and order total
+            }})
+        .then(()=>{
+            itemPrice = price.item_price;
+            rawPrice += roundTotal(itemPrice);
+            // calculate tax
+            console.log("itemPrice: " + itemPrice);
+            let taxPrice = roundTotal(itemPrice * 0.0825);
+            // Update amount being paid in taxes
+            tax += taxPrice;
+            // calculate order total
+            totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
+            console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
+        });
     }
 
     // send orders to database
@@ -96,20 +100,8 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     
         return 0;
     }
+// *************************************************************************************
 
-    function getID() {
-        let newID;
-        pool
-        .query("SELECT max(order_id) FROM receipts;")
-        .then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
-                newID = query_res.rows[i];
-                console.log(query_res.rows[i]);
-            }}).then(()=>{
-                orderID = newID.order_id + 1;
-                // return orderID;
-            });
-    }
 
 
 function getRandomInt(max) {
@@ -126,40 +118,44 @@ function cardNumberGenerator(cardlen){
     return cardNumber
 }
 
-// adding new items to menu
-function addMenu() {
-    // have text entry points - will get these from front end code
-    // get text from these fields
-    const itemID = getItemID();
-    let itemName = "";// get name from entry
-    let itemPrice = 0;// get from entry
-    let itemIngreds = "";// get from entry
-    // check if each item ingredient exists in the database
-    let individuals = itemIngreds.split(',');
-    for(let i = 0; i < individuals.size(); i++){
-        let name = individuals[i];
-        let exists;
-        pool.query("SELECT EXISTS(SELECT FROM ingredients where ingredient_name = '" + name + "');").then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
-                exists = query_res.rows[i];
-                console.log(query_res.rows[i]);
-            }
-            if(!exists.exists){
-                addInventoryItem(name);
-            }
-        });
-    }
-    
-    // send in query
-    const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
-    pool.query(query).then(query_res => {
-        for (let i = 0; i < query_res.rowCount; i++){
-            newID = query_res.rows[i];
-            console.log(query_res.rows[i]);
-        }});
+function getName() {
+    let numFirst = getRandomInt(firstName.length)
+    let numLast = getRandomInt(lastName.length)
+    let fullName = firstName[numFirst] + " " + lastName[numLast];
+
+    return fullName;
 }
 
-function getItemID() {
+// adding new items to menu
+let itemID;
+async function addMenu(itemName, itemPrice, itemIngreds) {
+    await getItemID()
+    .then(()=>{
+        // send in query
+        const query = "INSERT INTO menu VALUES(" +itemID + ",'" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
+        console.log(query);
+        pool.query(query);
+    })
+    
+    // check if each item ingredient exists in the database
+    //let individuals = itemIngreds.split(',');
+    // for(let i = 0; i < individuals.length; i++){
+    //     let name = individuals[i];
+    //     let exists;
+    //     pool.query("SELECT EXISTS(SELECT FROM ingredients where ingredient_name = '" + name + "');").then(query_res => {
+    //         for (let i = 0; i < query_res.rowCount; i++){
+    //             exists = query_res.rows[i];
+    //             console.log(query_res.rows[i]);
+    //         }
+    //         if(!exists.exists){
+    //             addInventoryItem(name);
+    //         }
+    //     });
+    // }
+}
+
+async function getItemID() {
+    console.log("IN GETITEMID");
     let newID;
     pool
     .query("SELECT max(item_id) FROM menu;")
@@ -167,16 +163,73 @@ function getItemID() {
         for (let i = 0; i < query_res.rowCount; i++){
             newID = query_res.rows[i];
             console.log(query_res.rows[i]);
-        }});
-    return newID+1;
+        }})
+    .then(()=>{
+        console.log("FINISHED WITH GETITEMID");
+        itemID = newID.max+1;
+        //return newID.max+1;
+    }) 
+}
+
+function getID() {
+    let newID;
+    pool
+    .query("SELECT max(order_id) FROM receipts;")
+    .then(query_res => {
+        for (let i = 0; i < query_res.rowCount; i++){
+            newID = query_res.rows[i];
+            console.log(query_res.rows[i]);
+        }}).then(()=>{
+            orderID = newID.order_id + 1;
+            // return orderID;
+        });
+}
+
+function roundTotal(num){
+    let newNum = "";
+    let currNum = "";
+    currNum += num;
+    let numDigs = 0;
+    let hitDeci = false;
+    for(let char of currNum){
+        newNum += char;
+        if(char == '.'){
+            hitDeci = true;
+        }
+        if(hitDeci){
+            numDigs++;
+        }
+        if(numDigs == 3){
+            break;
+        }
+    }
+    return parseFloat(newNum);
 }
 
 async function main(){
+    // updates price and orderitems
+    app.post("/addItem",jsonParser,(req,res)=>{
+        addItem(req.body.itemName);
+        updatePrice(req.body.itemName)
+        .then(()=>{
+            console.log("totalPrice: " + totalPrice);
+            res.json({"totalPrice" : totalPrice});
+        })
+    })
+
+    // sends final order in to database
     app.post("/sendOrder",jsonParser,(req,res)=> {
-        //console.log(req)
         sendOrder(req.body.paymentType, req.body.empName)
         .then(() => {
             res.send("Howdy");
+        })
+    })
+
+    // Adds new menu items
+    app.post("/newItem",jsonParser,(req,res)=>{
+        addMenu(req.body.itemName,req.body.itemPrice,req.body.itemIngreds)
+        .then(()=>{
+            res.send("Successfully added new menu item");
         })
     })
 

@@ -40,6 +40,10 @@ function drinkMenu() {
 
 const CustomerGUI = () => {
     const [results, setResults] = useState([])
+    const [receipt, setReceipt] = useState([])
+    const [total, setTotal] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
+    const [err, setErr] = useState('');
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -57,6 +61,35 @@ const CustomerGUI = () => {
         setResults([...drinkList]);
     }
 
+    const handleClick = async (item) => {
+        setReceipt([...receipt,item]);
+        setIsLoading(true);
+        try {
+            const response = await fetch('http://localhost:5000/addItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemName: item }),
+                headers: {
+                    "access-control-allow-origin" : "*",
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            //console.log('result is: ', JSON.stringify(result, null, 4));
+            setTotal(result);
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
@@ -71,7 +104,7 @@ const CustomerGUI = () => {
                 {results.map( elem => {
                      return (
                             <Grid item xs = {3} style={{ height: "20vw" }}>
-                                <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
+                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
                             </Grid>
                         );
                     })}
@@ -79,12 +112,23 @@ const CustomerGUI = () => {
             </div>
             <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ minHeight: "90%", width: "60%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
-                    Itemized Receipt
+                    <p style = {{ fontWeight: "bold", marginBottom: "1%", marginLeft: "1%", marginTop: "1%" }}>
+                        Itemized Receipt
+                    </p>
+                    {receipt.map( elem => {
+                        return (
+                            <p style = {{ marginLeft: "1%" }}>
+                                {elem}
+                            </p>
+                        );
+                    })}
                 </div>
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
                         <div style = {{ height: "25%", width: "80%", marginLeft: "10%", backgroundColor: "lightgrey" }} >
-                            Total: $X.XX
+                            <p> 
+                                Total: $ { total }
+                            </p>
                         </div>
 
                         <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
