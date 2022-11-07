@@ -24,14 +24,12 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             "Reitmeyer\'","Ha\'","Hak\'","Hawk\'","Mmmmmmmm\'","White\'","Mom\'"];
 
     // Attributes for the Order
-    {
-        let orderItems = "";
-        let rawPrice = 0.00;
-        let tax = 0.00;
-        let totalPrice = 0.00;
-        let orderID;
-        const customerName = getName();
-    }
+    let orderItems = "";
+    let rawPrice = 0.00;
+    let tax = 0.00;
+    let totalPrice = 0.00;
+    let orderID;
+    const customerName = getName();
 
 
 // ***************** Functions directly related to the current Order *****************
@@ -55,16 +53,19 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             for (let i = 0; i < query_res.rowCount; i++){
                 price = query_res.rows[i];
                 console.log(query_res.rows[i]);
-            }});
-        itemPrice = price.item_price;
-        // calculate tax
-        currTotal += itemPrice;
-        let taxPrice = currTotal * 0.0825;
-        // Update amount being paid in taxes
-        tax += taxPrice;
-        // calculate order total
-        totalPrice = currTotal + taxPrice;
-
+            }})
+        .then(()=>{
+            itemPrice = price.item_price;
+            rawPrice += roundTotal(itemPrice);
+            // calculate tax
+            console.log("itemPrice: " + itemPrice);
+            let taxPrice = roundTotal(itemPrice * 0.0825);
+            // Update amount being paid in taxes
+            tax += taxPrice;
+            // calculate order total
+            totalPrice = roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
+            console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
+        });
     }
 
     // send orders to database
@@ -128,9 +129,6 @@ async function addMenu(itemName, itemPrice, itemIngreds) {
     // have text entry points - will get these from front end code
     // get text from these fields
     const itemID = getItemID();
-    let itemName = "";// get name from entry
-    let itemPrice = 0;// get from entry
-    let itemIngreds = "";// get from entry
     // check if each item ingredient exists in the database
     let individuals = itemIngreds.split(',');
     for(let i = 0; i < individuals.size(); i++){
@@ -180,6 +178,27 @@ function getID() {
             orderID = newID.order_id + 1;
             // return orderID;
         });
+}
+
+function roundTotal(num){
+    let newNum = "";
+    let currNum = "";
+    currNum += num;
+    let numDigs = 0;
+    let hitDeci = false;
+    for(let char of currNum){
+        newNum += char;
+        if(char == '.'){
+            hitDeci = true;
+        }
+        if(hitDeci){
+            numDigs++;
+        }
+        if(numDigs == 3){
+            break;
+        }
+    }
+    return parseFloat(newNum);
 }
 
 async function main(){
