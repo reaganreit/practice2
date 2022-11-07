@@ -108,7 +108,7 @@ async function doWait(ingredients_str){
         resolve();
     })
 }
-updateInventory("Butter Chicken Bowl,Fries")
+//updateInventory("Butter Chicken Bowl,Fries")
 //Update inventory table when orders sent
 async function updateInventory(orderItems){
     items = orderItems.split(",");
@@ -148,6 +148,67 @@ async function updateInventory(orderItems){
             await pool.query(query_str)
         }
     }
+}
+
+//array of bowls
+async function bowlContent(){
+    let bowl;
+    bowls=[];
+    await pool
+            .query("SELECT item_name FROM menu WHERE item_name like '%Bowl%';")
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    bowl=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                    bowls.push(bowl.item_name);
+                }});
+    //console.log(bowls[0])
+    return bowls;
+}
+
+//array of gyros
+async function gyrosContent(){
+    let gyro;
+    gyros=[];
+    await pool
+            .query("SELECT item_name FROM menu WHERE item_name like '%Gyro%';")
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    gyro=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                    gyros.push(gyro.item_name);
+                }});
+    //console.log(gyros[0])
+    return gyros;
+}
+
+//array of drinks
+function drinksContent(){
+    drinks=["Fountain Drinks", "Bottled Water"];
+    return drinks;
+}
+
+//array of extras
+function extrasContent(){
+    extras=["2 Meatballs", "2 Falafels", "Fries", "Garlic Fries", "Hummus & Pita", "Extra Dressing", "Extra Hummus", "Extra Protein", "Pita Bread"];
+    return extras;
+}
+
+//the quantity of times that items were ordered in a time frame for POS report
+//returns the number of times it was ordered
+async function reportContent(item,date1, date2){ //params are item name the first date and the second date all strings
+    quantity_str="";
+    query_str ="SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+item +"%'and timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00'";
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    quantity_str=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                }});
+    quantity=quantity_str.quantity;
+    //console.log(quantity)
+    return quantity;
 }
     
 function addMenu() {
