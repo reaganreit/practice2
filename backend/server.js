@@ -40,9 +40,9 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
         return fullName;
     }
 
-    const addItem = () =>{
+    // async function
 
-    }
+    // }
 
     // get price and tax details
     const updatePrice = (itemName) => {
