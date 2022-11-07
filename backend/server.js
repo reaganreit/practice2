@@ -125,18 +125,16 @@ function getName() {
 }
 
 // adding new items to menu
+let itemID;
 async function addMenu(itemName, itemPrice, itemIngreds) {
-    const itemID = await new Promise((resolve, reject)=>{
-        getItemID()
-        .then(()=>{
-            resolve();
-        })
-    })
-    
+    await getItemID()
+    .then(()=>{
         // send in query
         const query = "INSERT INTO menu VALUES(" +itemID + ",'" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
         console.log(query);
         pool.query(query);
+    })
+    
     // check if each item ingredient exists in the database
     //let individuals = itemIngreds.split(',');
     // for(let i = 0; i < individuals.length; i++){
@@ -166,7 +164,8 @@ async function getItemID() {
         }})
     .then(()=>{
         console.log("FINISHED WITH GETITEMID");
-        return newID.max+1;
+        itemID = newID.max+1;
+        //return newID.max+1;
     }) 
 }
 
