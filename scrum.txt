@@ -1,0 +1,20 @@
+Sprint 1 - Meeting 1:
+    Agenda
+        - Discussing how much front end work has been completed
+        - Discussing how many tasks each member has completed
+        - Discussing any challenges each member had so far and how to overcome them
+    Accomplishments
+        - Completed GUI for varying end users
+        - Set up database connection for communication with server
+    Plans
+        - Finishing up the rest of the GUIs for all end users  
+        - Implement all HTTP request
+    Minutes
+        Our very first meeting consisted of discussing how we were going to delegate the tasks.
+        This was done after determining the roles each member had, which was split into front-end, 
+        back-end, and project manager. Alex Keener and Reagan Reitmeyer had the back-end roles, 
+        David Asatryan and Sry Hak had the front-end roles, and Emily Ha had the project manager role. 
+        We all brainstormed how to split the tasks into smaller chunks and laid out an initial product backlog, 
+        including what would be done by the first sprint as a minimal viable product. Our team decided to use React,
+        HTML, CSS and Javascript for this project as it would work the best for our purposes.
+
