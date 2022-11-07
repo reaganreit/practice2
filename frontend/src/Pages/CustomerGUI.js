@@ -63,14 +63,13 @@ const CustomerGUI = () => {
 
     const handleClick = async (item) => {
         setReceipt([...receipt,item]);
-        /*setIsLoading(true);
+        setIsLoading(true);
         try {
-            const response = await fetch('https://reqres.in/api/users', {
+            const response = await fetch('http://localhost:5000/addItem', {
                 method: 'POST',
-                body: JSON.stringify({
-                itemName: item
-                }),
+                body: JSON.stringify({ itemName: item }),
                 headers: {
+                    "access-control-allow-origin" : "*",
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
                 },
@@ -81,16 +80,14 @@ const CustomerGUI = () => {
             }
         
             const result = await response.json();
-        
-            console.log('result is: ', JSON.stringify(result, null, 4));
-    
-            setData(result);
+            console.log(result);
+            //console.log('result is: ', JSON.stringify(result, null, 4));
+            setTotal(result);
         } catch (err) {
             setErr(err.message);
         } finally {
             setIsLoading(false);
         }
-        */
     };
 
     return (
@@ -129,7 +126,9 @@ const CustomerGUI = () => {
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
                         <div style = {{ height: "25%", width: "80%", marginLeft: "10%", backgroundColor: "lightgrey" }} >
-                            Total: $X.XX
+                            <p> 
+                                Total: $ { total }
+                            </p>
                         </div>
 
                         <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>

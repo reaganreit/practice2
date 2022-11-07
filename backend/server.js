@@ -8,6 +8,8 @@ const jsonParser = bodyParser.json();
 // Create express app
 const app = express();
 const port = 5000;
+const cors = require("cors")
+app.use(cors());
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -63,7 +65,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             // Update amount being paid in taxes
             tax += taxPrice;
             // calculate order total
-            totalPrice = roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
+            totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
