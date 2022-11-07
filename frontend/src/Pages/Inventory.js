@@ -1,54 +1,105 @@
-import Header from "../Components/Header";
-import { DataGrid } from "@mui/x-data-grid";
 
-const columns = [
-  {field: 'id', headerName: 'ID', flex: 1, hide:true},
-  {field: 'item', headerName: 'Item', flex: 1},
-  {field: 'quantity', headerName: 'Quantity (kg)', flex: 1},
-  {field: 'previousQuantity', headerName: 'Previous Quantity (kg)', flex: 1},
-  {field: 'lastShipment', headerName: 'Last Shipment', flex: 1},
-  {field: 'nextShipment', headerName: 'Next Shipment', flex: 1}
-]
+import Header from "../Components/Header"
+
+import { useState } from "react";
+import { TextField } from "@mui/material";
+import { DataGrid } from '@mui/x-data-grid'; 
+
+import { createTheme, ThemeProvider } from "@mui/material";
+import FiveColRow from "../Components/FiveColRow";
+
+
+
 
 const rows = [
-    {id:1, item: "Chicken", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:2, item: "Rice", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:3, item: "Bowls", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:4, item: "Veggies", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:5, item: "Fries", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:6, item: "Water", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:7, item: "Drink", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:8, item: "Hummus", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:9, item: "Pita", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:10, item: "Falafel", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
-    {id:11, item: "Cups", quantity: 20, previousQuantity: 50, lastShipment: "2022-10-12", nextShipment: "2022-10-30"},
+  {id:1, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "2022/09/12", nextShipment: "2022/10/01"},
+  {id:2, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:3, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:4, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:5, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:6, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:7, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:8, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:9, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:10, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"}
 ]
 
-const Inventory = () => {
+
+
+const Inventory = ()=> {
+  const [startDate, setStartDate] = useState("2022-09-20");
+  const [endDate, setEndDate] = useState("2022-10-05")
+
   return (
-    <div style={{height: "100%"}}>
-        <Header title = "Inventory"></Header>
+    <div style={{ height: "100%"}}>
+      <Header title = "Inventory"/>
+      
 
-        <div style={{display:"flex", justifyContent:"center", marginTop:20}}>
-            <div style={{width:"90%"}}>
+      {/* A div which will have slight margins on both sides
+      This will be achieved by making a div with display flex, and another div within that  */}
 
-                {/* Start grid here */}
-                <div style={{ height: 600, marginTop:20}}>
-                    <DataGrid
-                        sx = {{
-                            backgroundColor : 'blue',
-                            color: 'white',
-                        }}
-                        hideFooter
-                        disableColumnMenu
-                        rows={rows}
-                        columns={columns} 
-                    />
-                </div>
+      <div style={{display:"flex", justifyContent:"center", marginTop:20}}>
+        <div style={{width:"90%"}}>
+
+
+          {/* A grid div which will contain the two text boxes */}
+          <div style={{display:"flex", justifyContent:"space-evenly"}}>
+            <TextField
+                id="date"
+                label="Starting Date"
+                type="date"
+                //defaultValue="2022-05-24"
+                value = {startDate}
+                onChange = { ( event ) => setStartDate(event.target.value)}
+                sx={{ width: 220 }}
+                InputLabelProps={{
+                shrink: true,
+                }}
+            />
+
+            <TextField
+                id="date"
+                label="Ending Date"
+                type="date"
+                value = {endDate}
+                onChange = { ( event ) => setEndDate(event.target.value)}
+                sx={{ width: 220 }}
+                InputLabelProps={{
+                shrink: true,
+                }}
+            />
+          </div>
+
+          {/* Start table here */}
+          <div style={{height:"500px", overflowY:"scroll", border:"solid", borderWidth:2, borderColor:"blue", backgroundColor:"blue", marginTop:20}}>
+
+            <div style={{borderBottom:'solid white 3px', position:"sticky",  top:0}}>
+              <FiveColRow item = {"."} quantity = {"Quantity"} prevQuantity = {"Previous Quantity"}  lastShipment = {"Last Shipment"} nextShipment = {"Next Shipment"}/>
             </div>
+            
+
+            {rows.map( (row) =>{
+              return (
+                <FiveColRow item = {row.item} quantity = {row.quantity} prevQuantity = {row.prevQuantity} lastShipment = {row.lasthipment} nextShipment = {row.nextShipment} />
+              )
+            })}
+
+          </div>
+
         </div>
+      </div>
+
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      
     </div>
-  )
+  );
 }
 
 export default Inventory;
+
+
+
+

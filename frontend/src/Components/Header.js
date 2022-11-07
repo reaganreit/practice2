@@ -1,4 +1,5 @@
 import { Button } from "@mui/material"
+import { Link } from "react-router-dom";
 
 
 const Header = (props) => {
@@ -6,8 +7,11 @@ const Header = (props) => {
       <div style = {{ height: "10%",}}>
         <div style = {{  height:"85%",display:"grid", gridTemplateColumns:"1fr 8fr 1fr"}}>
           
+          
           <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <Button style ={{backgroundColor:"blue"}} variant = "contained" >Back</Button>
+            <Link to = "/" style={{textDecoration:"none"}}>
+              <Button style ={{backgroundColor:"blue"}} variant = "contained" >Back</Button>
+            </Link>
           </div>
 
           <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
