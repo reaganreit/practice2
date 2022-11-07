@@ -7,7 +7,7 @@ import Pinpad from './Pages/Pinpad';
 import Checkout from './Pages/Checkout'
 import Inventory from './Pages/Inventory';
 import PopularCombos from './Pages/PopularCombos';
-
+import ExcessReport from  './Pages/ExcessReport';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 
@@ -15,7 +15,6 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
     <div style={{height:"100vh", margin: 0}}>
-
       <BrowserRouter>
 
             <Routes>
@@ -25,12 +24,14 @@ root.render(
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/inventory" element={<Inventory />} />
               <Route path="/popularcombos" element={<PopularCombos />} />
+              <Route path="/excessreport" element={<ExcessReport />} />
             </Routes>
             {/* <POSReport/> */}
             {/* <Checkout/> */}
             {/* <Inventory/> */}
             {/* <PopularCombos/> */}
       </BrowserRouter>
+
     </div>
 
   </>

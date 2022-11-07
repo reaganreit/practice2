@@ -35,6 +35,9 @@ const App= ()=> {
         <Button variant = "contained">POSReport</Button>
       </Link>
 
+      <Link to="/excessreport" style={{textDecoration:"none"}} >
+        <Button variant = "contained">Excess Report</Button>
+      </Link>
     </div>
   );
 }
