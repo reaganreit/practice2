@@ -207,10 +207,11 @@ function roundTotal(num){
 async function main(){
     // updates price and orderitems
     app.post("/addItem",jsonParser,(req,res)=>{
-        updatePrice(req.body.itemName);
-        addItem(req.body.itemName)
+        addItem(req.body.itemName);
+        updatePrice(req.body.itemName)
         .then(()=>{
-            res.send("Successfully added item to order");
+            console.log("totalPrice: " + totalPrice);
+            res.json({"totalPrice" : totalPrice});
         })
     })
 
