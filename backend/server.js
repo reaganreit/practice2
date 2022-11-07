@@ -3,9 +3,11 @@ const { query } = require('express');
 const express = require('../node_modules/express');
 const { Pool } = require('../node_modules/pg');
 const dotenv = require('../node_modules/dotenv').config();
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
 // Create express app
 const app = express();
-const port = 3000;
+const port = 5000;
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -16,7 +18,12 @@ const pool = new Pool({
     ssl: {rejectUnauthorized: false}
 });
 
-const Order = (()=>{
+// Names for orders
+firstName = ["\'Bob","\'Dylan","\'Brother","\'Bear","\'Guy","\'Ur","\'My","\'Same","\'Kim","\'Light","\'Queen","\'Waltuh"];
+lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","Ashtray\'","Asatryan\'",
+            "Reitmeyer\'","Ha\'","Hak\'","Hawk\'","Mmmmmmmm\'","White\'","Mom\'"];
+
+
     let orderItems = "";
     let rawPrice = 0.00;
     let tax = 0.00;
@@ -57,29 +64,37 @@ const Order = (()=>{
         // calculate order total
         let orderTotal = currTotal + taxPrice;
         // return tax and order total
-        // may have to make these variables global variables
-        let result = {orderTotal, taxPrice};
     }
 
     // send orders to database
-    function sendOrder(paymentType) {
+    async function sendOrder(paymentType, empName){
         // get time
         let date = new Date().toLocaleDateString();
         let time = new Date().toLocaleTimeString();
         time = time.substring(0, 8);
         let updatedDate = date + " " + time;
-        // get name
-        // format query
+        cardNum = cardNumberGenerator(12);
+        custName = getName();
         // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
         // for orders: order_id, total, timestamp
-        orderID = getID();
-        let query = "INSERT INTO orders values(" + orderID + "," + paymentType + "," + orderTotal + "," + updatedDate + "," + orderItems + "," 
-                                                 + custName + "," + cardNum + "," + empName + ";";
+        getID();
+        let query = "INSERT INTO receipts values(" + orderID + "," + paymentType + "," + totalPrice + ",'" + updatedDate + "','" + orderItems + "'," 
+                                                 + custName + "," + cardNum + ",'" + empName + "');";
         // execute query
-        pool.query(query);
-
-        // Subtracts inventory items used up in this order
-        updateInventory(orderItems);
+        let orderQuer = "INSERT INTO orders values(" + orderID + "," + totalPrice + ",'" + updatedDate +"');";
+        if(orderItems != ""){
+            pool.query(query)
+            .then(()=>{
+                pool.query(orderQuer)
+            })
+            .then(()=>{
+                // Subtracts inventory items used up in this order
+                updateInventory(orderItems);
+                return 1;
+            })
+        }
+    
+        return 0;
     }
 
     function getID() {
@@ -90,10 +105,12 @@ const Order = (()=>{
             for (let i = 0; i < query_res.rowCount; i++){
                 newID = query_res.rows[i];
                 console.log(query_res.rows[i]);
-            }});
-        orderID = newID.order_id + 1;
+            }}).then(()=>{
+                orderID = newID.order_id + 1;
+                // return orderID;
+            });
     }
-});
+
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -154,3 +171,16 @@ function getItemID() {
     return newID+1;
 }
 
+async function main(){
+    app.post("/sendOrder",jsonParser,(req,res)=> {
+        //console.log(req)
+        sendOrder(req.body.paymentType, req.body.empName)
+        .then(() => {
+            res.send("Howdy");
+        })
+    })
+
+    app.listen(port,()=> console.log(`Listening to port ${port}`));
+}
+
+main();
