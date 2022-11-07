@@ -41,6 +41,7 @@ function drinkMenu() {
 const CustomerGUI = () => {
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
+    const [total, setTotal] = useState([])
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -60,6 +61,7 @@ const CustomerGUI = () => {
 
     const handleClick = (itemName) => {
         setReceipt([...receipt,itemName]);
+        setTotal([])
     };
 
     return (
