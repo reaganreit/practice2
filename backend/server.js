@@ -126,35 +126,36 @@ function getName() {
 
 // adding new items to menu
 async function addMenu(itemName, itemPrice, itemIngreds) {
-    // have text entry points - will get these from front end code
-    // get text from these fields
-    const itemID = getItemID();
-    // check if each item ingredient exists in the database
-    let individuals = itemIngreds.split(',');
-    for(let i = 0; i < individuals.size(); i++){
-        let name = individuals[i];
-        let exists;
-        pool.query("SELECT EXISTS(SELECT FROM ingredients where ingredient_name = '" + name + "');").then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
-                exists = query_res.rows[i];
-                console.log(query_res.rows[i]);
-            }
-            if(!exists.exists){
-                addInventoryItem(name);
-            }
-        });
-    }
+    const itemID = await new Promise((resolve, reject)=>{
+        getItemID()
+        .then(()=>{
+            resolve();
+        })
+    })
     
-    // send in query
-    const query = "INSERT INTO menu VALUES('" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
-    pool.query(query).then(query_res => {
-        for (let i = 0; i < query_res.rowCount; i++){
-            newID = query_res.rows[i];
-            console.log(query_res.rows[i]);
-        }});
+        // send in query
+        const query = "INSERT INTO menu VALUES(" +itemID + ",'" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
+        console.log(query);
+        pool.query(query);
+    // check if each item ingredient exists in the database
+    //let individuals = itemIngreds.split(',');
+    // for(let i = 0; i < individuals.length; i++){
+    //     let name = individuals[i];
+    //     let exists;
+    //     pool.query("SELECT EXISTS(SELECT FROM ingredients where ingredient_name = '" + name + "');").then(query_res => {
+    //         for (let i = 0; i < query_res.rowCount; i++){
+    //             exists = query_res.rows[i];
+    //             console.log(query_res.rows[i]);
+    //         }
+    //         if(!exists.exists){
+    //             addInventoryItem(name);
+    //         }
+    //     });
+    // }
 }
 
-function getItemID() {
+async function getItemID() {
+    console.log("IN GETITEMID");
     let newID;
     pool
     .query("SELECT max(item_id) FROM menu;")
@@ -162,8 +163,11 @@ function getItemID() {
         for (let i = 0; i < query_res.rowCount; i++){
             newID = query_res.rows[i];
             console.log(query_res.rows[i]);
-        }});
-    return newID+1;
+        }})
+    .then(()=>{
+        console.log("FINISHED WITH GETITEMID");
+        return newID.max+1;
+    }) 
 }
 
 function getID() {
@@ -221,7 +225,7 @@ async function main(){
 
     // Adds new menu items
     app.post("/newItem",jsonParser,(req,res)=>{
-        addMenu(req.body,itemName,req.body.itemPrice,req.body.itemIngreds)
+        addMenu(req.body.itemName,req.body.itemPrice,req.body.itemIngreds)
         .then(()=>{
             res.send("Successfully added new menu item");
         })
