@@ -23,29 +23,28 @@ firstName = ["\'Bob","\'Dylan","\'Brother","\'Bear","\'Guy","\'Ur","\'My","\'Sam
 lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","Ashtray\'","Asatryan\'",
             "Reitmeyer\'","Ha\'","Hak\'","Hawk\'","Mmmmmmmm\'","White\'","Mom\'"];
 
-
-    let orderItems = "";
-    let rawPrice = 0.00;
-    let tax = 0.00;
-    let totalPrice = 0.00;
-    let orderID;
-    const customerName = getName();
-
-    function getName() {
-        let numFirst = getRandomInt(firstName.length)
-        let numLast = getRandomInt(lastName.length)
-    
-        let fullName = firstName[numFirst] + " " + lastName[numLast];
-    
-        return fullName;
+    // Attributes for the Order
+    {
+        let orderItems = "";
+        let rawPrice = 0.00;
+        let tax = 0.00;
+        let totalPrice = 0.00;
+        let orderID;
+        const customerName = getName();
     }
 
-    // async function
 
-    // }
+// ***************** Functions directly related to the current Order *****************
+    async function addItem(itemName){
+        if(orderItems = ""){
+            orderItems += itemName;
+        }else{
+            orderItems += "," + itemName;
+        }
+    }
 
     // get price and tax details
-    const updatePrice = (itemName) => {
+    async function updatePrice(itemName) {
         // calculate item total
         let itemPrice = 0.00;
         // get new order item's price from database
@@ -61,9 +60,11 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
         // calculate tax
         currTotal += itemPrice;
         let taxPrice = currTotal * 0.0825;
+        // Update amount being paid in taxes
+        tax += taxPrice;
         // calculate order total
         totalPrice = currTotal + taxPrice;
-        // return tax and order total
+
     }
 
     // send orders to database
@@ -96,20 +97,8 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     
         return 0;
     }
+// *************************************************************************************
 
-    function getID() {
-        let newID;
-        pool
-        .query("SELECT max(order_id) FROM receipts;")
-        .then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
-                newID = query_res.rows[i];
-                console.log(query_res.rows[i]);
-            }}).then(()=>{
-                orderID = newID.order_id + 1;
-                // return orderID;
-            });
-    }
 
 
 function getRandomInt(max) {
@@ -126,8 +115,16 @@ function cardNumberGenerator(cardlen){
     return cardNumber
 }
 
+function getName() {
+    let numFirst = getRandomInt(firstName.length)
+    let numLast = getRandomInt(lastName.length)
+    let fullName = firstName[numFirst] + " " + lastName[numLast];
+
+    return fullName;
+}
+
 // adding new items to menu
-function addMenu() {
+async function addMenu(itemName, itemPrice, itemIngreds) {
     // have text entry points - will get these from front end code
     // get text from these fields
     const itemID = getItemID();
@@ -171,12 +168,43 @@ function getItemID() {
     return newID+1;
 }
 
+function getID() {
+    let newID;
+    pool
+    .query("SELECT max(order_id) FROM receipts;")
+    .then(query_res => {
+        for (let i = 0; i < query_res.rowCount; i++){
+            newID = query_res.rows[i];
+            console.log(query_res.rows[i]);
+        }}).then(()=>{
+            orderID = newID.order_id + 1;
+            // return orderID;
+        });
+}
+
 async function main(){
+    // updates price and orderitems
+    app.post("/addItem",jsonParser,(req,res)=>{
+        updatePrice(req.body.itemName);
+        addItem(req.body.itemName)
+        .then(()=>{
+            res.send("Successfully added item to order");
+        })
+    })
+
+    // sends final order in to database
     app.post("/sendOrder",jsonParser,(req,res)=> {
-        //console.log(req)
         sendOrder(req.body.paymentType, req.body.empName)
         .then(() => {
             res.send("Howdy");
+        })
+    })
+
+    // Adds new menu items
+    app.post("/newItem",jsonParser,(req,res)=>{
+        addMenu(req.body,itemName,req.body.itemPrice,req.body.itemIngreds)
+        .then(()=>{
+            res.send("Successfully added new menu item");
         })
     })
 
