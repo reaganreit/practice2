@@ -429,6 +429,31 @@ async function getQuantity(item){
     return quantity;
 }
 
+//gets the pinpad entry and returns a person with its name, id(pinpad), and role(manager or employee)
+async function employeeType(id){
+    let person ={};
+    employee_name="";
+    query_str="SELECT employee_name from employees where employee_id = "+ id +";";
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    employee_name=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                    person.name=employee_name.employee_name;
+                }});
+    person.id=id;
+    if(person.name =="Reagan R" || person.name =="Lightfoot" ){
+        person.role="Manager";
+    }else{
+        person.role="Employee";
+    }
+    // console.log(person.name);
+    // console.log(person.id);
+    // console.log(person.role);
+    return person;
+}
+
 async function main(){
     // updates price and orderitems
     app.post("/addItem",jsonParser,(req,res)=>{
