@@ -12,7 +12,7 @@ import FiveColRow from "../Components/FiveColRow";
 
 
 const rows = [
-  {id:1, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
+  {id:1, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "2022/09/12", nextShipment: "2022/10/01"},
   {id:2, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
   {id:3, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
   {id:4, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
