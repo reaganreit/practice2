@@ -8,6 +8,11 @@ import Pinpad from "./Pages/Pinpad";
 import PopularCombos from "./Pages/PopularCombos";
 import POSReport from "./Pages/POSReport";
 
+import CustomerGUI from './Pages/CustomerGUI';
+import CashierGUI from './Pages/CashierGUI'
+import ExcessReport from './Pages/ExcessReport'
+import Statistics from './Pages/Statistics'
+
 const App= ()=> {
   return (
     <div style={{backgroundColor:"teal", height: "100%"}}>
@@ -33,6 +38,22 @@ const App= ()=> {
 
       <Link to="/posreport" style={{textDecoration:"none"}} >
         <Button variant = "contained">POSReport</Button>
+      </Link>
+
+      <Link to="/customergui" style={{textDecoration:"none"}} >
+        <Button variant = "contained">Customer GUI</Button>
+      </Link>
+
+      <Link to="/cashiergui" style={{textDecoration:"none"}} >
+        <Button variant = "contained">Cashier GUI</Button>
+      </Link>
+
+      <Link to="/statistics" style={{textDecoration:"none"}} >
+        <Button variant = "contained">Statistics</Button>
+      </Link>
+
+      <Link to="/excessreport" style={{textDecoration:"none"}} >
+        <Button variant = "contained">Excess Report</Button>
       </Link>
 
     </div>

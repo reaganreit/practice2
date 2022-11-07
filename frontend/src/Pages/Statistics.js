@@ -3,6 +3,11 @@ import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import { margin, width } from "@mui/system";
+import { Link } from "react-router-dom";
+
+import ExcessReport from "./ExcessReport";
+import PopularCombos from "./PopularCombos";
+import POSReport from "./POSReport";
 
 function createData(time, amount) {
     return { time, amount };
@@ -66,9 +71,18 @@ const Statistics = () => {
                 <div className="reportButtonsContainer" style={{
                     marginTop: "15%",
                 }}>
-                    <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> Report</Button>
-                    <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Popular Combos</Button>
-                    <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Excess Report</Button>
+                    <Link to = "/posreport" style={{textDecoration:"none"}}>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> Report</Button>
+                    </Link>
+
+                    <Link to = "/popularcombos" style={{textDecoration:"none"}}>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Popular Combos</Button>
+                    </Link>
+
+                    <Link to = "/excessreport" style={{textDecoration:"none"}}>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Excess Report</Button>
+                    </Link>
+
                 </div>
 
             </div>
