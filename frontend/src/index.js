@@ -8,13 +8,14 @@ import Inventory from './Pages/Inventory';
 import Statistics from './Pages/Statistics';
 import CashierGUI from './Pages/CashierGUI';
 import CustomerGUI from './Pages/CustomerGUI'
+import ExcessReport from './Pages/ExcessReport';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
   <div style={{height:"100vh", margin: 0}}>
     {/* <App /> */}
-    <Statistics />
+    <ExcessReport />
   </div>
     
   </>
