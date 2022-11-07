@@ -1,6 +1,5 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
-import BowlMenuGrid from "../Components/BowlMenuGrid";
 import { useState } from "react";
 
 const bowlList = [
@@ -41,6 +40,10 @@ function drinkMenu() {
 
 const CustomerGUI = () => {
     const [results, setResults] = useState([])
+    const [receipt, setReceipt] = useState([])
+    const [total, setTotal] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
+    const [err, setErr] = useState('');
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -58,6 +61,38 @@ const CustomerGUI = () => {
         setResults([...drinkList]);
     }
 
+    const handleClick = async (item) => {
+        setReceipt([...receipt,item]);
+        /*setIsLoading(true);
+        try {
+            const response = await fetch('https://reqres.in/api/users', {
+                method: 'POST',
+                body: JSON.stringify({
+                itemName: item
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+        
+            console.log('result is: ', JSON.stringify(result, null, 4));
+    
+            setData(result);
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+        */
+    };
+
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
@@ -72,25 +107,34 @@ const CustomerGUI = () => {
                 {results.map( elem => {
                      return (
                             <Grid item xs = {3} style={{ height: "20vw" }}>
-                                <Button style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
+                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
                             </Grid>
                         );
                     })}
                 </Grid>
             </div>
-            <div style = {{ display: "flex", height: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", backgroundColor: "lightgrey" }}>
-                <div style = {{ height: "90%", width: "60%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
-                    Itemized Receipt
+            <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", backgroundColor: "lightgrey" }}>
+                <div style = {{ minHeight: "90%", width: "60%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
+                    <p style = {{ fontWeight: "bold", marginBottom: "1%", marginLeft: "1%", marginTop: "1%" }}>
+                        Itemized Receipt
+                    </p>
+                    {receipt.map( elem => {
+                        return (
+                            <p style = {{ marginLeft: "1%" }}>
+                                {elem}
+                            </p>
+                        );
+                    })}
                 </div>
-                <div style = {{ display: "block", height: "90%", width: "30%", marginLeft: "5%" }}>
-                    <div style = {{ height: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
+                <div style = {{ minHeight: "90%", width: "30%", marginLeft: "5%" }}>
+                    <div style = {{ minHeight: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
                         <div style = {{ height: "25%", width: "80%", marginLeft: "10%", backgroundColor: "lightgrey" }} >
                             Total: $X.XX
                         </div>
 
                         <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
                     </div>
-                    <Button style = {{ height: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
+                    <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
                 </div>
             </div>
         </div>

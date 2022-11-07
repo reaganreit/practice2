@@ -6,33 +6,34 @@ import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
 import { createTheme, ThemeProvider } from "@mui/material";
+import FiveColRow from "../Components/FiveColRow";
 import ThreeColRow from "../Components/ThreeColRow";
 
 
 
 
 const rows = [
-  {id:1, item: "Butter Chicken", quantity: 20, sales: 30},
-  {id:2, item: "Butter Chicken", quantity: 20, sales: 30},
-  {id:3, item: "Butter Chicken", quantity: 20, sales: 30},
-  {id:4, item: "Butter Chicken", quantity: 20, sales: 40},
-  {id:5, item: "Butter Chicken", quantity: 20, sales: 40},
-  {id:6, item: "Butter Chicken", quantity: 20, sales: 40},
-  {id:7, item: "Butter Chicken", quantity: 20, sales: 40},
-  {id:8, item: "Butter Chicken", quantity: 20, sales: 40},
-  {id:9, item: "Butter Chicken", quantity: 20, sales: 40},
-  {id:10, item: "Butter Chicken", quantity: 20, sales: 30}
+  {id: 1, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 2, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 3, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 4, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 5, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 6, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 7, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 8, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 9, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
+  {id: 10, item: "Butter Chicken",  quantity:"French Fries", price: "30"},
 ]
 
 
 
-const POSReport = ()=> {
+const PopularCombos = ()=> {
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
 
   return (
     <div style={{ height: "100%"}}>
-      <Header title = "Point of Sales Report"/>
+      <Header title = "Popular Combos"/>
       
 
       {/* A div which will have slight margins on both sides
@@ -44,6 +45,7 @@ const POSReport = ()=> {
 
           {/* A grid div which will contain the two text boxes */}
           <div style={{display:"flex", justifyContent:"space-evenly"}}>
+            
             <TextField
                 id="date"
                 label="Starting Date"
@@ -74,13 +76,13 @@ const POSReport = ()=> {
           <div style={{height:"500px", overflowY:"scroll", border:"solid", borderWidth:2, borderColor:"blue", backgroundColor:"blue", marginTop:20}}>
 
             <div style={{borderBottom:'solid white 3px', position:"sticky",  top:0}}>
-              <ThreeColRow item = {"Item"} quantity = {"Quantity"} price = {"Sales"} />
+              <ThreeColRow item = {"Item 1 "} quantity = {"Item 2"} price = {"Times Ordered Together"}/>
             </div>
             
 
             {rows.map( (row) =>{
               return (
-                <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.sales}/>
+                <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.price} />
               )
             })}
 
@@ -98,7 +100,7 @@ const POSReport = ()=> {
   );
 }
 
-export default POSReport;
+export default PopularCombos;
 
 
 

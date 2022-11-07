@@ -28,3 +28,16 @@ th, td {
   border:1px solid black;
   height: 10vh;
 }
+
+
+.w {
+  background-color: white;
+  color: black;
+}
+
+.blueRow {
+  background-color: blue;
+  color: white;
+  opacity: 80%;
+}
+
