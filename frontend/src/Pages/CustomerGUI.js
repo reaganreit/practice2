@@ -42,6 +42,8 @@ const CustomerGUI = () => {
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
+    const [err, setErr] = useState('');
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -59,9 +61,36 @@ const CustomerGUI = () => {
         setResults([...drinkList]);
     }
 
-    const handleClick = (itemName) => {
-        setReceipt([...receipt,itemName]);
-        setTotal([])
+    const handleClick = async (item) => {
+        setReceipt([...receipt,item]);
+        /*setIsLoading(true);
+        try {
+            const response = await fetch('https://reqres.in/api/users', {
+                method: 'POST',
+                body: JSON.stringify({
+                itemName: item
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+        
+            console.log('result is: ', JSON.stringify(result, null, 4));
+    
+            setData(result);
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+        */
     };
 
     return (
@@ -86,9 +115,12 @@ const CustomerGUI = () => {
             </div>
             <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ minHeight: "90%", width: "60%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
+                    <p style = {{ fontWeight: "bold", marginBottom: "1%", marginLeft: "1%", marginTop: "1%" }}>
+                        Itemized Receipt
+                    </p>
                     {receipt.map( elem => {
                         return (
-                            <p>
+                            <p style = {{ marginLeft: "1%" }}>
                                 {elem}
                             </p>
                         );

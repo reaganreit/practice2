@@ -66,7 +66,7 @@ const Statistics = () => {
                 <div className="reportButtonsContainer" style={{
                     marginTop: "15%",
                 }}>
-                    <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS Report</Button>
+                    <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> Report</Button>
                     <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Popular Combos</Button>
                     <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Excess Report</Button>
                 </div>
