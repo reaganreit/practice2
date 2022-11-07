@@ -18,3 +18,16 @@ Sprint 1 - Meeting 1:
         including what would be done by the first sprint as a minimal viable product. Our team decided to use React,
         HTML, CSS and Javascript for this project as it would work the best for our purposes.
 
+Sprint 1 - Meeting 2:
+    Agenda
+        - Discussing what everyone has completed since the last scrum meeting
+        - Discussing any issues with current work
+    Plans
+        - Finish the HTTP requests so that we can finish up the front end displays
+        - Implementing more functionality for backend processes
+    Minutes
+        We discussed our current tasks on hand and any issues related to the process. We also discussed any tasks 
+        completed since the first meeting about the project and the difficulties. One of the difficulties was just 
+        the process of learning React and the syntax involved. There were more discussions on switching the assignment
+        of tasks so that the project manager can help more when needed. As a result, more tasks will be assigned to the
+        project manager from the sprint backlog.
