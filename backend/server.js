@@ -62,7 +62,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
         currTotal += itemPrice;
         let taxPrice = currTotal * 0.0825;
         // calculate order total
-        let orderTotal = currTotal + taxPrice;
+        totalPrice = currTotal + taxPrice;
         // return tax and order total
     }
 
