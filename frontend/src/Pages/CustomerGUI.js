@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -63,14 +64,13 @@ const CustomerGUI = () => {
 
     const handleClick = async (item) => {
         setReceipt([...receipt,item]);
-        /*setIsLoading(true);
+        setIsLoading(true);
         try {
-            const response = await fetch('https://reqres.in/api/users', {
+            const response = await fetch('http://localhost:5000/addItem', {
                 method: 'POST',
-                body: JSON.stringify({
-                itemName: item
-                }),
+                body: JSON.stringify({ itemName: item }),
                 headers: {
+                    "access-control-allow-origin" : "*",
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
                 },
@@ -81,16 +81,14 @@ const CustomerGUI = () => {
             }
         
             const result = await response.json();
-        
-            console.log('result is: ', JSON.stringify(result, null, 4));
-    
-            setData(result);
+            console.log(result);
+            //console.log('result is: ', JSON.stringify(result, null, 4));
+            setTotal(result.totalPrice);
         } catch (err) {
             setErr(err.message);
         } finally {
             setIsLoading(false);
         }
-        */
     };
 
     return (
@@ -129,12 +127,17 @@ const CustomerGUI = () => {
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
                         <div style = {{ height: "25%", width: "80%", marginLeft: "10%", backgroundColor: "lightgrey" }} >
-                            Total: $X.XX
+                            <p> 
+                                Total: $ { total }
+                            </p>
                         </div>
-
-                        <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
+                        <Link to="/checkout" style={{ textDecoration:"none" }}>
+                            <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
+                        </Link>
                     </div>
-                    <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
+                    <Link to="/pinpad" style={{ textDecoration:"none" }}>
+                        <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
+                    </Link>
                 </div>
             </div>
         </div>
