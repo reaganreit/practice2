@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { createContext } from "react";
 import React, { useState } from 'react'
 import Checkout from './Checkout'
+import { UserContext } from "../contexts/total";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -46,7 +47,7 @@ export const globalTotal = React.createContext()
 const CustomerGUI = () => {
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
-    const [total, setTotal] = useState([])
+    const [total, setTotal] = useState(0)
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
 
@@ -98,7 +99,7 @@ const CustomerGUI = () => {
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
 
-            <globalTotal.Provider value = {total}>
+            <globalTotal.Provider value = {{ total, setTotal }}>
                 <Checkout />
             </globalTotal.Provider>
 
@@ -141,7 +142,7 @@ const CustomerGUI = () => {
                             </p>
                         </div>
                         <Link to="/checkout" style={{ textDecoration:"none" }}>
-                            <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
+                            <Button onClick = {() => setTotal(total)} style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
                         </Link>
                     </div>
                     <Link to="/pinpad" style={{ textDecoration:"none" }}>

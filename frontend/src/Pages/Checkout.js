@@ -7,24 +7,14 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import ThreeColRow from "../Components/ThreeColRow";
 
 import { useState } from "react";
-import React from 'react';
 import { createContext } from "react";
-import { useContext } from "react";
 import { globalTotal } from './CustomerGUI'
+import React, {useContext} from 'react';
+import { UserContext } from "../contexts/total";
 
 const Checkout = ()=> {
 
-    const [totalPrice, setTotal] = useState(200);
-
-    render() {
-        return (
-            <globalTotal.Consumer>
-                {total => {
-                    return totalPrice;
-                }}
-            </globalTotal.Consumer>
-        )
-    }
+    const totalPrice = useContext(UserContext);
 
     return (
         
