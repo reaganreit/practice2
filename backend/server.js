@@ -32,6 +32,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     let totalPrice = 0.00;
     let orderID;
     const customerName = getName();
+    let waiting = true;
 
 
 // ***************** Functions directly related to the current Order *****************
@@ -45,11 +46,13 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
 
     // get price and tax details
     async function updatePrice(itemName) {
+        console.log("Inside updatePrice");
         // calculate item total
         let itemPrice = 0.00;
         // get new order item's price from database
         let price;
-        pool
+        console.log("Query Time");
+       await pool
         .query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
         .then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
@@ -57,16 +60,21 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
                 console.log(query_res.rows[i]);
             }})
         .then(()=>{
+            console.log("Finished Query");
             itemPrice = price.item_price;
             rawPrice += roundTotal(itemPrice);
             // calculate tax
-            console.log("itemPrice: " + itemPrice);
+            //console.log("itemPrice: " + itemPrice);
             let taxPrice = roundTotal(itemPrice * 0.0825);
             // Update amount being paid in taxes
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
+<<<<<<< HEAD
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
+=======
+            //console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
+>>>>>>> 40d5389057d4e6e546c7e6ae66253c4ec239ca12
         });
     }
 
@@ -310,12 +318,15 @@ async function reportContent(item,date1, date2){ //params are item name the firs
 async function main(){
     // updates price and orderitems
     app.post("/addItem",jsonParser,(req,res)=>{
-        addItem(req.body.itemName);
-        updatePrice(req.body.itemName)
-        .then(()=>{
-            console.log("totalPrice: " + totalPrice);
+        console.log("Price Before: " + totalPrice);
+        (async() => {
+            addItem(req.body.itemName);
+            await updatePrice(req.body.itemName);
+            console.log("totalPrice: " + totalPrice)
             res.json({"totalPrice" : totalPrice});
-        })
+    
+          
+        })();
     })
 
     // sends final order in to database
