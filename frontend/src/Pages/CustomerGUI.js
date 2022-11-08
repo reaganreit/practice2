@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -130,10 +131,13 @@ const CustomerGUI = () => {
                                 Total: $ { total }
                             </p>
                         </div>
-
-                        <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
+                        <Link to="/checkout" style={{ textDecoration:"none" }}>
+                            <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
+                        </Link>
                     </div>
-                    <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
+                    <Link to="/pinpad" style={{ textDecoration:"none" }}>
+                        <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
+                    </Link>
                 </div>
             </div>
         </div>

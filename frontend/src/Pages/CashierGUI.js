@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -30,8 +31,8 @@ const drinkList = [
 ]
 
 const managerButtonList = [
-    {id: 1, buttonName: "Statistics"},
-    {id: 2, buttonName: "Inventory"}
+    {id: 1, buttonName: "Statistics", linkName: "/statistics"},
+    {id: 2, buttonName: "Inventory", linkName: "/inventory"}
 ]
 
 function extraMenu() {
@@ -46,7 +47,8 @@ function drinkMenu() {
 const CashierGUI = () => {
     const [results, setResults] = useState([])
 
-    const [managerButtons, setManagerButtons] = useState([])
+    // TODO: IMPLEMENT LOGIC FOR SERVER VS MANAGER
+    const [managerButtons, setManagerButtons] = useState([...managerButtonList])
 
     function buttonMenu() {
         setManagerButtons([...managerButtonList]);
@@ -108,12 +110,16 @@ const CashierGUI = () => {
                             <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Employee Swipes</Button>
                             {managerButtons.map( elem => {
                                 return (
-                                        <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>{elem.buttonName}</Button>
+                                        <Link to={elem.linkName} style={{ textDecoration:"none" }}>
+                                            <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>{elem.buttonName}</Button>
+                                        </Link>
                                     );
                                 })}
                         </div>
                     </div>
-                    <Button onClick={buttonMenu} style = {{ maxHeight: "25%", width: "60%", marginTop: "5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign Out</Button>
+                    <Link to="/pinpad" style={{textDecoration:"none"}} >
+                        <Button onClick={buttonMenu} style = {{ maxHeight: "25%", width: "60%", marginTop: "5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign Out</Button>
+                    </Link>
                 </div>
             </div>
         </div>
