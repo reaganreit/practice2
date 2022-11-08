@@ -1,5 +1,5 @@
 import Header from "../Components/Header"
-
+import CustomerGUI from "./CustomerGUI";
 import { Button, TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
@@ -7,80 +7,93 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import ThreeColRow from "../Components/ThreeColRow";
 
 import { useState } from "react";
+import React from 'react';
+import { createContext } from "react";
+import { useContext } from "react";
+import { globalTotal } from './CustomerGUI'
 
 const Checkout = ()=> {
 
-    const [total, setTotal] = useState(200);
+    const [totalPrice, setTotal] = useState(200);
 
-  return (
-    <div style={{ height: "100%" }}>
-        <Header title = "Checkout"/>
+    render() {
+        return (
+            <globalTotal.Consumer>
+                {total => {
+                    return totalPrice;
+                }}
+            </globalTotal.Consumer>
+        )
+    }
+
+    return (
         
+        <div style={{ height: "100%" }}>
+            <Header title = "Checkout"/>
+
+            <h1 style={{ textAlign:"center"}} > Order: ${totalPrice} </h1>
+            <h1 style={{ textAlign:"center"}} > Tax: ${totalPrice * 0.2} </h1>
+            <h1 style={{ textAlign:"center"}} > Total: ${totalPrice * 1.2} </h1>
+
             
+            <br/>
+            <br/>
+            <br/>
+            <br/>
 
-        <h1 style={{ textAlign:"center"}} > Order: ${total} </h1>
-        <h1 style={{ textAlign:"center"}} > Tax: ${total * 0.2} </h1>
-        <h1 style={{ textAlign:"center"}} > Total: ${total * 1.2} </h1>
+            <div style = {{display:"flex", justifyContent:"center", width:"100%"}}>
+                <div style = {{width:"80%", maxHeight:"50vh", overflowY:"scroll", border:"solid"}}>
+                    <h1>Item 1</h1>
+                    <h1>Item 2</h1>
+                    <h1>Item 3</h1>
+                    <h1>Item 4</h1>
+                    <h1>Item 5</h1>
 
-        
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+                    
+                </div>
+            </div>
 
-        <div style = {{display:"flex", justifyContent:"center", width:"100%"}}>
-            <div style = {{width:"80%", maxHeight:"50vh", overflowY:"scroll", border:"solid"}}>
-                <h1>Item 1</h1>
-                <h1>Item 2</h1>
-                <h1>Item 3</h1>
-                <h1>Item 4</h1>
-                <h1>Item 5</h1>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
 
+
+            {/* Three centered divs */}
+            <div style = {{width: "100%", display:"flex", justifyContent:"center"}} >
+
+                <div style = {{width:"100%", display:"grid", gridTemplateColumns:"1fr 1fr 1fr"}}>
+                    <div style ={{display:"flex", justifyContent:"center"}}>
+                        <Button variant="contained" style = {{height:"60px"}}> Credit/Debit card </Button>
+                    </div>
+
+                    <div style ={{display:"flex", justifyContent:"center"}}>
+                        <Button variant="contained" style = {{height:"60px"}}> Meal Swipes </Button>
+                    </div>
+
+                    <div style ={{display:"flex", justifyContent:"center"}}>
+                        <Button variant="contained" style = {{height:"60px"}}> Dining Dollars </Button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style = {{width: "100%", display:"flex", justifyContent:"center", marginTop:"10vh"}} >
+
+                    <div style ={{display:"flex", justifyContent:"center"}}>
+                        <Button variant="contained" style = {{height:"60px"}}> Cancel Order </Button>
+                    </div>
+
+            </div>
                 
-            </div>
+
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        
         </div>
-
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-
-
-        {/* Three centered divs */}
-        <div style = {{width: "100%", display:"flex", justifyContent:"center"}} >
-
-            <div style = {{width:"100%", display:"grid", gridTemplateColumns:"1fr 1fr 1fr"}}>
-                <div style ={{display:"flex", justifyContent:"center"}}>
-                    <Button variant="contained" style = {{height:"60px"}}> Credit/Debit card </Button>
-                </div>
-
-                <div style ={{display:"flex", justifyContent:"center"}}>
-                    <Button variant="contained" style = {{height:"60px"}}> Meal Swipes </Button>
-                </div>
-
-                <div style ={{display:"flex", justifyContent:"center"}}>
-                    <Button variant="contained" style = {{height:"60px"}}> Dining Dollars </Button>
-                </div>
-            </div>
-
-        </div>
-
-        <div style = {{width: "100%", display:"flex", justifyContent:"center", marginTop:"10vh"}} >
-
-                <div style ={{display:"flex", justifyContent:"center"}}>
-                    <Button variant="contained" style = {{height:"60px"}}> Cancel Order </Button>
-                </div>
-
-        </div>
-            
-
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-      
-    </div>
-  );
+    );
 }
 
 export default Checkout;

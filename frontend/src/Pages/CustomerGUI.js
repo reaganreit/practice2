@@ -1,7 +1,9 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
-import { useState } from "react";
 import { Link } from "react-router-dom";
+import { createContext } from "react";
+import React, { useState } from 'react'
+import Checkout from './Checkout'
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -39,12 +41,15 @@ function drinkMenu() {
     console.log("drink button clicked");
 }
 
+export const globalTotal = React.createContext()
+
 const CustomerGUI = () => {
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
+
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -82,7 +87,6 @@ const CustomerGUI = () => {
         
             const result = await response.json();
             console.log(result);
-            //console.log('result is: ', JSON.stringify(result, null, 4));
             setTotal(result.totalPrice);
         } catch (err) {
             setErr(err.message);
@@ -93,6 +97,11 @@ const CustomerGUI = () => {
 
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
+
+            <globalTotal.Provider value = {total}>
+                <Checkout />
+            </globalTotal.Provider>
+
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
                 <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}>Bowl</Button>
                 <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}>Gyro</Button>
