@@ -103,6 +103,7 @@ const CashierGUI = () => {
 
     const handleCheckout = async (payment, employeeName) => {
         setIsLoading(true);
+        emptyReceipt()
         try {
             const response = await fetch('http://localhost:5000/sendOrder', {
                 method: 'POST',
@@ -119,12 +120,16 @@ const CashierGUI = () => {
         
             const result = await response.json();
             console.log(result);
- 
+
         } catch (err) {
             setErr(err.message);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const emptyReceipt = () => {
+        setReceipt([]);
     };
 
     return (

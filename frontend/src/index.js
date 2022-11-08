@@ -18,7 +18,6 @@ root.render(
   <>
     <div style={{height:"100vh", margin: 0}}>
       <BrowserRouter>
-
             <Routes>
               <Route path="/" element={<App />} />
               <Route path="/posreport" element={<POSReport />} />
