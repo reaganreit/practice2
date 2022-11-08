@@ -3,6 +3,7 @@ import { TextField } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid'; 
+import ThreeColRow from "../Components/ThreeColRow";
 
 const columns = [
     {field: 'id', headerName: 'ID', flex: 1, hide:true},
@@ -34,15 +35,20 @@ const ExcessReport = () => {
                     <TextField size="small" label="End Date" variant="outlined"/>
                 </div>
 
-                <DataGrid
-                style={{ height: "80%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor:"blue", color:"white"}}
+                <div style={{height:"80%", width: "60%", marginLeft: "20%", overflowY:"scroll", border:"solid", borderWidth:2, borderColor:"blue", backgroundColor:"blue", marginTop:20}}>
 
-                hideFooter
-                disableColumnMenu
-                
-                rows={rows}
-                columns={columns}
-                />
+                    <div style={{borderBottom:'solid white 3px', position:"sticky",  top:0}}>
+                        <ThreeColRow item = {"Item"} quantity = {"Quantity"} price = {"Sales"} />
+                    </div>
+
+
+                    {rows.map( (row) =>{
+                    return (
+                        <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.sales}/>
+                    )
+                    })}
+
+                </div>
 
             </div>
             
