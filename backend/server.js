@@ -30,12 +30,11 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     let totalPrice = 0.00;
     let orderID;
     const customerName = getName();
-    let waiting = true;
 
 
 // ***************** Functions directly related to the current Order *****************
     async function addItem(itemName){
-        if(orderItems = ""){
+        if(orderItems == ""){
             orderItems += itemName;
         }else{
             orderItems += "," + itemName;
@@ -83,23 +82,25 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
         custName = getName();
         // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
         // for orders: order_id, total, timestamp
-        getID();
-        let query = "INSERT INTO receipts values(" + orderID + "," + paymentType + "," + totalPrice + ",'" + updatedDate + "','" + orderItems + "'," 
-                                                 + custName + "," + cardNum + ",'" + empName + "');";
-        // execute query
-        let orderQuer = "INSERT INTO orders values(" + orderID + "," + totalPrice + ",'" + updatedDate +"');";
-        if(orderItems != ""){
-            pool.query(query)
-            .then(()=>{
-                pool.query(orderQuer)
-            })
-            .then(()=>{
-                // Subtracts inventory items used up in this order
-                updateInventory(orderItems);
-                return 1;
-            })
-        }
-    
+        await getID().then(()=>{
+            let query = "INSERT INTO receipts values(" + orderID + ",'" + paymentType + "'," + totalPrice + ",'" + updatedDate + "','" + orderItems + "'," 
+                                                    + custName + "," + cardNum + ",'" + empName + "');";
+            // execute query
+            let orderQuer = "INSERT INTO orders values(" + orderID + "," + totalPrice + ",'" + updatedDate +"');";
+            if(orderItems != ""){
+                console.log(query);
+                pool.query(query)
+                .then(()=>{
+                    pool.query(orderQuer)
+                })
+                .then(()=>{
+                    // Subtracts inventory items used up in this order
+                    updateInventory(orderItems);
+                    return 1;
+                })
+            }
+            console.log("Uploaded Order");
+        });
         return 0;
     }
 // *************************************************************************************
@@ -136,30 +137,45 @@ async function addMenu(itemName, itemPrice, itemIngreds) {
         // send in query
         const query = "INSERT INTO menu VALUES(" +itemID + ",'" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
         console.log(query);
-        pool.query(query);
+        //pool.query(query);
     })
     
     // check if each item ingredient exists in the database
-    //let individuals = itemIngreds.split(',');
-    // for(let i = 0; i < individuals.length; i++){
-    //     let name = individuals[i];
-    //     let exists;
-    //     pool.query("SELECT EXISTS(SELECT FROM ingredients where ingredient_name = '" + name + "');").then(query_res => {
-    //         for (let i = 0; i < query_res.rowCount; i++){
-    //             exists = query_res.rows[i];
-    //             console.log(query_res.rows[i]);
-    //         }
-    //         if(!exists.exists){
-    //             addInventoryItem(name);
-    //         }
-    //     });
-    // }
+    let individuals = itemIngreds.split(',');
+    for(let i = 0; i < individuals.length; i++){
+        let name = individuals[i];
+        let exists;
+        pool.query("SELECT EXISTS(SELECT FROM ingredients where name = '" + name + "');").then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                exists = query_res.rows[i];
+                console.log(query_res.rows[i]);
+            }
+            if(!exists.exists){
+                addInventoryItem(name);
+            }
+        });
+    }
+}
+
+async function addInventoryItem(name){
+    // get newID for item
+    let ID;
+    await pool.query("SELECT max(ingredient_id) FROM ingredients;")
+    .then(query_res => {
+        for(let i = 0; i < query_res.rowCount; i++){
+            ID = query_res.rows[i];
+        }
+    }).then(()=>{
+        let newID = ID.ingredient_id + 1;
+        console.log("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
+        //pool.query("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
+    });
 }
 
 async function getItemID() {
     console.log("IN GETITEMID");
     let newID;
-    pool
+    await pool
     .query("SELECT max(item_id) FROM menu;")
     .then(query_res => {
         for (let i = 0; i < query_res.rowCount; i++){
@@ -173,16 +189,16 @@ async function getItemID() {
     }) 
 }
 
-function getID() {
+async function getID() {
     let newID;
-    pool
+    await pool
     .query("SELECT max(order_id) FROM receipts;")
     .then(query_res => {
         for (let i = 0; i < query_res.rowCount; i++){
             newID = query_res.rows[i];
             console.log(query_res.rows[i]);
         }}).then(()=>{
-            orderID = newID.order_id + 1;
+            orderID = newID.max + 1;
             // return orderID;
         });
 }
@@ -318,8 +334,6 @@ async function main(){
             await updatePrice(req.body.itemName);
             console.log("totalPrice: " + totalPrice)
             res.json({"totalPrice" : totalPrice});
-    
-          
         })();
     })
 
