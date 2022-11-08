@@ -101,6 +101,32 @@ const CashierGUI = () => {
         }
     };
 
+    const handleCheckout = async (payment, employeeName) => {
+        setIsLoading(true);
+        try {
+            const response = await fetch('http://localhost:5000/sendOrder', {
+                method: 'POST',
+                body: JSON.stringify({ paymentType : payment, empName: employeeName }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+ 
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
@@ -144,10 +170,10 @@ const CashierGUI = () => {
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "2.5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "2.5%", backgroundColor: "whitesmoke" }}>
                         <div className="checkoutButtons" style = {{ width:"80%", marginLeft: "10%" }}>
-                            <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Credit</Button>
-                            <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Dining Dollars</Button>
-                            <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Retail Swipes</Button>
-                            <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Employee Swipes</Button>
+                            <Button onClick = {event => handleCheckout("Credit", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Credit</Button>
+                            <Button onClick = {event => handleCheckout("Dining Dollars", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Dining Dollars</Button>
+                            <Button onClick = {event => handleCheckout("Retail Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Retail Swipes</Button>
+                            <Button onClick = {event => handleCheckout("Employee Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Employee Swipes</Button>
                             {managerButtons.map( elem => {
                                 return (
                                         <Link to={elem.linkName} style={{ textDecoration:"none" }}>

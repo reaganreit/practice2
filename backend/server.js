@@ -70,11 +70,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
-<<<<<<< HEAD
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
-=======
-            //console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
->>>>>>> 40d5389057d4e6e546c7e6ae66253c4ec239ca12
         });
     }
 
