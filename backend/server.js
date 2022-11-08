@@ -88,14 +88,19 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             // execute query
             let orderQuer = "INSERT INTO orders values(" + orderID + "," + totalPrice + ",'" + updatedDate +"');";
             if(orderItems != ""){
+                console.log("HERE");
                 console.log(query);
                 pool.query(query)
                 .then(()=>{
-                    pool.query(orderQuer)
+                    pool.query(orderQuer);
                 })
                 .then(()=>{
                     // Subtracts inventory items used up in this order
                     updateInventory(orderItems);
+                    // Resets order attributes
+                    totalPrice = 0.00;
+                    orderItems = "";
+                    tax = 0.00;
                     return 1;
                 })
             }
@@ -137,7 +142,7 @@ async function addMenu(itemName, itemPrice, itemIngreds) {
         // send in query
         const query = "INSERT INTO menu VALUES(" +itemID + ",'" + itemName +"', " + itemPrice +", '" + itemIngreds + "');";
         console.log(query);
-        //pool.query(query);
+        pool.query(query);
     })
     
     // check if each item ingredient exists in the database
@@ -151,7 +156,7 @@ async function addMenu(itemName, itemPrice, itemIngreds) {
                 console.log(query_res.rows[i]);
             }
             if(!exists.exists){
-                addInventoryItem(name);
+                //addInventoryItem(name);
             }
         });
     }
