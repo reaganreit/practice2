@@ -31,3 +31,20 @@ Sprint 1 - Meeting 2:
         the process of learning React and the syntax involved. There were more discussions on switching the assignment
         of tasks so that the project manager can help more when needed. As a result, more tasks will be assigned to the
         project manager from the sprint backlog.
+
+
+Sprint 1 - Meeting 3:
+    Agenda
+        - Discussing any tasks that anyone is having trouble with
+        - Discussing the tasks that have been completed
+        - Demoing to the team functionality of the newly completed tasks
+    Plans
+        - Finish debugging backend functions
+        - Implement all HTTP requests to display data on frontend
+    Minutes
+        We discussed any issues with our assigned tasks and finalized what needed to be done as a minimal viable product 
+        for the first sprint. We ended up determining that some tasks previously assigned to the first sprint were not necessary 
+        due to the time constraint we are on for the upcoming deadline. As a result, those tasks are assigned to the second sprint. 
+        One issue discussed was Alex’s task where the postman server request would send back data before the function completed and 
+        update the variables that would be returned to frontend. We brainstormed possible solutions such as waiting on threads but none 
+        have worked so far.
