@@ -12,7 +12,7 @@ import CustomerGUI from './Pages/CustomerGUI'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
-    <div style={{height:"100vh", margin: 0}}>
+    {/* <div style={{height:"100vh", margin: 0}}>
       <BrowserRouter>
 
             <Routes>
@@ -24,13 +24,8 @@ root.render(
               <Route path="/popularcombos" element={<PopularCombos />} />
               <Route path="/excessreport" element={<ExcessReport />} />
             </Routes>
-            {/* <POSReport/> */}
-            {/* <Checkout/> */}
-            {/* <Inventory/> */}
-            {/* <PopularCombos/> */}
       </BrowserRouter>
-
-    </div>
+    </div> */}
 
   <div style={{height:"100vh", margin: 0}}>
     {/* <App /> */}

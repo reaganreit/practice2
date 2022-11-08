@@ -82,7 +82,7 @@ const CustomerGUI = () => {
             const result = await response.json();
             console.log(result);
             //console.log('result is: ', JSON.stringify(result, null, 4));
-            setTotal(result);
+            setTotal(result.totalPrice);
         } catch (err) {
             setErr(err.message);
         } finally {
