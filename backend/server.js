@@ -8,6 +8,8 @@ const jsonParser = bodyParser.json();
 // Create express app
 const app = express();
 const port = 5000;
+const cors = require("cors")
+app.use(cors());
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -67,7 +69,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
-            //console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
+            console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
 
@@ -315,20 +317,25 @@ function extrasContent(){
 
 //the quantity of times that items were ordered in a time frame for POS report
 //returns the number of times it was ordered
-async function reportContent(item,date1, date2){ //params are item name the first date and the second date all strings
+async function reportContent(item, date1, date2){ //params are item name the first date and the second date all strings
     quantity_str="";
     query_str ="SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+item +"%'and timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
-    await pool
-            .query(query_str)
-            .then(query_res => {
-                for (let i = 0; i < query_res.rowCount; i++){
-                    quantity_str=query_res.rows[i];
-                    console.log(query_res.rows[i]);
-                }});
-    quantity=quantity_str.quantity;
+    // query_str ="SELECT count(order_items) AS quantity FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
+    await new Promise((resolve,reject) => {
+        pool.query(query_str, (err,result) => {
+
+            for (let i = 0; i < result.rows.length; i++){
+                quantity_str=result.rows[i];
+                console.log(result.rows[i]);
+            }});
+
+            quantity=quantity_str.quantity;
+            resolve()
+            })
     //console.log(quantity)
     return quantity;
 }
+
 
 //all receipts
 async function receipts(){
@@ -346,7 +353,7 @@ async function receipts(){
 }
 
 //get all the ingredients in id order
-async function getInventoy(){
+async function getInventory(){
     query_str = "SELECT * FROM ingredients ORDER BY ingredient_id;";
     inventory=[];
     await pool
@@ -442,6 +449,7 @@ async function getPrice(item){
 async function getQuantity(item){
     query_str = "SELECT quantity as quan FROM ingredients where name = '"+item+"';";
     quantity_str="";
+    query_str ="SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+item +"%'and timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00'";
     await pool
             .query(query_str)
             .then(query_res => {
@@ -455,6 +463,7 @@ async function getQuantity(item){
 }
 
 //gets the pinpad entry and returns a person with its name, id(pinpad), and role(manager or employee)
+// manager IDs: 45678, 67890
 async function employeeType(id){
     let person ={};
     employee_name="";
@@ -507,7 +516,50 @@ async function main(){
         })
     })
 
+
+    // Returns type of employee
+    app.post("/employeeType",jsonParser,(req,res)=>{
+        console.log(req.body.pin)
+        employeeType(req.body.pin).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+        // res.send(employeeType(req.body.pin) );  
+    })
+
+    app.get("/getInventory",jsonParser,(req,res)=>{
+        getInventory().then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+        // res.send(employeeType(req.body.pin) );  
+    })
+
+    app.get("/posreport",jsonParser,(req,res)=>{
+        getMenu().then(
+            data => {
+                menu = data
+                let returnData = []
+                
+                for (let i = 0 ; i < menu.length ; i++){
+                    
+                    let quantity = reportContent(menu[i].item_name, req.body.startDate, req.body.endDate)
+                    returnData.push({item: menu[i].item_name, quantity: quantity })
+                }
+                console.log(returnData)
+                res.send( returnData )
+            }
+        )
+        // getInventory().then( data => {
+
+
+        //     res.send(data)
+        //     console.log("data sent", data)
+        // }) 
+        // res.send(employeeType(req.body.pin) );  
+    })
+
+
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
-
-//main();
+main();

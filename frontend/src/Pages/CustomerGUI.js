@@ -1,32 +1,41 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { createContext } from "react";
+import React, { useState } from 'react'
+import Checkout from './Checkout'
+import { UserContext } from "../contexts/total";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
     {id: 2, itemName: "Lemon Chicken Bowl"},
     {id: 3, itemName: "Veggie Bowl"},
-    {id: 4, itemName: "Butter Chicken Bowl"},
-    {id: 5, itemName: "Butter Chicken Bowl"}
+    {id: 4, itemName: "Seasoned Meat Bowl"},
+    {id: 5, itemName: "Meatball Bowl"}
 ]
 
 const gyroList = [
-    {id: 1, itemName: "Butter Chicken Gyro"},
+    {id: 1, itemName: "Seasoned Meat Gyro"},
     {id: 2, itemName: "Lemon Chicken Gyro"},
     {id: 3, itemName: "Veggie Gyro"},
-    {id: 4, itemName: "Butter Chicken Gyro"},
-    {id: 5, itemName: "Butter Chicken Gyro"}
+    {id: 4, itemName: "Meatball Gyro"},
 ]
 
 const extraList = [
-    {id: 1, itemName: "Hummus"},
+    {id: 1, itemName: "Hummus & Pita"},
     {id: 2, itemName: "Pita Bread"},
-    {id: 3, itemName: "Falafel"},
+    {id: 3, itemName: "2 Falafels"},
+    {id: 4, itemName: "2 Meatballs"},
+    {id: 5, itemName: "Fries"},
+    {id: 6, itemName: "Garlic Fries"},
+    {id: 7, itemName: "Extra Dressing"},
+    {id: 8, itemName: "Extra Hummus"},
+    {id: 9, itemName: "Extra Protein"},
 ]
 
 const drinkList = [
-    {id: 1, itemName: "Water"},
-    {id: 2, itemName: "Fountain Drink"},
+    {id: 1, itemName: "Bottled Water"},
+    {id: 2, itemName: "Fountain Drinks"},
 ]
 
 
@@ -38,12 +47,15 @@ function drinkMenu() {
     console.log("drink button clicked");
 }
 
+export const globalTotal = React.createContext()
+
 const CustomerGUI = () => {
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
-    const [total, setTotal] = useState([])
+    const [total, setTotal] = useState(0)
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
+
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -63,13 +75,40 @@ const CustomerGUI = () => {
 
     const handleClick = async (item) => {
         setReceipt([...receipt,item]);
-        /*setIsLoading(true);
+        setIsLoading(true);
         try {
-            const response = await fetch('https://reqres.in/api/users', {
+            const response = await fetch('http://localhost:5000/addItem', {
                 method: 'POST',
-                body: JSON.stringify({
-                itemName: item
-                }),
+                body: JSON.stringify({ itemName: item }),
+                headers: {
+                    "access-control-allow-origin" : "*",
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setTotal(result.totalPrice);
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleCheckout = async (payment, employeeName) => {
+        setIsLoading(true);
+        emptyReceipt()
+        setTotal(0);
+        try {
+            const response = await fetch('http://localhost:5000/sendOrder', {
+                method: 'POST',
+                body: JSON.stringify({ paymentType : payment, empName: employeeName }),
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
@@ -81,27 +120,29 @@ const CustomerGUI = () => {
             }
         
             const result = await response.json();
-        
-            console.log('result is: ', JSON.stringify(result, null, 4));
-    
-            setData(result);
+            console.log(result);
+
         } catch (err) {
             setErr(err.message);
         } finally {
             setIsLoading(false);
         }
-        */
+    };
+
+    const emptyReceipt = () => {
+        setReceipt([]);
     };
 
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
+
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
                 <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}>Bowl</Button>
                 <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}>Gyro</Button>
                 <Button onClick={extraMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}>Extra</Button>
                 <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}>Drink</Button>
             </div>
-            <div style = {{ height: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
+            <div style = {{ minHeight: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
                 {/* <BowlMenuGrid /> */}
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
@@ -129,12 +170,19 @@ const CustomerGUI = () => {
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
                         <div style = {{ height: "25%", width: "80%", marginLeft: "10%", backgroundColor: "lightgrey" }} >
-                            Total: $X.XX
+                            <p> 
+                                Total: $ { total }
+                            </p>
                         </div>
-
-                        <Button style = {{ height: "25%", width: "80%", marginTop: "10%", marginLeft: "10%", backgroundColor: "blue", color: "white" }}>Checkout</Button>
+                        <div className="checkoutButtons" style = {{ width:"80%", marginLeft: "10%" }}>
+                            <Button onClick = {event => handleCheckout("Credit", "customer")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Credit</Button>
+                            <Button onClick = {event => handleCheckout("Dining Dollars", "customer")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Dining Dollars</Button>
+                        </div>
                     </div>
-                    <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
+                    
+                    <Link to="/pinpad" style={{ textDecoration:"none" }}>
+                        <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}>Sign In</Button>
+                    </Link>
                 </div>
             </div>
         </div>
