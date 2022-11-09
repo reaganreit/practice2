@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -50,6 +50,8 @@ function drinkMenu() {
 
 
 const CashierGUI = () => {
+    const location = useLocation()
+    
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])

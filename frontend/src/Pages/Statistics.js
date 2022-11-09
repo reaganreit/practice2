@@ -5,6 +5,10 @@ import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recha
 import { margin, width } from "@mui/system";
 import { Link } from "react-router-dom";
 
+import ExcessReport from "./ExcessReport";
+import PopularCombos from "./PopularCombos";
+import POSReport from "./POSReport";
+
 function createData(time, amount) {
     return { time, amount };
 }

@@ -1,7 +1,8 @@
 
 import Header from "../Components/Header"
+import axios from 'axios'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
@@ -29,6 +30,15 @@ const rows = [
 const Inventory = ()=> {
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
+  const[data, setData] = useState([])
+
+  useEffect(()=>{
+    axios.get('http://localhost:5000/getInventory')
+      .then(res => {
+        console.log(res.data)
+        setData(res.data)
+      })
+  },[startDate, endDate])
 
   return (
     <div style={{ height: "100%"}}>
@@ -43,7 +53,7 @@ const Inventory = ()=> {
 
 
           {/* A grid div which will contain the two text boxes */}
-          <div style={{display:"flex", justifyContent:"space-evenly"}}>
+          {/* <div style={{display:"flex", justifyContent:"space-evenly"}}>
             <TextField
                 id="date"
                 label="Starting Date"
@@ -68,21 +78,22 @@ const Inventory = ()=> {
                 shrink: true,
                 }}
             />
-          </div>
+          </div> */}
 
           {/* Start table here */}
           <div style={{height:"500px", overflowY:"scroll", border:"solid", borderWidth:2, borderColor:"blue", backgroundColor:"blue", marginTop:20}}>
 
             <div style={{borderBottom:'solid white 3px', position:"sticky",  top:0}}>
-              <FiveColRow item = {"."} quantity = {"Quantity"} prevQuantity = {"Previous Quantity"}  lastShipment = {"Last Shipment"} nextShipment = {"Next Shipment"}/>
+              <FiveColRow item = {"Item id"} quantity = {"Name"} prevQuantity = {"Quantity"}  lastShipment = {"Unit"} nextShipment = {"Last Shipment"}/>
             </div>
             
 
-            {rows.map( (row) =>{
+            { (data ?? []).map( (row) =>{
               return (
-                <FiveColRow item = {row.item} quantity = {row.quantity} prevQuantity = {row.prevQuantity} lastShipment = {row.lasthipment} nextShipment = {row.nextShipment} />
+                <FiveColRow item = {row.ingredient_id} quantity = {row.name} prevQuantity = {row.quantity} lastShipment = {row.ingredient_unit} nextShipment = {row.last_shipment.slice(0,10)} />
               )
-            })}
+            }) }
+            
 
           </div>
 
