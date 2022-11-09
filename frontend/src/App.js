@@ -15,7 +15,7 @@ import CustomerGUI from "./Pages/CustomerGUI";
 
 const App= ()=> {
   return (
-    <Inventory />
+    <Pinpad />
     
   );
 }
