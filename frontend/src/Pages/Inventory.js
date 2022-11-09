@@ -1,7 +1,7 @@
 
 import Header from "../Components/Header"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
@@ -29,6 +29,10 @@ const rows = [
 const Inventory = ()=> {
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
+
+  useEffect(()=>{
+    console.log("UE triggered")
+  },[startDate, endDate])
 
   return (
     <div style={{ height: "100%"}}>

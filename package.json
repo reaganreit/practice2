@@ -1,12 +1,10 @@
 {
   "dependencies": {
-<<<<<<< HEAD
-    "@mui/x-date-pickers": "^5.0.7"
-=======
+    "@mui/x-date-pickers": "^5.0.7",
     "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "pg": "^8.8.0"
->>>>>>> 8af0965f0bd5796628c8904cb413a055454d4679
   }
 }

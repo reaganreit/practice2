@@ -7,7 +7,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 import { createTheme, ThemeProvider, Button } from "@mui/material";
 import ThreeColRow from "../Components/ThreeColRow";
-
+import { Link } from "react-router-dom";
 
 const numbers = [ 0,
             1, 2, 3,
@@ -19,6 +19,13 @@ const numbers = [ 0,
 
 const Pinpad = ()=> {
   const [ passcode, setPasscode ] = useState("Enter Passcode")
+
+  function logIn(code){
+    
+
+
+    return true
+  }
 
   function addToCode(digit){
     if (passcode === "Enter Passcode"){
@@ -147,13 +154,14 @@ const Pinpad = ()=> {
               })}
               
               <div style={{display:"flex", alignItems:"center",justifyContent:"center", width:"100%"}}>
-
-                <Button 
-                  variant = "contained"
-                  className = "hoverOpacity"
-                  style = {{justifyContent:"center", border:"solid", width:"60%", height:"60%", display:"flex", alignItems:"center"}}>
-                    LOG IN
-                </Button>
+                <Link to="/cashiergui" style={{ textDecoration:"none" }}>
+                  <Button 
+                    variant = "contained"
+                    className = "hoverOpacity"
+                    style = {{justifyContent:"center", border:"solid", width:"60%", height:"60%", display:"flex", alignItems:"center"}}>
+                      LOG IN
+                  </Button>
+                </Link>
                 
               </div>
 
