@@ -1,33 +1,38 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
     {id: 2, itemName: "Lemon Chicken Bowl"},
     {id: 3, itemName: "Veggie Bowl"},
-    {id: 4, itemName: "Butter Chicken Bowl"},
-    {id: 5, itemName: "Butter Chicken Bowl"}
+    {id: 4, itemName: "Seasoned Meat Bowl"},
+    {id: 5, itemName: "Meatball Bowl"}
 ]
 
 const gyroList = [
-    {id: 1, itemName: "Butter Chicken Gyro"},
+    {id: 1, itemName: "Seasoned Meat Gyro"},
     {id: 2, itemName: "Lemon Chicken Gyro"},
     {id: 3, itemName: "Veggie Gyro"},
-    {id: 4, itemName: "Butter Chicken Gyro"},
-    {id: 5, itemName: "Butter Chicken Gyro"}
+    {id: 4, itemName: "Meatball Gyro"},
 ]
 
 const extraList = [
-    {id: 1, itemName: "Hummus"},
+    {id: 1, itemName: "Hummus & Pita"},
     {id: 2, itemName: "Pita Bread"},
-    {id: 3, itemName: "Falafel"},
+    {id: 3, itemName: "2 Falafels"},
+    {id: 4, itemName: "2 Meatballs"},
+    {id: 5, itemName: "Fries"},
+    {id: 6, itemName: "Garlic Fries"},
+    {id: 7, itemName: "Extra Dressing"},
+    {id: 8, itemName: "Extra Hummus"},
+    {id: 9, itemName: "Extra Protein"},
 ]
 
 const drinkList = [
-    {id: 1, itemName: "Water"},
-    {id: 2, itemName: "Fountain Drink"},
+    {id: 1, itemName: "Bottled Water"},
+    {id: 2, itemName: "Fountain Drinks"},
 ]
 
 const managerButtonList = [
@@ -45,6 +50,8 @@ function drinkMenu() {
 
 
 const CashierGUI = () => {
+    const location = useLocation()
+    
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
@@ -104,6 +111,7 @@ const CashierGUI = () => {
     const handleCheckout = async (payment, employeeName) => {
         setIsLoading(true);
         emptyReceipt()
+        setTotal(0);
         try {
             const response = await fetch('http://localhost:5000/sendOrder', {
                 method: 'POST',
@@ -140,7 +148,7 @@ const CashierGUI = () => {
                 <Button onClick={extraMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}>Extra</Button>
                 <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}>Drink</Button>
             </div>
-            <div style = {{ height: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
+            <div style = {{ minHeight: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
