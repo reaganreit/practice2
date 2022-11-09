@@ -1,7 +1,8 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { UserContext } from "../contexts/user";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -50,8 +51,8 @@ function drinkMenu() {
 
 
 const CashierGUI = () => {
-    const location = useLocation()
     
+    const {user,setUser} = useContext(UserContext)
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
@@ -177,7 +178,10 @@ const CashierGUI = () => {
                         Total: $ { total }
                     </div>
                     <div style = {{ height: "20%", width: "100%", marginTop: "20%", backgroundColor: "whitesmoke" }} >
-                        Employee ID: 12345
+                        Employee ID: {(user.id ?? 'w')}
+                    </div>
+                    <div style = {{ height: "20%", width: "100%", backgroundColor: "whitesmoke" }} >
+                        Employee Name: {(user.name ?? 'w')}
                     </div>
                 </div>
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "2.5%" }}>
