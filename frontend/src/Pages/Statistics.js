@@ -29,7 +29,7 @@ const Statistics = () => {
   const theme = useTheme();
   return (
     <div style={{height: "100%"}}>
-        <Header title = "Statistics"></Header>
+        <Header title = "Statistics" path = "/cashiergui"></Header>
 
         <span className="statsContainer" style={{
             borderTop: "5%",

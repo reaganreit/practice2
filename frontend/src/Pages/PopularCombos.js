@@ -33,7 +33,7 @@ const PopularCombos = ()=> {
 
   return (
     <div style={{ height: "100%"}}>
-      <Header title = "Popular Combos"/>
+      <Header title = "Popular Combos" path = "/statistics"/>
       
 
       {/* A div which will have slight margins on both sides

@@ -317,24 +317,21 @@ function extrasContent(){
 
 //the quantity of times that items were ordered in a time frame for POS report
 //returns the number of times it was ordered
-async function reportContent(item, date1, date2){ //params are item name the first date and the second date all strings
+async function reportContent(date1, date2){ //params are item name the first date and the second date all strings
     quantity_str="";
-    query_str ="SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+item +"%'and timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
+    query_str ="SELECT order_items FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
     // query_str ="SELECT count(order_items) AS quantity FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
-    await new Promise((resolve,reject) => {
-        pool.query(query_str, (err,result) => {
-
-            for (let i = 0; i < result.rows.length; i++){
-                quantity_str=result.rows[i];
-                console.log(result.rows[i]);
-            }});
-
-            quantity=quantity_str.quantity;
+    let data = [1]
+    await new Promise((resolve,reject) =>{
+        pool.query(query_str, (error, result) =>{
+            data = result
             resolve()
-            })
-    //console.log(quantity)
-    return quantity;
+        })
+        
+    })
+    return data     
 }
+
 
 //all receipts
 async function receipts(){
@@ -533,28 +530,75 @@ async function main(){
         // res.send(employeeType(req.body.pin) );  
     })
 
-    app.get("/posreport",jsonParser,(req,res)=>{
-        getMenu().then(
-            data => {
-                menu = data
-                let returnData = []
+    app.post("/posreport",jsonParser,(req,res)=>{
+            
+        let returnData = []
+        console.log(req.body)
+        
+        reportContent(req.body.startDate, req.body.endDate).then( data =>{
+            getMenu().then( menuData =>{ 
+                const itemMap = new Map()
+                data = data.rows
+                for (let i = 0 ; i < data.length ; i++){
+                    let items = data[i].order_items.split(',')
                 
-                for (let i = 0 ; i < menu.length ; i++){
-                    
-                    let quantity = reportContent(menu[i].item_name, req.body.startDate, req.body.endDate)
-                    returnData.push({item: menu[i].item_name, quantity: quantity })
+
+                    for (let j = 0 ; j < items.length ; j++){
+                        items[j] = items[j].trim()
+                        if (itemMap.get(items[j]) === undefined){
+                            itemMap.set(items[j], 0)
+                        }
+                        let amt = itemMap.get(items[j])
+                        itemMap.set(items[j], amt + 1)
+                    }
                 }
-                console.log(returnData)
-                res.send( returnData )
-            }
-        )
-        // getInventory().then( data => {
+
+                console.log(menuData)
 
 
-        //     res.send(data)
-        //     console.log("data sent", data)
-        // }) 
-        // res.send(employeeType(req.body.pin) );  
+
+                for (let [key, value] of itemMap){
+                    console.log(key,value)
+
+                    let price = 0
+
+                    for (let j = 0 ; j < menuData.length ; j++){
+                        console.log(menuData[j])
+                        if (menuData[j].item_name === key){
+                            console.log("item found")
+                            price = Math.floor(menuData[j].item_price * value * 100) / 100
+                        }
+                    }
+                    returnData.push({itemName: key, quantity: value, sales: price})
+                }
+
+                res.send(returnData)
+                })
+            // const itemMap = new Map()
+            // data = data.rows
+            // for (let i = 0 ; i < data.length ; i++){
+            //     let items = data[i].order_items.split(',')
+            
+
+            //     for (let j = 0 ; j < items.length ; j++){
+            //         items[j] = items[j].trim()
+            //         if (itemMap.get(items[j]) === undefined){
+            //             itemMap.set(items[j], 0)
+            //         }
+            //         let amt = itemMap.get(items[j])
+            //         itemMap.set(items[j], amt + 1)
+            //     }
+            // }
+
+            // console.log(itemMap)
+            // for (let [key, value] of itemMap){
+            //     console.log(key,value)
+            //     returnData.push({itemName: key, quantity: value})
+            // }
+
+            // res.send(returnData)
+        })
+
     })
 
 
