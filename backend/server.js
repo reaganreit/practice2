@@ -321,17 +321,19 @@ async function reportContent(item, date1, date2){ //params are item name the fir
     quantity_str="";
     query_str ="SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+item +"%'and timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
     // query_str ="SELECT count(order_items) AS quantity FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
+    await new Promise((resolve,reject) => {
+        pool.query(query_str, (err,result) => {
 
-    await pool
-            .query(query_str)
-            .then(query_res => {
-                for (let i = 0; i < query_res.rowCount; i++){
-                    quantity_str=query_res.rows[i];
-                    console.log(query_res.rows[i]);
-                }});
-    quantity=quantity_str.quantity;
+            for (let i = 0; i < result.rows.length; i++){
+                quantity_str=result.rows[i];
+                console.log(result.rows[i]);
+            }});
+
+            quantity=quantity_str.quantity;
+            resolve()
+            })
     //console.log(quantity)
-    return quan;
+    return quantity;
 }
 
 //all receipts
@@ -536,10 +538,14 @@ async function main(){
             data => {
                 menu = data
                 let returnData = []
-                res.send(menu)
+                
                 for (let i = 0 ; i < menu.length ; i++){
-                    returnData.append({item: menu[i].item_name})
+                    
+                    let quantity = reportContent(menu[i].item_name, req.body.startDate, req.body.endDate)
+                    returnData.push({item: menu[i].item_name, quantity: quantity })
                 }
+                console.log(returnData)
+                res.send( returnData )
             }
         )
         // getInventory().then( data => {
