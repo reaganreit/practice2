@@ -9,7 +9,7 @@ const Header = (props) => {
           
           
           <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <Link to = "/" style={{textDecoration:"none"}}>
+            <Link to = {(props.path ?? '/')} style={{textDecoration:"none"}}>
               <Button style ={{backgroundColor:"blue"}} variant = "contained" >Back</Button>
             </Link>
           </div>
