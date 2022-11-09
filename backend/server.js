@@ -317,7 +317,133 @@ function extrasContent(){
 
 //the quantity of times that items were ordered in a time frame for POS report
 //returns the number of times it was ordered
-async function reportContent(item,date1, date2){ //params are item name the first date and the second date all strings
+async function reportContent(date1, date2){ //params are item name the first date and the second date all strings
+    quantity_str="";
+    query_str ="SELECT order_items FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
+    // query_str ="SELECT count(order_items) AS quantity FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
+    let data = [1]
+    await new Promise((resolve,reject) =>{
+        pool.query(query_str, (error, result) =>{
+            data = result
+            resolve()
+        })
+        
+    })
+    return data     
+}
+
+
+//all receipts
+async function receipts(){
+    query_str = "SELECT * FROM receipts;";
+    receipts=[];
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    receipts.push(query_res.rows[i]);
+                    //console.log(query_res.rows[i]);
+                }});
+    //console.log(receipts[1])
+    return receipts;
+}
+
+//get all the ingredients in id order
+async function getInventory(){
+    query_str = "SELECT * FROM ingredients ORDER BY ingredient_id;";
+    inventory=[];
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    inventory.push(query_res.rows[i]);
+                    //console.log(query_res.rows[i]);
+                }});
+    //console.log(inventory[1])
+    return inventory;
+}
+
+//get all the menu items in id order
+async function getMenu(){
+    query_str = "SELECT * FROM menu ORDER BY item_id;";
+    menuItems=[];
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    menuItems.push(query_res.rows[i]);
+                    //console.log(query_res.rows[i]);
+                }});
+    //console.log(menuItems[1])
+    return menuItems;
+}
+
+//get all the receipts between two dates
+async function combosData(date1, date2){
+    query_str = "SELECT * FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
+    receipts=[];
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    receipts.push(query_res.rows[i]);
+                    //console.log(query_res.rows[i]);
+                }});
+    //console.log(receipts[1])
+    return receipts;
+}
+
+//gets the quantity in the inventory of a particular item
+async function inventoryQuantity(item){
+    quantity_str="";
+    query_str ="SELECT quantity as quan FROM ingredients where name = '"+item+"';";
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    quantity_str=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                }});
+    quantity=quantity_str.quan;
+    console.log(quantity)
+    return quantity;
+}
+
+//get the ingredients used of a specific item
+async function ingredientsUsed(item){
+    ingredients_str="";
+    query_str ="SELECT ingredients_used FROM menu WHERE item_name ='" + item +"';";
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    ingredients_str=query_res.rows[i];
+                    //console.log(query_res.rows[i]);
+                }});
+    ingredients=ingredients_str.ingredients_used;
+   // console.log(ingredients)
+    return ingredients;
+}
+
+//get the price of an item, returns price as an int
+async function getPrice(item){
+    query_str = "select item_price AS price from menu where item_name= '"+item+"';";
+    price_str="";
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    price_str=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                }});
+    price=price_str.price;
+    //console.log(price)
+    return price;
+}
+
+//get the quantity of an item from ingredients, returns quantity as an int
+async function getQuantity(item){
+    query_str = "SELECT quantity as quan FROM ingredients where name = '"+item+"';";
     quantity_str="";
     query_str ="SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+item +"%'and timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00'";
     await pool
@@ -327,7 +453,7 @@ async function reportContent(item,date1, date2){ //params are item name the firs
                     quantity_str=query_res.rows[i];
                     console.log(query_res.rows[i]);
                 }});
-    quantity=quantity_str.quantity;
+    quantity=quantity_str.quan;
     //console.log(quantity)
     return quantity;
 }
@@ -359,6 +485,96 @@ async function main(){
             res.send("Successfully added new menu item");
         })
     })
+
+
+    // Returns type of employee
+    app.post("/employeeType",jsonParser,(req,res)=>{
+        console.log(req.body.pin)
+        employeeType(req.body.pin).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+        // res.send(employeeType(req.body.pin) );  
+    })
+
+    app.get("/getInventory",jsonParser,(req,res)=>{
+        getInventory().then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+        // res.send(employeeType(req.body.pin) );  
+    })
+
+    app.post("/posreport",jsonParser,(req,res)=>{
+            
+        let returnData = []
+        console.log(req.body)
+        
+        reportContent(req.body.startDate, req.body.endDate).then( data =>{
+            getMenu().then( menuData =>{ 
+                const itemMap = new Map()
+                data = data.rows
+                for (let i = 0 ; i < data.length ; i++){
+                    let items = data[i].order_items.split(',')
+                
+
+                    for (let j = 0 ; j < items.length ; j++){
+                        items[j] = items[j].trim()
+                        if (itemMap.get(items[j]) === undefined){
+                            itemMap.set(items[j], 0)
+                        }
+                        let amt = itemMap.get(items[j])
+                        itemMap.set(items[j], amt + 1)
+                    }
+                }
+
+                console.log(menuData)
+
+
+
+                for (let [key, value] of itemMap){
+                    console.log(key,value)
+
+                    let price = 0
+
+                    for (let j = 0 ; j < menuData.length ; j++){
+                        if (menuData[j].item_name === key){
+                            console.log("item found")
+                            price = Math.floor(menuData[j].item_price * value * 100) / 100
+                        }
+                    }
+                    returnData.push({itemName: key, quantity: value, sales: price})
+                }
+
+                res.send(returnData)
+                })
+            // const itemMap = new Map()
+            // data = data.rows
+            // for (let i = 0 ; i < data.length ; i++){
+            //     let items = data[i].order_items.split(',')
+            
+
+            //     for (let j = 0 ; j < items.length ; j++){
+            //         items[j] = items[j].trim()
+            //         if (itemMap.get(items[j]) === undefined){
+            //             itemMap.set(items[j], 0)
+            //         }
+            //         let amt = itemMap.get(items[j])
+            //         itemMap.set(items[j], amt + 1)
+            //     }
+            // }
+
+            // console.log(itemMap)
+            // for (let [key, value] of itemMap){
+            //     console.log(key,value)
+            //     returnData.push({itemName: key, quantity: value})
+            // }
+
+            // res.send(returnData)
+        })
+
+    })
+
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
