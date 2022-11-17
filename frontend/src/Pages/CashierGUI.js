@@ -38,7 +38,8 @@ const drinkList = [
 
 const managerButtonList = [
     {id: 1, buttonName: "Statistics", linkName: "/statistics"},
-    {id: 2, buttonName: "Inventory", linkName: "/inventory"}
+    {id: 2, buttonName: "Inventory", linkName: "/inventory"},
+    {id: 3, buttonName: "Edit Menu", linkName: "/editMenu"}
 ]
 
 function extraMenu() {
