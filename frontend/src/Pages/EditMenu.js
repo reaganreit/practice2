@@ -2,29 +2,69 @@ import Header from "../Components/Header";
 import { TextField } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import {Button} from "@mui/material";
+import { useEffect, useState } from "react";
+
 
 const EditMenu = () => {
+
+    const [newItemName, setNewItemName] = useState();
+    const [newItemPrice, setNewItemPrice] = useState();
+    const [newItemIngredients, setNewItemIngredients] = useState();
+    const [err, setErr] = useState('');
+
+
+    const addNewItem = async (name, price, ingredients) => {
+        console.log("clicked");
+        console.log(name);
+        console.log(price);
+        console.log(ingredients);
+        try {
+            const response = await fetch('http://localhost:5000/newItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemName: name, itemPrice: price, itemIngreds: ingredients }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+        } catch (err) {
+            setErr(err.message);
+        }
+    }
+
     return (
         <div style = {{ height: "100%" }}>
-            <Header title = "Edit Menu" path = "/cashiergui"></Header>   
+            <Header title = "Edit Menu" path = "/cashiergui"></Header>  
+
             <div style = {{ height: "90%", paddingBottom: "2.5%" }}>
+
                 <div className="addItem" style = {{ height: "30%", width: "80%", marginLeft: "10%", marginTop: "2.5%", backgroundColor: "lightgrey"}}>
                     <h2 style = {{ paddingTop: ".75%", textAlign: "center" }}>Add Item</h2>
                     <span style = {{ display: "flex"}}>
                         <div style = {{ width: "60%", height: "70%", marginLeft: "10%"}}>
                             <article style = {{ marginTop: "3%", marginBottom: "2%" }}>
-                                <TextField size="small" label="Name of Item" variant="filled" style = {{ width: "60%", marginRight: "5%", backgroundColor: "white"}}/>
+                                <TextField onChange = { ( event ) => setNewItemName(event.target.value)} size="small" label="Name of Item" variant="filled" style = {{ width: "60%", marginRight: "5%", backgroundColor: "white"}}/>
                                 <TextField size="small" label="Price of Item" variant="filled" 
+                                    onChange = { ( event ) => setNewItemPrice(event.target.value)}
                                     InputProps={{
                                         startAdornment: <InputAdornment position="start">$</InputAdornment>,
                                     }}
                                     style = {{ width: "30%", marginRight: "5%", backgroundColor: "white"}} />
                             </article>
-                            <TextField size="small" label="Ingredients of Item" variant="filled" style = {{ width: "95%", marginRight: "5%", backgroundColor: "white"}}/>
+                            <TextField onChange = { ( event ) => setNewItemIngredients(event.target.value)} size="small" label="Ingredients of Item" variant="filled" style = {{ width: "95%", marginRight: "5%", backgroundColor: "white"}}/>
                         </div>
-                        <Button style = {{ height: "7.5%", width: "10%", marginLeft: "5%", marginTop: "4%", color: "white", backgroundColor: "blue" }}>Add Item</Button>
+                        <Button onClick = {event => addNewItem(newItemName, newItemPrice, newItemIngredients)} style = {{ height: "7.5%", width: "10%", marginLeft: "5%", marginTop: "4%", color: "white", backgroundColor: "blue" }}>Add Item</Button>
                     </span>
                 </div>
+
+
                 <div className="deleteItem" style = {{ height: "30%", width: "80%", marginLeft: "10%", marginTop: "2.5%", backgroundColor: "lightgrey", textAlign: "center" }}>
                     <h2 style = {{ paddingTop: ".75%" }}>Delete Item</h2>
                     <div>
@@ -32,6 +72,8 @@ const EditMenu = () => {
                         <Button style = {{ height: "10%", width: "10%", marginLeft: "3.5%", marginTop: "4.5%", color: "white", backgroundColor: "blue" }}>Delete Item</Button>
                     </div>
                 </div>
+
+
                 <div className="editItem" style = {{ height: "30%", width: "80%", marginLeft: "10%", marginTop: "2.5%", backgroundColor: "lightgrey", textAlign: "center" }}>
                     <h2 style = {{ paddingTop: ".75%" }}>Edit Item</h2>
                     <div>
@@ -44,8 +86,8 @@ const EditMenu = () => {
                         <Button style = {{ height: "10%", width: "10%", marginLeft: "3.5%", marginTop: "4.5%", color: "white", backgroundColor: "blue" }}>Delete Item</Button>
                     </div>
                 </div>
+
             </div>
-            
         </div>
     )
 }
