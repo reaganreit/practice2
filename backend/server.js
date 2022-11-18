@@ -33,6 +33,9 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     let orderID;
     const customerName = getName();
 
+// items low on stock
+let lowStock = [];
+
 
 // ***************** Functions directly related to the current Order *****************
     async function addItem(itemName){
@@ -69,6 +72,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
+            roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
@@ -208,6 +212,17 @@ async function getID() {
             orderID = newID.max + 1;
             // return orderID;
         });
+}
+
+async function checkStock(){
+    lowStock = [];
+    let items = await getInventory();
+
+    for(let i = 0; i < items.length; i++){
+        if(items[i].quantity <= 30){
+            lowStock.push(items[i].name);
+        }
+    }
 }
 
 function roundTotal(num){
@@ -531,6 +546,14 @@ async function main(){
         // res.send(employeeType(req.body.pin) );  
     })
 
+    app.post("/lowStock",jsonParser,(req,res)=>{
+        (async() => {
+            await lowStock();
+            res.send(lowStock);
+        })();
+        
+    })
+
     app.post("/posreport",jsonParser,(req,res)=>{
             
         let returnData = []
@@ -605,4 +628,6 @@ async function main(){
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
+console.log("TESTING");
+checkStock();
 main();
