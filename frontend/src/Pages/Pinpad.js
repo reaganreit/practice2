@@ -59,8 +59,11 @@ const Pinpad = ()=> {
 
   return (
     <div style={{ height: "100%"}}>
-      <Header title = "Log in"/>
 
+      <div style={{width:"100%",display:"flex", justifyContent:"center", alignItems:"center", marginTop:"3%"}}>
+        <h1 style = {{textAlign: "center"}}>Log In</h1>
+      </div>
+      
 
       {/* Start pinpad here */}
       <div style = {{width:"100%", display:"flex", justifyContent:"center", marginTop:"15vh"}}>

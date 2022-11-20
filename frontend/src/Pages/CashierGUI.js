@@ -54,7 +54,7 @@ function drinkMenu() {
 const CashierGUI = () => {
     
     const {user,setUser} = useContext(UserContext)
-    const [results, setResults] = useState([])
+    const [results, setResults] = useState([...bowlList])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
     const [isLoading, setIsLoading] = useState(false);
