@@ -4,10 +4,10 @@ import { Button } from "@mui/material"
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import { margin, width } from "@mui/system";
 import { Link } from "react-router-dom";
+import { TextField } from "@mui/material";
+import { useEffect, useState } from "react";
 
-import ExcessReport from "./ExcessReport";
-import PopularCombos from "./PopularCombos";
-import POSReport from "./POSReport";
+
 
 function createData(time, amount) {
     return { time, amount };
@@ -27,6 +27,9 @@ const data = [
 
 const Statistics = () => {
   const theme = useTheme();
+  const [startDate, setStartDate] = useState("2022-09-20");
+  const [endDate, setEndDate] = useState("2022-10-05")
+
   return (
     <div style={{height: "100%"}}>
         <Header title = "Statistics" path = "/cashiergui"></Header>
@@ -44,7 +47,40 @@ const Statistics = () => {
                 height: "75%",
                 marginRight: "10%"
             }}>
+                <div>
+                    <TextField
+                        id="date"
+                        label="Starting Date"
+                        type="date"
+                        value = {startDate}
+                        onChange = { ( event ) => setStartDate(event.target.value)}
+                        sx={{ width: 220 }}
+                        InputLabelProps={{
+                        shrink: true,
+                        }}
+                        style = {{  
+                            width: "40%",
+                            marginRight: "20%"
+                        }}
+                    />
+
+                    <TextField
+                        id="date"
+                        label="Ending Date"
+                        type="date"
+                        value = {endDate}
+                        onChange = { ( event ) => setEndDate(event.target.value)}
+                        sx={{ width: 220 }}
+                        InputLabelProps={{
+                        shrink: true,
+                        }}
+                        style = {{  
+                            width: "40%"
+                        }}
+                    />
+                </div>
                 <table style = {{
+                    marginTop: "5%",
                     width: "100%",
                     height: "70%",
                     backgroundColor: "blue",
@@ -69,7 +105,7 @@ const Statistics = () => {
                 </table>
 
                 <div className="reportButtonsContainer" style={{
-                    marginTop: "15%",
+                    marginTop: "5%",
                 }}>
                     <Link to="/posreport" style={{ textDecoration:"none" }}>
                         <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> Report</Button>
