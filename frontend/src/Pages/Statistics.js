@@ -14,18 +14,6 @@ function createData(time, amount) {
     return { time, amount };
 }
 
-const data = [
-    createData('00:00', 0),
-    createData('03:00', 300),
-    createData('06:00', 600),
-    createData('09:00', 800),
-    createData('12:00', 1500),
-    createData('15:00', 2000),
-    createData('18:00', 2400),
-    createData('21:00', 2400),
-    createData('24:00', undefined),
-  ];
-
 const Statistics = () => {
   const theme = useTheme();
   const [startDate, setStartDate] = useState("2022-09-20");
@@ -34,6 +22,7 @@ const Statistics = () => {
   const [credit, setCredit] = useState();
   const [dining, setDining] = useState();
   const [orders, setOrders] = useState();
+  const [graphData, setGraphData] = useState([]);
 
 
   useEffect(() => {
@@ -44,7 +33,32 @@ const Statistics = () => {
         setDining(data.data.dining);
         setOrders(data.data.orders);
       })
+
+    axios.post("http://localhost:5000/statsGraph", { startDate: startDate, endDate:endDate})
+      .then(retrievedData => {
+        console.log(retrievedData);
+        setGraphData([]);
+        let numElements = retrievedData.data.length; 
+        console.log("numElements: ", numElements);
+
+        if (numElements >= 5) {
+            let elementsPerBreakpoint = numElements/5;
+            for (var breakpoint = 0; breakpoint < 5; breakpoint++) {
+                setGraphData(graphData => [...graphData, createData(elem.timestamp, breakpointTotal)]);
+                for (var i = 0; i < elementsPerBreakpoint; i++) {
+    
+                }
+            }
+        }
+        {(retrievedData.data ?? []).map( (elem) => {
+            setGraphData(graphData => [...graphData, createData(elem.timestamp, elem.total)]);
+        })}
+      })
   },[startDate,endDate])
+
+  useEffect((setGraphData) => {
+    console.log(graphData);
+  })
 
 
   return (
@@ -105,15 +119,15 @@ const Statistics = () => {
                 }}>
                     <tr>
                         <td>Gross Revenue</td>
-                        <td>${revenue}</td>
+                        <td>$ {revenue}</td>
                     </tr>
                     <tr>
                         <td>Credit</td>
-                        <td>${credit}</td>
+                        <td>$ {credit}</td>
                     </tr>
                     <tr>
                         <td>Dining</td>
-                        <td>${dining}</td>
+                        <td>$ {dining}</td>
                     </tr>
                     <tr>
                         <td>Orders</td>
@@ -142,7 +156,7 @@ const Statistics = () => {
                 height = "70%"
             >
                 <LineChart
-                    data={data}
+                    data = {graphData}
                     margin={{
                         top: 16,
                         right: 16,
@@ -155,6 +169,15 @@ const Statistics = () => {
                         stroke={theme.palette.text.secondary}
                         style={theme.typography.body2}
                     />
+                        <Label
+                        style={{
+                            textAnchor: 'middle',
+                            fill: theme.palette.text.primary,
+                            ...theme.typography.body1,
+                        }}
+                        >
+                        Time/Date
+                        </Label>
                     <YAxis
                         stroke={theme.palette.text.secondary}
                         style={theme.typography.body2}
