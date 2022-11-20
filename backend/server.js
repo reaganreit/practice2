@@ -183,8 +183,15 @@ async function addInventoryItem(name){
     });
 }
 
+function deleteMenu(item){
+    pool.query("DELETE FROM menu WHERE item_name = '" + item + "';");
+}
+
+function updateMenu(item, price){
+    pool.query("UPDATE menu SET item_price = " + price + " WHERE item_name = '" + item + "';");
+}
+
 async function getItemID() {
-    console.log("IN GETITEMID");
     let newID;
     await pool
     .query("SELECT max(item_id) FROM menu;")
@@ -194,9 +201,7 @@ async function getItemID() {
             console.log(query_res.rows[i]);
         }})
     .then(()=>{
-        console.log("FINISHED WITH GETITEMID");
         itemID = newID.max+1;
-        //return newID.max+1;
     }) 
 }
 
@@ -525,6 +530,11 @@ async function main(){
         .then(()=>{
             res.send("Successfully added new menu item");
         })
+    })
+
+    // Deletes menu item
+    app.post("/deleteItem",jsonParser,(req,res)=>{
+        deleteMenu(req.body.item);
     })
 
 
