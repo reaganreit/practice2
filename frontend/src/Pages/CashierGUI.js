@@ -38,7 +38,8 @@ const drinkList = [
 
 const managerButtonList = [
     {id: 1, buttonName: "Statistics", linkName: "/statistics"},
-    {id: 2, buttonName: "Inventory", linkName: "/inventory"}
+    {id: 2, buttonName: "Inventory", linkName: "/inventory"},
+    {id: 3, buttonName: "Edit Menu", linkName: "/editMenu"}
 ]
 
 function extraMenu() {
@@ -53,7 +54,7 @@ function drinkMenu() {
 const CashierGUI = () => {
     
     const {user,setUser} = useContext(UserContext)
-    const [results, setResults] = useState([])
+    const [results, setResults] = useState([...bowlList])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
     const [isLoading, setIsLoading] = useState(false);
