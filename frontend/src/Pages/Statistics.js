@@ -38,21 +38,27 @@ const Statistics = () => {
       .then(retrievedData => {
         console.log(retrievedData);
         setGraphData([]);
-        let numElements = retrievedData.data.length; 
+        let numElements = retrievedData.data.length-1; 
         console.log("numElements: ", numElements);
 
         if (numElements >= 5) {
             let elementsPerBreakpoint = numElements/5;
+            let breakpointTotal; 
+            let elemIndex = 0;
             for (var breakpoint = 0; breakpoint < 5; breakpoint++) {
-                setGraphData(graphData => [...graphData, createData(elem.timestamp, breakpointTotal)]);
+                breakpointTotal = 0;
                 for (var i = 0; i < elementsPerBreakpoint; i++) {
-    
+                    breakpointTotal += retrievedData.data[elemIndex].total;
+                    elemIndex++;
                 }
+                console.log("timestamp: ", retrievedData.data[elemIndex].timestamp);
+                console.log("total: ", breakpointTotal);
+                setGraphData(graphData => [...graphData, createData(retrievedData.data[elemIndex].timestamp, breakpointTotal)]);
             }
         }
-        {(retrievedData.data ?? []).map( (elem) => {
-            setGraphData(graphData => [...graphData, createData(elem.timestamp, elem.total)]);
-        })}
+        // {(retrievedData.data ?? []).map( (elem) => {
+        //     setGraphData(graphData => [...graphData, createData(elem.timestamp, elem.total)]);
+        // })}
       })
   },[startDate,endDate])
 
