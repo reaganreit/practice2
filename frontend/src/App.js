@@ -15,6 +15,7 @@ import CustomerGUI from "./Pages/CustomerGUI";
 import ExcessReport from "./Pages/ExcessReport";
 import CashierGUI from "./Pages/CashierGUI";
 import Statistics from "./Pages/Statistics";
+import EditMenu from "./Pages/EditMenu";
 
 const App= ()=> {
   const [ user,setUser ] = useState({})
@@ -35,7 +36,7 @@ const App= ()=> {
             <Route path="/customergui" element={<CustomerGUI />} />
             <Route path="/cashiergui" element={<CashierGUI />} />
             <Route path="/statistics" element={<Statistics />} />
-
+            <Route path="/editMenu" element = {<EditMenu />} />
           </Routes>
         </UserContext.Provider>
 
