@@ -8,7 +8,8 @@ const jsonParser = bodyParser.json();
 // Create express app
 const app = express();
 const port = 5000;
-const cors = require("cors")
+const cors = require("cors");
+const { json } = require('body-parser');
 app.use(cors());
 // Create pool
 const pool = new Pool({
@@ -604,6 +605,11 @@ async function main(){
     // Deletes menu item
     app.post("/deleteItem",jsonParser,(req,res)=>{
         deleteMenu(req.body.item);
+    })
+
+    // Updates menu item price
+    app.post("/updateItem",jsonParser,(req,res)=>{
+        updateMenu(req.body.item, req.body.price);
     })
 
 
