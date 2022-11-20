@@ -590,7 +590,7 @@ async function main(){
     app.post("/sendOrder",jsonParser,(req,res)=> {
         sendOrder(req.body.paymentType, req.body.empName)
         .then(() => {
-            res.send("Howdy");
+            res.send("Order has been sent to the database");
         })
     })
 
@@ -605,11 +605,13 @@ async function main(){
     // Deletes menu item
     app.post("/deleteItem",jsonParser,(req,res)=>{
         deleteMenu(req.body.item);
+        res.send("Deleted " + req.body.item);
     })
 
     // Updates menu item price
     app.post("/updateItem",jsonParser,(req,res)=>{
         updateMenu(req.body.item, req.body.price);
+        res.send("Updated price of " + req.body.item + " to " + req.body.price);
     })
 
 
@@ -631,9 +633,9 @@ async function main(){
         // res.send(employeeType(req.body.pin) );  
     })
 
-    app.post("/lowStock",jsonParser,(req,res)=>{
+    app.get("/lowStock",jsonParser,(req,res)=>{
         (async() => {
-            await lowStock();
+            await checkStock();
             res.send(lowStock);
         })();
         
