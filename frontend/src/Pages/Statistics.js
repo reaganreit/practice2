@@ -6,6 +6,7 @@ import { margin, width } from "@mui/system";
 import { Link } from "react-router-dom";
 import { TextField } from "@mui/material";
 import { useEffect, useState } from "react";
+import axios from 'axios'
 
 
 
@@ -28,10 +29,26 @@ const data = [
 const Statistics = () => {
   const theme = useTheme();
   const [startDate, setStartDate] = useState("2022-09-20");
-  const [endDate, setEndDate] = useState("2022-10-05")
+  const [endDate, setEndDate] = useState("2022-10-05");
+  const [revenue, setRevenue] = useState();
+  const [credit, setCredit] = useState();
+  const [dining, setDining] = useState();
+  const [orders, setOrders] = useState();
+
+
+  useEffect(() => {
+    axios.post("http://localhost:5000/statsTable", { startDate: startDate, endDate:endDate})
+      .then(data => {
+        setRevenue(data.data.grossRevenue);
+        setCredit(data.data.credit);
+        setDining(data.data.dining);
+        setOrders(data.data.orders);
+      })
+  },[startDate,endDate])
+
 
   return (
-    <div style={{height: "100%"}}>
+    <div style={{height: "80%"}}>
         <Header title = "Statistics" path = "/cashiergui"></Header>
 
         <span className="statsContainer" style={{
@@ -53,7 +70,7 @@ const Statistics = () => {
                         label="Starting Date"
                         type="date"
                         value = {startDate}
-                        onChange = { ( event ) => setStartDate(event.target.value)}
+                        onChange = { ( event ) => setStartDate(event.target.value) }
                         sx={{ width: 220 }}
                         InputLabelProps={{
                         shrink: true,
@@ -88,19 +105,19 @@ const Statistics = () => {
                 }}>
                     <tr>
                         <td>Gross Revenue</td>
-                        <td>$10,000</td>
+                        <td>${revenue}</td>
                     </tr>
                     <tr>
                         <td>Credit</td>
-                        <td>$5,000</td>
+                        <td>${credit}</td>
                     </tr>
                     <tr>
                         <td>Dining</td>
-                        <td>$5,000</td>
+                        <td>${dining}</td>
                     </tr>
                     <tr>
                         <td>Orders</td>
-                        <td>1000</td>
+                        <td>{orders}</td>
                     </tr>
                 </table>
 
