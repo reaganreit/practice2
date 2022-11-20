@@ -73,6 +73,13 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
         });
     }
 
+    //reset all the prices for the itemized receipt to zero
+    function resetTotal(){
+        totalPrice=0.00;
+        rawPrice=0.00;
+        tax=0.00;
+    }
+
     // send orders to database
     async function sendOrder(paymentType, empName){
         // get time
@@ -110,6 +117,9 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
         });
         return 0;
     }
+
+
+    
 // *************************************************************************************
 
 
@@ -482,6 +492,65 @@ async function employeeType(id){
     // console.log(person.id);
     // console.log(person.role);
     return person;
+}
+
+//function for the statistics table takes in 2 dates and returns an object with the attributes
+//orders for the number of orders, credit for the sales made in credit band debit cards, 
+//dining for the revenue in meal swipes and grossRevenue for the total revenue for those dates
+//statisticsTable("09-15-2022", "09-17-2022"); //example test run
+async function statisticsTable(date1, date2){
+    let stats={};
+    totalRevenue = 0.0;
+    creditRevenue = 0.0;
+    diningRevenue = 0.0;
+    orders = 0;
+
+    query_str = "SELECT * FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00'";
+    receipts=[];
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    receipts.push(query_res.rows[i]);
+                    //console.log(query_res.rows[i]);
+                }});
+
+    for (let i = 0; i < receipts.length; i++){
+        totalRevenue+=receipts[i].total;
+        if(receipts[i].payment_type == "Debit Card" || receipts[i].payment_type == "Credit Card"){
+            creditRevenue+=receipts[i].total;
+        }else if(receipts[i].payment_type == "Meal Swipes"){
+            diningRevenue+=receipts[i].total;
+        }
+    }
+    console.log(receipts[3]);
+    orders=receipts.length;
+    stats.orders=orders;
+    stats.credit=roundTotal(creditRevenue);
+    stats.grossRevenue=roundTotal(totalRevenue);
+    stats.dining=roundTotal(diningRevenue);
+    console.log(stats.orders);
+    console.log(stats.credit);
+    console.log(stats.dining);
+    console.log(stats.grossRevenue);
+    return stats;
+}
+
+//returns array of the receipts in a specified timeframe
+//use receipts[index].total to get the revenue of each order
+//statisticsGraph("09-15-2022", "09-17-2022"); //example test run
+async function statisticsGraph(date1,date2){
+    query_str = "SELECT * FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00'";
+    receipts=[];
+    await pool
+            .query(query_str)
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    receipts.push(query_res.rows[i]);
+                    //console.log(query_res.rows[i]);
+                }});
+    //console.log(receipts[1]); //use receipts[index].total to get the revenue of the order
+    return receipts;
 }
 
 async function main(){
