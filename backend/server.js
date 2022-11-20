@@ -680,6 +680,12 @@ async function main(){
         }) 
     })
 
+    app.post("/statsGraph",jsonParser,(req,res)=>{
+        statisticsGraph(req.body.startDate, req.body.endDate).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+    })
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
