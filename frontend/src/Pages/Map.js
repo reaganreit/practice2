@@ -3,26 +3,23 @@ import Header from "../Components/Header"
 import axios from 'axios'
 
 import { useState, useEffect } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"; 
 import translate, { setCORS } from "google-translate-api-browser";
 // setting up cors-anywhere server address
 // const translate = setCORS("http://cors-anywhere.herokuapp.com/");
 // setCORS("http://cors-anywhere.herokuapp.com/");
 
-translate("Je ne mangé pas six jours", { to: "en" })
-  .then(res => {
-    // I do not eat six days
-    console.log(res.text)
-  })
-  .catch(err => {
-    console.error(err);
-  });
+// translate("Je ne mangé pas six jours", { to: "en" })
+//   .then(res => {
+//     // I do not eat six days
+//     console.log(res.text)
+//   })
+//   .catch(err => {
+//     console.error(err);
+//   });
 
 
 const Map = ()=> {
-  const {isLoaded} = useLoadScript({googleMapsApiKey: "AIzaSyBexgGrMdlraFbTjWoB52Uci1G2Kk-TTL0"})
 
-  if (!isLoaded) return <p>loading</p>
   return (
     <div style={{ height: "100%"}}>
       <Header title = "Map" path = "/map"/>
