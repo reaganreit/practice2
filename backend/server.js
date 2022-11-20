@@ -537,11 +537,12 @@ async function statisticsTable(date1, date2){
                 }});
 
     for (let i = 0; i < receipts.length; i++){
-        totalRevenue+=receipts[i].total;
         if(receipts[i].payment_type == "Debit Card" || receipts[i].payment_type == "Credit Card"){
             creditRevenue+=receipts[i].total;
+            totalRevenue+=receipts[i].total;
         }else if(receipts[i].payment_type == "Meal Swipes"){
             diningRevenue+=receipts[i].total;
+            totalRevenue+=receipts[i].total;
         }
     }
     console.log(receipts[3]);
