@@ -459,13 +459,17 @@ async function popCombos(date1, date2) {
         //list of the pairs with value given
         for (let [key, value] of matchCounter.entries()) {
             if (value === uniqueList[i]) {
-                matchingList.push({combo: key, value: uniqueList[i]});
+                let pair = key.split(",");
+                let one = pair[0];
+                let two = pair[1];
+                matchingList.push({first: one, second: two, value: uniqueList[i]});
             }
         }
     }
     for (let i = 0; i < 10; ++i) {
         topTenItems.push(matchingList[i]);
     }
+
     return topTenItems;
 }
 
