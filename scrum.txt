@@ -96,7 +96,7 @@ Sprint 2 - Meeting 3: 11/20/22
         - Create HTTPS request to change menu item price
         - Create HTTPS request to delete menu item
         - Make queries to get information for analytics
-        - Collect analytical information to display data for sales statistic graph
+        - Collect analytical information to display data for sales statistics graph
         - Collects analytical information to display data for sales statistics
     Plans
         - Create HTTP request for retrieving  statistics
@@ -108,4 +108,6 @@ Sprint 2 - Meeting 3: 11/20/22
         that aren’t necessary for this minimal viable product into sprint 3. As a result, we are less pressed for time for this 
         sprint. Sprint three contains mostly the finishing touches such as making sure the website is accessible and any tasks that 
         are proving to be too difficult at the moment. 
+
+
 

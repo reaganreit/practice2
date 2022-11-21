@@ -47,6 +47,8 @@ function drinkMenu() {
     console.log("drink button clicked");
 }
 
+var counter = 0;
+
 export const globalTotal = React.createContext()
 
 const CustomerGUI = () => {
@@ -55,7 +57,6 @@ const CustomerGUI = () => {
     const [total, setTotal] = useState(0)
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
-
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -74,7 +75,8 @@ const CustomerGUI = () => {
     }
 
     const handleClick = async (item) => {
-        setReceipt([...receipt,item]);
+        setReceipt([...receipt,{id:counter, name:item}]);
+        counter++;
         setIsLoading(true);
         try {
             const response = await fetch('http://localhost:5000/addItem', {
@@ -131,6 +133,38 @@ const CustomerGUI = () => {
 
     const emptyReceipt = () => {
         setReceipt([]);
+        counter = 0;
+    };
+
+    const removeItem = async (id) => {
+        const newReceipt = receipt.filter(
+            (receipt) => receipt.id !== id
+        );
+        setReceipt(newReceipt);
+            console.log(receipt);
+        try {
+            const response = await fetch('http://localhost:5000/removeItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemID : id }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setTotal(result.totalPrice);
+
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -143,7 +177,6 @@ const CustomerGUI = () => {
                 <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}>Drink</Button>
             </div>
             <div style = {{ minHeight: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
-                {/* <BowlMenuGrid /> */}
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
@@ -161,10 +194,12 @@ const CustomerGUI = () => {
                     </p>
                     {receipt.map( elem => {
                         return (
-                            <p style = {{ marginLeft: "1%" }}>
-                                {elem}
-                            </p>
-                        );
+                            <div key = { elem.id } onClick = {() => removeItem(elem.id)}>
+                                <p style = {{ marginLeft: "1%" }}> 
+                                    { elem.name } 
+                                </p>
+                            </div>
+                        )
                     })}
                 </div>
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "5%" }}>
