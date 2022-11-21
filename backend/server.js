@@ -32,6 +32,8 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     let tax = 0.00;
     let totalPrice = 0.00;
     let orderID;
+    let orderItemsList = [];
+
     const customerName = getName();
 
 // items low on stock
@@ -40,6 +42,7 @@ let lowStock = [];
 
 // ***************** Functions directly related to the current Order *****************
     async function addItem(itemName){
+        orderItemsList.push(itemName);
         if(orderItems == ""){
             orderItems += itemName;
         }else{
@@ -73,7 +76,7 @@ let lowStock = [];
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
-            roundTotal(totalPrice);
+            totalPrice = roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
@@ -81,8 +84,7 @@ let lowStock = [];
     async function removeItem(itemID){
         // get the price of the item
         let itemPrice = 0.00;
-        let splitItems = orderItems.split(",");
-        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + splitItems[itemID] + "';")
+        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + orderItemsList[itemID] + "';")
         .then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
                 itemPrice = query_res.rows[i].item_price;
@@ -96,11 +98,20 @@ let lowStock = [];
             roundTotal(tax);
         })
 
+        let splitItems = orderItems.split(',');
+        let itemName = orderItemsList[itemID];
         orderItems = "";
+        let skippedOne = false;
         // add every item back into the string
         for(let i = 0; i < splitItems.length; i++){
-            if(i != itemID){
+            if(skippedOne){
                 addItem(splitItems[i]);
+            }
+            else if(splitItems[i].localeCompare(orderItemsList[itemID]) != 0){
+                console.log("adding back " + splitItems[i]);
+                addItem(splitItems[i]);
+            }else{
+                skippedOne = true;
             }
         }
     }
