@@ -413,7 +413,8 @@ async function reportContent(date1, date2){ //params are item name the first dat
 //the popular combos ordered in a time frame
 async function popCombos(date1, date2) {
     let orderItems = [];
-    let sortedNumbers = [];
+    let keyList = [];
+    let valueList = [];
     let topTenItems = [];
     const matchCounter = new Map();
     await pool.query("SELECT * FROM receipts where timestamp between '" + date1 + " " +"00:00:00' and '" + date2 + " 00:00:00';")
@@ -426,6 +427,7 @@ async function popCombos(date1, date2) {
             for(let i = 0; i < orderItems.length; ++i) {
                 for (let j = i + 1; j < orderItems.length; ++j) {
                     let word = orderItems.get(i) + "," + orderItems.get(j);
+                    keyList.push(word);
                     if (matchCounter.has(word)) {
                         matchCounter.set(word, matchCounter.get(word) + 1);
                     } else {
@@ -435,7 +437,29 @@ async function popCombos(date1, date2) {
             }
         }
     })
-
+    
+    //creating list of counts for the combos
+    for (let i = 0; i < keyList.length; ++i) {
+        valueList.push(matchCounter.get(keyList.at(i)));
+    }
+    //sorting valueList in descending order
+    valueList.sort(function(a, b){return (b - a)});
+    let counter = 0;
+    //creating top10 list of combos
+    for (let i = 0; i < valueList.length; ++i) {
+        let matchingList = Object.keys(matchCounter).filter(key => matchCounter[key] === valueList.at(i));
+        for (let j = 0; j < matchingList.length; ++j) {
+            topTenItems.push({pair: matchingList.at(j), value: valueList.at(i)});
+            counter++;
+            if (counter == 10) {
+                break;
+            }
+        }
+        if (counter == 10) {
+            break;
+        }
+    }
+    return topTenItems;
 }
 
 
