@@ -64,7 +64,7 @@ Sprint 2 - Meeting 1: 11/13/22
         minimal viable product. We also did a mock demo in preparation for the demo during the lab. We discussed pushing some 
         tasks from sprint 1 onto sprint 2 as well due to time constraints.
 
-Sprint 2 - Meetng 3: 11/18/22
+Sprint 2 - Meetng 2: 11/18/22
     Agenda
         - Any challenges so far for members with their current tasks
         - Any tasks that everyone has completed since the last meeting
@@ -82,4 +82,30 @@ Sprint 2 - Meetng 3: 11/18/22
         at the moment. This is not a big deal as we completed the bulk of our entire project during sprint 1. We also discussed 
         any questions we had for the team overall such as specifics regarding a task.
 
+Sprint 2 - Meeting 3: 11/20/22
+    Agenda
+        - Any issues regarding current tasks
+        - What everyone is working on currently
+        - If we are on track with our ideal burndown
+    Accomplishments 
+        - Added the ability to cancel items from order
+        - Implemented google maps
+        - Get data for excess report to give to frontend
+        - Add functionality for delete menu items
+        - Add functionality for updating menu items
+        - Create HTTPS request to change menu item price
+        - Create HTTPS request to delete menu item
+        - Make queries to get information for analytics
+        - Collect analytical information to display data for sales statistic graph
+        - Collects analytical information to display data for sales statistics
+    Plans
+        - Create HTTP request for retrieving  statistics
+        - Implement google translate
+        - Implement google maps
+        - Collect analytical information to display data for ordered items in a time period
+    Minutes
+        After discussing our progress and how long it will take certain remaining tasks to complete, we decided to move tasks 
+        that aren’t necessary for this minimal viable product into sprint 3. As a result, we are less pressed for time for this 
+        sprint. Sprint three contains mostly the finishing touches such as making sure the website is accessible and any tasks that 
+        are proving to be too difficult at the moment. 
 
