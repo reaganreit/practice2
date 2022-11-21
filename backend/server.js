@@ -765,12 +765,41 @@ async function main(){
         // res.send(employeeType(req.body.pin) );  
     })
 
+    // checks for low stock of current inventory
     app.get("/lowStock",jsonParser,(req,res)=>{
         (async() => {
             await checkStock();
             res.send(lowStock);
         })();
         
+    })
+
+    app.post("/getBowls", jsonParser,(req,res)=>{
+        (async() =>{
+            let bowls = await bowlContent();
+            res.send(bowls);
+        })();
+    })
+
+    app.post("/getGyros", jsonParser,(req,res)=>{
+        (async() =>{
+            let gyros = await gyrosContent();
+            res.send(gyros);
+        })();
+    })
+
+    app.post("/getDrinks", jsonParser,(req,res)=>{
+        (async() =>{
+            let drinks = await drinksContent();
+            res.send(drinks);
+        })();
+    })
+
+    app.post("/getExtras", jsonParser,(req,res)=>{
+        (async() =>{
+            let bowls = await extrasContent();
+            res.send(extras);
+        })();
     })
 
     app.post("/posreport",jsonParser,(req,res)=>{
@@ -817,29 +846,6 @@ async function main(){
 
                 res.send(returnData)
                 })
-            // const itemMap = new Map()
-            // data = data.rows
-            // for (let i = 0 ; i < data.length ; i++){
-            //     let items = data[i].order_items.split(',')
-            
-
-            //     for (let j = 0 ; j < items.length ; j++){
-            //         items[j] = items[j].trim()
-            //         if (itemMap.get(items[j]) === undefined){
-            //             itemMap.set(items[j], 0)
-            //         }
-            //         let amt = itemMap.get(items[j])
-            //         itemMap.set(items[j], amt + 1)
-            //     }
-            // }
-
-            // console.log(itemMap)
-            // for (let [key, value] of itemMap){
-            //     console.log(key,value)
-            //     returnData.push({itemName: key, quantity: value})
-            // }
-
-            // res.send(returnData)
         })
 
     })
