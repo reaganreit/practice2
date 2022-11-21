@@ -8,7 +8,8 @@ const jsonParser = bodyParser.json();
 // Create express app
 const app = express();
 const port = 5000;
-const cors = require("cors")
+const cors = require("cors");
+const { json } = require('body-parser');
 app.use(cors());
 // Create pool
 const pool = new Pool({
@@ -32,6 +33,9 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     let totalPrice = 0.00;
     let orderID;
     const customerName = getName();
+
+// items low on stock
+let lowStock = [];
 
 
 // ***************** Functions directly related to the current Order *****************
@@ -69,6 +73,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
+            roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
@@ -189,8 +194,15 @@ async function addInventoryItem(name){
     });
 }
 
+function deleteMenu(item){
+    pool.query("DELETE FROM menu WHERE item_name = '" + item + "';");
+}
+
+function updateMenu(item, price){
+    pool.query("UPDATE menu SET item_price = " + price + " WHERE item_name = '" + item + "';");
+}
+
 async function getItemID() {
-    console.log("IN GETITEMID");
     let newID;
     await pool
     .query("SELECT max(item_id) FROM menu;")
@@ -200,9 +212,7 @@ async function getItemID() {
             console.log(query_res.rows[i]);
         }})
     .then(()=>{
-        console.log("FINISHED WITH GETITEMID");
         itemID = newID.max+1;
-        //return newID.max+1;
     }) 
 }
 
@@ -218,6 +228,17 @@ async function getID() {
             orderID = newID.max + 1;
             // return orderID;
         });
+}
+
+async function checkStock(){
+    lowStock = [];
+    let items = await getInventory();
+
+    for(let i = 0; i < items.length; i++){
+        if(items[i].quantity <= 30){
+            lowStock.push(items[i].name);
+        }
+    }
 }
 
 function roundTotal(num){
@@ -516,11 +537,12 @@ async function statisticsTable(date1, date2){
                 }});
 
     for (let i = 0; i < receipts.length; i++){
-        totalRevenue+=receipts[i].total;
         if(receipts[i].payment_type == "Debit Card" || receipts[i].payment_type == "Credit Card"){
             creditRevenue+=receipts[i].total;
+            totalRevenue+=receipts[i].total;
         }else if(receipts[i].payment_type == "Meal Swipes"){
             diningRevenue+=receipts[i].total;
+            totalRevenue+=receipts[i].total;
         }
     }
     console.log(receipts[3]);
@@ -570,7 +592,7 @@ async function main(){
     app.post("/sendOrder",jsonParser,(req,res)=> {
         sendOrder(req.body.paymentType, req.body.empName)
         .then(() => {
-            res.send("Howdy");
+            res.send("Order has been sent to the database");
         })
     })
 
@@ -580,6 +602,18 @@ async function main(){
         .then(()=>{
             res.send("Successfully added new menu item");
         })
+    })
+
+    // Deletes menu item
+    app.post("/deleteItem",jsonParser,(req,res)=>{
+        deleteMenu(req.body.item);
+        res.send("Deleted " + req.body.item);
+    })
+
+    // Updates menu item price
+    app.post("/updateItem",jsonParser,(req,res)=>{
+        updateMenu(req.body.item, req.body.price);
+        res.send("Updated price of " + req.body.item + " to " + req.body.price);
     })
 
 
@@ -599,6 +633,14 @@ async function main(){
             console.log("data sent", data)
         }) 
         // res.send(employeeType(req.body.pin) );  
+    })
+
+    app.get("/lowStock",jsonParser,(req,res)=>{
+        (async() => {
+            await checkStock();
+            res.send(lowStock);
+        })();
+        
     })
 
     app.post("/posreport",jsonParser,(req,res)=>{
@@ -689,4 +731,6 @@ async function main(){
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
+console.log("TESTING");
+checkStock();
 main();
