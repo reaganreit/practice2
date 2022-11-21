@@ -868,6 +868,13 @@ async function main(){
         }) 
     })
 
+    app.post("/excessReport",jsonParser,(req,res)=>{
+        (async ()=>{
+            let results = await excessReport(req.body.dateOne, req.body.dateTwo);
+            res.send(results);
+        })();
+    })
+
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
 console.log("TESTING");
