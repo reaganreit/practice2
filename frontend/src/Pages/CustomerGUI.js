@@ -138,7 +138,7 @@ const CustomerGUI = () => {
 
     const removeItem = async (id) => {
         const newReceipt = receipt.filter(
-            (receipt) => receipt.id != id
+            (receipt) => receipt.id !== id
         );
         setReceipt(newReceipt);
             console.log(receipt);
@@ -165,7 +165,7 @@ const CustomerGUI = () => {
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>

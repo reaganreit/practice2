@@ -412,20 +412,26 @@ async function reportContent(date1, date2){ //params are item name the first dat
 
 //the popular combos ordered in a time frame
 async function popCombos(date1, date2) {
-    let orderItems = [];
     let keyList = [];
     let valueList = [];
     let topTenItems = [];
     const matchCounter = new Map();
-    console.log("before");
     
     await pool.query("SELECT * FROM receipts where timestamp between '" + date1 + " " +"00:00:00' and '" + date2 + " 00:00:00';")
     .then(query_res => {
         for (let row = 0; row < query_res.rowCount; ++row) {
             //create list of all ordered items in that one order
-            orderItems.push(query_res.rows[row].order_items);
+            let orderItems = [];
+            if (query_res.rows[row].order_items == "") {
+                continue;
+            }
+            orderItems = query_res.rows[row].order_items.split(",");
 
             //create all possible pairs and use hashmap to keep track of counts
+            if (orderItems.length == 1) {
+                continue;
+            }
+
             for(let i = 0; i < orderItems.length; ++i) {
                 for (let j = i + 1; j < orderItems.length; ++j) {
                     let word = orderItems[i] + "," + orderItems[j];
@@ -439,30 +445,26 @@ async function popCombos(date1, date2) {
             }
         }
     })
-    
     //creating list of counts for the combos
     for (let i = 0; i < keyList.length; ++i) {
         valueList.push(matchCounter.get(keyList[i]));
     }
     //sorting valueList in descending order
     valueList.sort(function(a, b){return (b - a)});
-    let counter = 0;
+    //removing duplicates in list
+    let uniqueList = [...new Set(valueList)];
     //creating top10 list of combos
-    for (let i = 0; i < valueList.length; ++i) {
-        let matchingList = Object.keys(matchCounter).filter(key => matchCounter[key] === valueList.at(i));
-        for (let j = 0; j < matchingList.length; ++j) {
-            topTenItems.push({pair: matchingList.at(j), value: valueList.at(i)});
-            counter++;
-            if (counter == 10) {
-                break;
+    let matchingList = [];
+    for (let i = 0; i < uniqueList.length; ++i) {
+        //list of the pairs with value given
+        for (let [key, value] of matchCounter.entries()) {
+            if (value === uniqueList[i]) {
+                matchingList.push({combo: key, value: uniqueList[i]});
             }
-        }
-        if (counter == 10) {
-            break;
         }
     }
     for (let i = 0; i < 10; ++i) {
-        console.log(topTenItems.at(i));
+        topTenItems.push(matchingList[i]);
     }
     return topTenItems;
 }
@@ -899,6 +901,14 @@ async function main(){
 
     })
 
+    //popular combos information
+    app.post("/popCombos", jsonParser, (req, res)=> {
+        popCombos(req.body.startDate, req.body.endDate).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        })
+    })
+
     // sends information for statistics table
     app.post("/statsTable",jsonParser,(req,res)=>{
         statisticsTable(req.body.startDate, req.body.endDate).then( data => {
@@ -917,5 +927,4 @@ async function main(){
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
 console.log("TESTING");
-popCombos("10/10/2022", "10/20/2022");
 main();
