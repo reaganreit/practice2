@@ -85,13 +85,13 @@ const PopularCombos = ()=> {
           <div style={{height:"500px", overflowY:"scroll", border:"solid", borderWidth:2, borderColor:"blue", backgroundColor:"blue", marginTop:20}}>
 
             <div style={{borderBottom:'solid white 3px', position:"sticky",  top:0}}>
-              <ThreeColRow itemOne = {"Item 1 "} itemTwo = {"Item 2"} quantity = {"Times Ordered Together"}/>
+              <ThreeColRow item = {"Item 1 "} quantity = {"Item 2"} price = {"Times Ordered Together"}/>
             </div>
             
 
             {(combos ?? []).map( (row) =>{
               return (
-                <ThreeColRow itemOne = {row.first} itemTwo = {row.second} quantity = {row.value} />
+                <ThreeColRow item = {row.first} quantity = {row.second} price = {row.value} />
               )
             })}
 
