@@ -78,10 +78,11 @@ let lowStock = [];
         });
     }
 
-    async function removeItem(itemName){
+    async function removeItem(itemID){
         // get the price of the item
         let itemPrice = 0.00;
-        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
+        let splitItems = orderItems.split(",");
+        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + splitItems[itemID] + "';")
         .then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
                 itemPrice = query_res.rows[i].item_price;
@@ -95,19 +96,10 @@ let lowStock = [];
             roundTotal(tax);
         })
 
-        let splitItems = orderItems.split(",");
-        let index = -1;
-        // find item in list
-        for(let i = 0; i < splitItems.length; i++){
-            if(splitItems[i] == itemName){
-                index = i;
-                break;
-            }
-        }
         orderItems = "";
         // add every item back into the string
         for(let i = 0; i < splitItems.length; i++){
-            if(i != index){
+            if(i != itemID){
                 addItem(splitItems[i]);
             }
         }
@@ -711,7 +703,7 @@ async function main(){
         (async() => {
             console.log("totalPrice b4: " + totalPrice);
             console.log("orderItems b4: " + orderItems);
-            await removeItem(req.body.itemName);
+            await removeItem(req.body.itemID);
             console.log("totalPrice after: " + totalPrice);
             console.log("orderItems after: " + orderItems);
             res.json({"totalPrice" : totalPrice})
