@@ -78,6 +78,41 @@ let lowStock = [];
         });
     }
 
+    async function removeItem(itemName){
+        // get the price of the item
+        let itemPrice = 0.00;
+        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                itemPrice = query_res.rows[i].item_price;
+                console.log(query_res.rows[i]);
+            }})
+        .then(()=>{
+            let taxNum = roundTotal(parseFloat(itemPrice) * 0.0825);
+            totalPrice -= roundTotal(parseFloat(itemPrice) + taxNum);
+            tax -= taxNum;
+            totalPrice = roundTotal(totalPrice);
+            roundTotal(tax);
+        })
+
+        let splitItems = orderItems.split(",");
+        let index = -1;
+        // find item in list
+        for(let i = 0; i < splitItems.length; i++){
+            if(splitItems[i] == itemName){
+                index = i;
+                break;
+            }
+        }
+        orderItems = "";
+        // add every item back into the string
+        for(let i = 0; i < splitItems.length; i++){
+            if(i != index){
+                addItem(splitItems[i]);
+            }
+        }
+    }
+
     //reset all the prices for the itemized receipt to zero
     function resetTotal(){
         totalPrice=0.00;
@@ -94,8 +129,7 @@ let lowStock = [];
         let updatedDate = date + " " + time;
         cardNum = cardNumberGenerator(12);
         custName = getName();
-        // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
-        // for orders: order_id, total, timestamp
+
         await getID().then(()=>{
             let query = "INSERT INTO receipts values(" + orderID + ",'" + paymentType + "'," + totalPrice + ",'" + updatedDate + "','" + orderItems + "'," 
                                                     + custName + "," + cardNum + ",'" + empName + "');";
@@ -242,11 +276,13 @@ async function checkStock(){
 }
 
 function roundTotal(num){
+    num.toFixed(2);
     let newNum = "";
     let currNum = "";
     currNum += num;
     let numDigs = 0;
     let hitDeci = false;
+    let big = false;
     for(let char of currNum){
         newNum += char;
         if(char == '.'){
@@ -256,8 +292,16 @@ function roundTotal(num){
             numDigs++;
         }
         if(numDigs == 3){
+            if(parseInt(char) > 4){
+                big = true;
+            }
             break;
         }
+    }
+    // Rounds if necessary
+    newNum = parseFloat(newNum);
+    if(big){
+        newNum += 0.01;
     }
     return parseFloat(newNum);
 }
@@ -341,8 +385,19 @@ function drinksContent(){
 }
 
 //array of extras
-function extrasContent(){
-    extras=["2 Meatballs", "2 Falafels", "Fries", "Garlic Fries", "Hummus & Pita", "Extra Dressing", "Extra Hummus", "Extra Protein", "Pita Bread"];
+async function extrasContent(){
+    //extras=["2 Meatballs", "2 Falafels", "Fries", "Garlic Fries", "Hummus & Pita", "Extra Dressing", "Extra Hummus", "Extra Protein", "Pita Bread"];
+    let extra;
+    extras=[];
+    await pool
+            .query("SELECT item_name FROM menu WHERE item_name not like '%Gyro%' and item_name not like '%Bowl%' and item_name not like 'Bottled Water' and item_name not like 'Fountain Drinks';")
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    extra=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                    extras.push(extra.item_name);
+                }});
+    //console.log(extras[0])
     return extras;
 }
 
@@ -575,6 +630,70 @@ async function statisticsGraph(date1,date2){
     return receipts;
 }
 
+async function excessReport(dateOne, dateTwo){
+    // get a list of all the menu items
+    let menuItems = [];
+    menuItems = await getMenu();
+    // will keep count of each item sold between the dates
+    let counts = [];
+
+    let returnItems = [];
+
+    // get the total sold for each menu item
+    for(let i = 0; i < menuItems.length; i++){
+        let count = 0;
+        await pool.query("SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+ menuItems[i].item_name +"%'and timestamp between '"+ dateOne +" "+"00:00:00' and '" + dateTwo +" 00:00:00';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                counts.push(query_res.rows[i].quantity);
+            }
+        })
+    }
+    let invItems = [];
+    invItems = await getInventory();
+    // Populate hashmap for each inventory item
+    const invCount = new Map();
+    for(let i = 0; i < invItems.length; i++){
+        invCount.set(invItems[i].name,0);
+    }
+    // iterate through each menu item, add the count num to the correct position in hashmap
+    for(let i = 0; i < menuItems.length; i++){
+        let ingredients = "";
+        // get ingredients involved in the menu item
+        await pool.query("SELECT ingredients_used FROM menu WHERE item_name = '" + menuItems[i].item_name + "';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                ingredients = query_res.rows[i].ingredients_used;
+            }
+        })
+        // iterate through those ingredients
+        let ingredList = ingredients.split(",");
+        for(let j = 0; j < ingredList.length; j++){
+            let num = invCount.get(ingredList[j]);
+            invCount.set(ingredList[j], parseInt(num) + parseInt(counts[i]));
+        }
+    }
+    // compare counts in hashmap to total items, add items that are less than 10% to a list
+    for(let i = 0; i < invItems.length; i++){
+        let numSold = invCount.get(invItems[i].name);
+        let numLeft;
+        // get current inventory
+        await pool.query("SELECT quantity FROM ingredients WHERE name = '" + invItems[i].name + "';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                numLeft = query_res.rows[i].quantity;
+
+            }
+        })
+        let percentage = numSold / (numSold + numLeft);
+        if(percentage <= 0.10){
+            returnItems.push(invItems[i].name);
+        }
+    }
+    // return the list
+    return returnItems;
+}
+
 async function main(){
     // updates price and orderitems
 
@@ -585,6 +704,17 @@ async function main(){
             await updatePrice(req.body.itemName);
             console.log("totalPrice: " + totalPrice)
             res.json({"totalPrice" : totalPrice});
+        })();
+    })
+
+    app.post("/removeItem",jsonParser,(req,res)=>{
+        (async() => {
+            console.log("totalPrice b4: " + totalPrice);
+            console.log("orderItems b4: " + orderItems);
+            await removeItem(req.body.itemName);
+            console.log("totalPrice after: " + totalPrice);
+            console.log("orderItems after: " + orderItems);
+            res.json({"totalPrice" : totalPrice})
         })();
     })
 
@@ -635,12 +765,41 @@ async function main(){
         // res.send(employeeType(req.body.pin) );  
     })
 
+    // checks for low stock of current inventory
     app.get("/lowStock",jsonParser,(req,res)=>{
         (async() => {
             await checkStock();
             res.send(lowStock);
         })();
         
+    })
+
+    app.post("/getBowls", jsonParser,(req,res)=>{
+        (async() =>{
+            let bowls = await bowlContent();
+            res.send(bowls);
+        })();
+    })
+
+    app.post("/getGyros", jsonParser,(req,res)=>{
+        (async() =>{
+            let gyros = await gyrosContent();
+            res.send(gyros);
+        })();
+    })
+
+    app.post("/getDrinks", jsonParser,(req,res)=>{
+        (async() =>{
+            let drinks = await drinksContent();
+            res.send(drinks);
+        })();
+    })
+
+    app.post("/getExtras", jsonParser,(req,res)=>{
+        (async() =>{
+            let bowls = await extrasContent();
+            res.send(extras);
+        })();
     })
 
     app.post("/posreport",jsonParser,(req,res)=>{
@@ -709,5 +868,4 @@ async function main(){
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
 console.log("TESTING");
-checkStock();
 main();
