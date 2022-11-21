@@ -78,6 +78,41 @@ let lowStock = [];
         });
     }
 
+    async function removeItem(itemName){
+        // get the price of the item
+        let itemPrice = 0.00;
+        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                itemPrice = query_res.rows[i].item_price;
+                console.log(query_res.rows[i]);
+            }})
+        .then(()=>{
+            let taxNum = roundTotal(parseFloat(itemPrice) * 0.0825);
+            totalPrice -= roundTotal(parseFloat(itemPrice) + taxNum);
+            tax -= taxNum;
+            totalPrice = roundTotal(totalPrice);
+            roundTotal(tax);
+        })
+
+        let splitItems = orderItems.split(",");
+        let index = -1;
+        // find item in list
+        for(let i = 0; i < splitItems.length; i++){
+            if(splitItems[i] == itemName){
+                index = i;
+                break;
+            }
+        }
+        orderItems = "";
+        // add every item back into the string
+        for(let i = 0; i < splitItems.length; i++){
+            if(i != index){
+                addItem(splitItems[i]);
+            }
+        }
+    }
+
     //reset all the prices for the itemized receipt to zero
     function resetTotal(){
         totalPrice=0.00;
@@ -241,11 +276,13 @@ async function checkStock(){
 }
 
 function roundTotal(num){
+    num.toFixed(2);
     let newNum = "";
     let currNum = "";
     currNum += num;
     let numDigs = 0;
     let hitDeci = false;
+    let big = false;
     for(let char of currNum){
         newNum += char;
         if(char == '.'){
@@ -255,8 +292,16 @@ function roundTotal(num){
             numDigs++;
         }
         if(numDigs == 3){
+            if(parseInt(char) > 4){
+                big = true;
+            }
             break;
         }
+    }
+    // Rounds if necessary
+    newNum = parseFloat(newNum);
+    if(big){
+        newNum += 0.01;
     }
     return parseFloat(newNum);
 }
@@ -647,6 +692,17 @@ async function main(){
             await updatePrice(req.body.itemName);
             console.log("totalPrice: " + totalPrice)
             res.json({"totalPrice" : totalPrice});
+        })();
+    })
+
+    app.post("/removeItem",jsonParser,(req,res)=>{
+        (async() => {
+            console.log("totalPrice b4: " + totalPrice);
+            console.log("orderItems b4: " + orderItems);
+            await removeItem(req.body.itemName);
+            console.log("totalPrice after: " + totalPrice);
+            console.log("orderItems after: " + orderItems);
+            res.json({"totalPrice" : totalPrice})
         })();
     })
 
