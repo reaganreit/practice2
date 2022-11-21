@@ -188,10 +188,9 @@ const CashierGUI = () => {
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "2.5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "2.5%", backgroundColor: "whitesmoke" }}>
                         <div className="checkoutButtons" style = {{ width:"80%", marginLeft: "10%" }}>
-                            <Button onClick = {event => handleCheckout("Credit", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Credit</Button>
-                            <Button onClick = {event => handleCheckout("Dining Dollars", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Dining Dollars</Button>
+                            <Button onClick = {event => handleCheckout("Credit Card", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Credit</Button>
+                            <Button onClick = {event => handleCheckout("Debit Card", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Debit</Button>
                             <Button onClick = {event => handleCheckout("Retail Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Retail Swipes</Button>
-                            <Button onClick = {event => handleCheckout("Employee Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Employee Swipes</Button>
                             {managerButtons.map( elem => {
                                 return (
                                         <Link to={elem.linkName} style={{ textDecoration:"none" }}>

@@ -8,7 +8,8 @@ const jsonParser = bodyParser.json();
 // Create express app
 const app = express();
 const port = 5000;
-const cors = require("cors")
+const cors = require("cors");
+const { json } = require('body-parser');
 app.use(cors());
 // Create pool
 const pool = new Pool({
@@ -32,6 +33,9 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
     let totalPrice = 0.00;
     let orderID;
     const customerName = getName();
+
+// items low on stock
+let lowStock = [];
 
 
 // ***************** Functions directly related to the current Order *****************
@@ -69,8 +73,36 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
+            roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
+    }
+
+    async function removeItem(itemID){
+        // get the price of the item
+        let itemPrice = 0.00;
+        let splitItems = orderItems.split(",");
+        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + splitItems[itemID] + "';")
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                itemPrice = query_res.rows[i].item_price;
+                console.log(query_res.rows[i]);
+            }})
+        .then(()=>{
+            let taxNum = roundTotal(parseFloat(itemPrice) * 0.0825);
+            totalPrice -= roundTotal(parseFloat(itemPrice) + taxNum);
+            tax -= taxNum;
+            totalPrice = roundTotal(totalPrice);
+            roundTotal(tax);
+        })
+
+        orderItems = "";
+        // add every item back into the string
+        for(let i = 0; i < splitItems.length; i++){
+            if(i != itemID){
+                addItem(splitItems[i]);
+            }
+        }
     }
 
     //reset all the prices for the itemized receipt to zero
@@ -89,8 +121,7 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
         let updatedDate = date + " " + time;
         cardNum = cardNumberGenerator(12);
         custName = getName();
-        // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
-        // for orders: order_id, total, timestamp
+
         await getID().then(()=>{
             let query = "INSERT INTO receipts values(" + orderID + ",'" + paymentType + "'," + totalPrice + ",'" + updatedDate + "','" + orderItems + "'," 
                                                     + custName + "," + cardNum + ",'" + empName + "');";
@@ -189,8 +220,15 @@ async function addInventoryItem(name){
     });
 }
 
+function deleteMenu(item){
+    pool.query("DELETE FROM menu WHERE item_name = '" + item + "';");
+}
+
+function updateMenu(item, price){
+    pool.query("UPDATE menu SET item_price = " + price + " WHERE item_name = '" + item + "';");
+}
+
 async function getItemID() {
-    console.log("IN GETITEMID");
     let newID;
     await pool
     .query("SELECT max(item_id) FROM menu;")
@@ -200,9 +238,7 @@ async function getItemID() {
             console.log(query_res.rows[i]);
         }})
     .then(()=>{
-        console.log("FINISHED WITH GETITEMID");
         itemID = newID.max+1;
-        //return newID.max+1;
     }) 
 }
 
@@ -220,12 +256,25 @@ async function getID() {
         });
 }
 
+async function checkStock(){
+    lowStock = [];
+    let items = await getInventory();
+
+    for(let i = 0; i < items.length; i++){
+        if(items[i].quantity <= 30){
+            lowStock.push(items[i].name);
+        }
+    }
+}
+
 function roundTotal(num){
+    num.toFixed(2);
     let newNum = "";
     let currNum = "";
     currNum += num;
     let numDigs = 0;
     let hitDeci = false;
+    let big = false;
     for(let char of currNum){
         newNum += char;
         if(char == '.'){
@@ -235,8 +284,16 @@ function roundTotal(num){
             numDigs++;
         }
         if(numDigs == 3){
+            if(parseInt(char) > 4){
+                big = true;
+            }
             break;
         }
+    }
+    // Rounds if necessary
+    newNum = parseFloat(newNum);
+    if(big){
+        newNum += 0.01;
     }
     return parseFloat(newNum);
 }
@@ -320,8 +377,19 @@ function drinksContent(){
 }
 
 //array of extras
-function extrasContent(){
-    extras=["2 Meatballs", "2 Falafels", "Fries", "Garlic Fries", "Hummus & Pita", "Extra Dressing", "Extra Hummus", "Extra Protein", "Pita Bread"];
+async function extrasContent(){
+    //extras=["2 Meatballs", "2 Falafels", "Fries", "Garlic Fries", "Hummus & Pita", "Extra Dressing", "Extra Hummus", "Extra Protein", "Pita Bread"];
+    let extra;
+    extras=[];
+    await pool
+            .query("SELECT item_name FROM menu WHERE item_name not like '%Gyro%' and item_name not like '%Bowl%' and item_name not like 'Bottled Water' and item_name not like 'Fountain Drinks';")
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    extra=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                    extras.push(extra.item_name);
+                }});
+    //console.log(extras[0])
     return extras;
 }
 
@@ -516,11 +584,12 @@ async function statisticsTable(date1, date2){
                 }});
 
     for (let i = 0; i < receipts.length; i++){
-        totalRevenue+=receipts[i].total;
         if(receipts[i].payment_type == "Debit Card" || receipts[i].payment_type == "Credit Card"){
             creditRevenue+=receipts[i].total;
+            totalRevenue+=receipts[i].total;
         }else if(receipts[i].payment_type == "Meal Swipes"){
             diningRevenue+=receipts[i].total;
+            totalRevenue+=receipts[i].total;
         }
     }
     console.log(receipts[3]);
@@ -553,8 +622,73 @@ async function statisticsGraph(date1,date2){
     return receipts;
 }
 
+async function excessReport(dateOne, dateTwo){
+    // get a list of all the menu items
+    let menuItems = [];
+    menuItems = await getMenu();
+    // will keep count of each item sold between the dates
+    let counts = [];
+
+    let returnItems = [];
+
+    // get the total sold for each menu item
+    for(let i = 0; i < menuItems.length; i++){
+        let count = 0;
+        await pool.query("SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+ menuItems[i].item_name +"%'and timestamp between '"+ dateOne +" "+"00:00:00' and '" + dateTwo +" 00:00:00';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                counts.push(query_res.rows[i].quantity);
+            }
+        })
+    }
+    let invItems = [];
+    invItems = await getInventory();
+    // Populate hashmap for each inventory item
+    const invCount = new Map();
+    for(let i = 0; i < invItems.length; i++){
+        invCount.set(invItems[i].name,0);
+    }
+    // iterate through each menu item, add the count num to the correct position in hashmap
+    for(let i = 0; i < menuItems.length; i++){
+        let ingredients = "";
+        // get ingredients involved in the menu item
+        await pool.query("SELECT ingredients_used FROM menu WHERE item_name = '" + menuItems[i].item_name + "';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                ingredients = query_res.rows[i].ingredients_used;
+            }
+        })
+        // iterate through those ingredients
+        let ingredList = ingredients.split(",");
+        for(let j = 0; j < ingredList.length; j++){
+            let num = invCount.get(ingredList[j]);
+            invCount.set(ingredList[j], parseInt(num) + parseInt(counts[i]));
+        }
+    }
+    // compare counts in hashmap to total items, add items that are less than 10% to a list
+    for(let i = 0; i < invItems.length; i++){
+        let numSold = invCount.get(invItems[i].name);
+        let numLeft;
+        // get current inventory
+        await pool.query("SELECT quantity FROM ingredients WHERE name = '" + invItems[i].name + "';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                numLeft = query_res.rows[i].quantity;
+
+            }
+        })
+        let percentage = numSold / (numSold + numLeft);
+        if(percentage <= 0.10){
+            returnItems.push(invItems[i].name);
+        }
+    }
+    // return the list
+    return returnItems;
+}
+
 async function main(){
     // updates price and orderitems
+
     app.post("/addItem",jsonParser,(req,res)=>{
         console.log("Price Before: " + totalPrice);
         (async() => {
@@ -565,11 +699,22 @@ async function main(){
         })();
     })
 
+    app.post("/removeItem",jsonParser,(req,res)=>{
+        (async() => {
+            console.log("totalPrice b4: " + totalPrice);
+            console.log("orderItems b4: " + orderItems);
+            await removeItem(req.body.itemID);
+            console.log("totalPrice after: " + totalPrice);
+            console.log("orderItems after: " + orderItems);
+            res.json({"totalPrice" : totalPrice})
+        })();
+    })
+
     // sends final order in to database
     app.post("/sendOrder",jsonParser,(req,res)=> {
         sendOrder(req.body.paymentType, req.body.empName)
         .then(() => {
-            res.send("Howdy");
+            res.send("Order has been sent to the database");
         })
     })
 
@@ -579,6 +724,18 @@ async function main(){
         .then(()=>{
             res.send("Successfully added new menu item");
         })
+    })
+
+    // Deletes menu item
+    app.post("/deleteItem",jsonParser,(req,res)=>{
+        deleteMenu(req.body.item);
+        res.send("Deleted " + req.body.item);
+    })
+
+    // Updates menu item price
+    app.post("/updateItem",jsonParser,(req,res)=>{
+        updateMenu(req.body.item, req.body.price);
+        res.send("Updated price of " + req.body.item + " to " + req.body.price);
     })
 
 
@@ -598,6 +755,43 @@ async function main(){
             console.log("data sent", data)
         }) 
         // res.send(employeeType(req.body.pin) );  
+    })
+
+    // checks for low stock of current inventory
+    app.get("/lowStock",jsonParser,(req,res)=>{
+        (async() => {
+            await checkStock();
+            res.send(lowStock);
+        })();
+        
+    })
+
+    app.post("/getBowls", jsonParser,(req,res)=>{
+        (async() =>{
+            let bowls = await bowlContent();
+            res.send(bowls);
+        })();
+    })
+
+    app.post("/getGyros", jsonParser,(req,res)=>{
+        (async() =>{
+            let gyros = await gyrosContent();
+            res.send(gyros);
+        })();
+    })
+
+    app.post("/getDrinks", jsonParser,(req,res)=>{
+        (async() =>{
+            let drinks = await drinksContent();
+            res.send(drinks);
+        })();
+    })
+
+    app.post("/getExtras", jsonParser,(req,res)=>{
+        (async() =>{
+            let bowls = await extrasContent();
+            res.send(extras);
+        })();
     })
 
     app.post("/posreport",jsonParser,(req,res)=>{
@@ -644,34 +838,26 @@ async function main(){
 
                 res.send(returnData)
                 })
-            // const itemMap = new Map()
-            // data = data.rows
-            // for (let i = 0 ; i < data.length ; i++){
-            //     let items = data[i].order_items.split(',')
-            
-
-            //     for (let j = 0 ; j < items.length ; j++){
-            //         items[j] = items[j].trim()
-            //         if (itemMap.get(items[j]) === undefined){
-            //             itemMap.set(items[j], 0)
-            //         }
-            //         let amt = itemMap.get(items[j])
-            //         itemMap.set(items[j], amt + 1)
-            //     }
-            // }
-
-            // console.log(itemMap)
-            // for (let [key, value] of itemMap){
-            //     console.log(key,value)
-            //     returnData.push({itemName: key, quantity: value})
-            // }
-
-            // res.send(returnData)
         })
 
     })
 
+    // sends information for statistics table
+    app.post("/statsTable",jsonParser,(req,res)=>{
+        statisticsTable(req.body.startDate, req.body.endDate).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+    })
+
+    app.post("/statsGraph",jsonParser,(req,res)=>{
+        statisticsGraph(req.body.startDate, req.body.endDate).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+    })
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
+console.log("TESTING");
 main();
