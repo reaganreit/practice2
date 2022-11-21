@@ -94,8 +94,7 @@ let lowStock = [];
         let updatedDate = date + " " + time;
         cardNum = cardNumberGenerator(12);
         custName = getName();
-        // for receipt: order_id, payment_type, total, date/timestamp, order_items, customer_name, card_number, employeee_name
-        // for orders: order_id, total, timestamp
+
         await getID().then(()=>{
             let query = "INSERT INTO receipts values(" + orderID + ",'" + paymentType + "'," + totalPrice + ",'" + updatedDate + "','" + orderItems + "'," 
                                                     + custName + "," + cardNum + ",'" + empName + "');";
@@ -574,6 +573,70 @@ async function statisticsGraph(date1,date2){
     return receipts;
 }
 
+async function excessReport(dateOne, dateTwo){
+    // get a list of all the menu items
+    let menuItems = [];
+    menuItems = await getMenu();
+    // will keep count of each item sold between the dates
+    let counts = [];
+
+    let returnItems = [];
+
+    // get the total sold for each menu item
+    for(let i = 0; i < menuItems.length; i++){
+        let count = 0;
+        await pool.query("SELECT count(order_items) AS quantity FROM receipts where order_items like'%"+ menuItems[i].item_name +"%'and timestamp between '"+ dateOne +" "+"00:00:00' and '" + dateTwo +" 00:00:00';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                counts.push(query_res.rows[i].quantity);
+            }
+        })
+    }
+    let invItems = [];
+    invItems = await getInventory();
+    // Populate hashmap for each inventory item
+    const invCount = new Map();
+    for(let i = 0; i < invItems.length; i++){
+        invCount.set(invItems[i].name,0);
+    }
+    // iterate through each menu item, add the count num to the correct position in hashmap
+    for(let i = 0; i < menuItems.length; i++){
+        let ingredients = "";
+        // get ingredients involved in the menu item
+        await pool.query("SELECT ingredients_used FROM menu WHERE item_name = '" + menuItems[i].item_name + "';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                ingredients = query_res.rows[i].ingredients_used;
+            }
+        })
+        // iterate through those ingredients
+        let ingredList = ingredients.split(",");
+        for(let j = 0; j < ingredList.length; j++){
+            let num = invCount.get(ingredList[j]);
+            invCount.set(ingredList[j], parseInt(num) + parseInt(counts[i]));
+        }
+    }
+    // compare counts in hashmap to total items, add items that are less than 10% to a list
+    for(let i = 0; i < invItems.length; i++){
+        let numSold = invCount.get(invItems[i].name);
+        let numLeft;
+        // get current inventory
+        await pool.query("SELECT quantity FROM ingredients WHERE name = '" + invItems[i].name + "';")
+        .then(query_res => {
+            for(let i = 0; i < query_res.rowCount; i++){
+                numLeft = query_res.rows[i].quantity;
+
+            }
+        })
+        let percentage = numSold / (numSold + numLeft);
+        if(percentage <= 0.10){
+            returnItems.push(invItems[i].name);
+        }
+    }
+    // return the list
+    return returnItems;
+}
+
 async function main(){
     // updates price and orderitems
     app.post("/addItem",jsonParser,(req,res)=>{
@@ -716,5 +779,4 @@ async function main(){
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
 console.log("TESTING");
-checkStock();
 main();
