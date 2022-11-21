@@ -577,6 +577,7 @@ async function statisticsGraph(date1,date2){
 
 async function main(){
     // updates price and orderitems
+
     app.post("/addItem",jsonParser,(req,res)=>{
         console.log("Price Before: " + totalPrice);
         (async() => {
@@ -713,6 +714,20 @@ async function main(){
 
     })
 
+    // sends information for statistics table
+    app.post("/statsTable",jsonParser,(req,res)=>{
+        statisticsTable(req.body.startDate, req.body.endDate).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+    })
+
+    app.post("/statsGraph",jsonParser,(req,res)=>{
+        statisticsGraph(req.body.startDate, req.body.endDate).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        }) 
+    })
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
