@@ -4,37 +4,37 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../contexts/user";
 
-const bowlList = [
-    {id: 1, itemName: "Butter Chicken Bowl"},
-    {id: 2, itemName: "Lemon Chicken Bowl"},
-    {id: 3, itemName: "Veggie Bowl"},
-    {id: 4, itemName: "Seasoned Meat Bowl"},
-    {id: 5, itemName: "Meatball Bowl"}
-]
+// const bowlList = [
+//     {id: 1, itemName: "Butter Chicken Bowl"},
+//     {id: 2, itemName: "Lemon Chicken Bowl"},
+//     {id: 3, itemName: "Veggie Bowl"},
+//     {id: 4, itemName: "Seasoned Meat Bowl"},
+//     {id: 5, itemName: "Meatball Bowl"}
+// ]
 
-const gyroList = [
-    {id: 1, itemName: "Seasoned Meat Gyro"},
-    {id: 2, itemName: "Lemon Chicken Gyro"},
-    {id: 3, itemName: "Veggie Gyro"},
-    {id: 4, itemName: "Meatball Gyro"},
-]
+// const gyroList = [
+//     {id: 1, itemName: "Seasoned Meat Gyro"},
+//     {id: 2, itemName: "Lemon Chicken Gyro"},
+//     {id: 3, itemName: "Veggie Gyro"},
+//     {id: 4, itemName: "Meatball Gyro"},
+// ]
 
-const extraList = [
-    {id: 1, itemName: "Hummus & Pita"},
-    {id: 2, itemName: "Pita Bread"},
-    {id: 3, itemName: "2 Falafels"},
-    {id: 4, itemName: "2 Meatballs"},
-    {id: 5, itemName: "Fries"},
-    {id: 6, itemName: "Garlic Fries"},
-    {id: 7, itemName: "Extra Dressing"},
-    {id: 8, itemName: "Extra Hummus"},
-    {id: 9, itemName: "Extra Protein"},
-]
+// const extraList = [
+//     {id: 1, itemName: "Hummus & Pita"},
+//     {id: 2, itemName: "Pita Bread"},
+//     {id: 3, itemName: "2 Falafels"},
+//     {id: 4, itemName: "2 Meatballs"},
+//     {id: 5, itemName: "Fries"},
+//     {id: 6, itemName: "Garlic Fries"},
+//     {id: 7, itemName: "Extra Dressing"},
+//     {id: 8, itemName: "Extra Hummus"},
+//     {id: 9, itemName: "Extra Protein"},
+// ]
 
-const drinkList = [
-    {id: 1, itemName: "Bottled Water"},
-    {id: 2, itemName: "Fountain Drinks"},
-]
+// const drinkList = [
+//     {id: 1, itemName: "Bottled Water"},
+//     {id: 2, itemName: "Fountain Drinks"},
+// ]
 
 const managerButtonList = [
     {id: 1, buttonName: "Statistics", linkName: "/statistics"},
@@ -52,9 +52,12 @@ function drinkMenu() {
 
 
 const CashierGUI = () => {
-    
     const {user,setUser} = useContext(UserContext)
-    const [results, setResults] = useState([...bowlList])
+    const [bowlList, setBowlList] = useState([]);
+    const [gyroList, setGyroList] = useState([]);
+    const [extraList, setExtraList] = useState([]);
+    const [drinkList, setDrinkList] = useState([]);
+    const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
     const [isLoading, setIsLoading] = useState(false);
@@ -67,21 +70,112 @@ const CashierGUI = () => {
         setManagerButtons([...managerButtonList]);
     }
 
-    function bowlMenu() {
+    const bowlMenu = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/addItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemName: item }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setBowlList(result);
+        } catch (err) {
+            setErr(err.message);
+        }
         setResults([...bowlList]);
     }
 
-    function gyroMenu() {
+    const gyroMenu = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/addItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemName: item }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setGyroList(result);
+        } catch (err) {
+            setErr(err.message);
+        }
         setResults([...gyroList]);
     }
+    const extraMenu = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/addItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemName: item }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
 
-    function extraMenu() {
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setExtraList(result);
+        } catch (err) {
+            setErr(err.message);
+        }
         setResults([...extraList]);
     }
 
-    function drinkMenu() {
+    const drinkMenu = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/addItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemName: item }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setDrinkList(result);
+        } catch (err) {
+            setErr(err.message);
+        }
         setResults([...drinkList]);
     }
+
+    // function gyroMenu() {
+    //     setResults([...gyroList]);
+    // }
+
+    // function extraMenu() {
+    //     setResults([...extraList]);
+    // }
+
+    // function drinkMenu() {
+    //     setResults([...drinkList]);
+    // }
 
     const handleClick = async (item) => {
         setReceipt([...receipt,item]);

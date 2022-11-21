@@ -687,29 +687,6 @@ async function main(){
 
                 res.send(returnData)
                 })
-            // const itemMap = new Map()
-            // data = data.rows
-            // for (let i = 0 ; i < data.length ; i++){
-            //     let items = data[i].order_items.split(',')
-            
-
-            //     for (let j = 0 ; j < items.length ; j++){
-            //         items[j] = items[j].trim()
-            //         if (itemMap.get(items[j]) === undefined){
-            //             itemMap.set(items[j], 0)
-            //         }
-            //         let amt = itemMap.get(items[j])
-            //         itemMap.set(items[j], amt + 1)
-            //     }
-            // }
-
-            // console.log(itemMap)
-            // for (let [key, value] of itemMap){
-            //     console.log(key,value)
-            //     returnData.push({itemName: key, quantity: value})
-            // }
-
-            // res.send(returnData)
         })
 
     })
