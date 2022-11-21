@@ -73,7 +73,7 @@ let lowStock = [];
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
-            roundTotal(totalPrice);
+            totalPrice = roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
