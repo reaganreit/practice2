@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import ExcessReport from "./ExcessReport";
 import PopularCombos from "./PopularCombos";
 import POSReport from "./POSReport";
+import TranslatedText from "./TranslatedText";
+
 
 function createData(time, amount) {
     return { time, amount };

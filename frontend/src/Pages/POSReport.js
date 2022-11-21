@@ -7,6 +7,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 import { createTheme, ThemeProvider } from "@mui/material";
 import ThreeColRow from "../Components/ThreeColRow";
+import TranslatedText from "./TranslatedText";
 
 
 

@@ -3,6 +3,8 @@ import { Grid } from '@mui/material';
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../contexts/user";
+import TranslatedText from "./TranslatedText";
+
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -67,18 +69,22 @@ const CashierGUI = () => {
     }
 
     function bowlMenu() {
+        setResults([])
         setResults([...bowlList]);
     }
 
     function gyroMenu() {
+        setResults(prevState => [])
         setResults([...gyroList]);
     }
 
     function extraMenu() {
+        setResults(prevState => [])
         setResults([...extraList]);
     }
 
     function drinkMenu() {
+        setResults([])
         setResults([...drinkList]);
     }
 
@@ -144,17 +150,18 @@ const CashierGUI = () => {
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
-                <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}>Bowl</Button>
-                <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}>Gyro</Button>
-                <Button onClick={extraMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}>Extra</Button>
-                <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}>Drink</Button>
+                <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Bowls"} lang = "hy"/></Button>
+                <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Gyro"} lang = "hy"/></Button>
+                <Button onClick={extraMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Extra"} lang = "hy"/></Button>
+                <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Drinks"} lang = "hy"/></Button>
             </div>
             <div style = {{ minHeight: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
                             <Grid item xs = {3} style={{ height: "20vw" }}>
-                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button>
+                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}><TranslatedText key = {elem.itemName} text = {elem.itemName} lang = "hy"/></Button>
+                                {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
                             </Grid>
                         );
                     })}
@@ -163,25 +170,29 @@ const CashierGUI = () => {
             <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", paddingBottom: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ minHeight: "90%", width: "45%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
                     <p style = {{ fontWeight: "bold", marginBottom: "1%", marginLeft: "1%", marginTop: "1%" }}>
-                        Itemized Receipt
+                        
+                        <TranslatedText text = {"Itemized Receipt"} lang = "hy"/>
                     </p>
                     {receipt.map( elem => {
                         return (
                             <p style = {{ marginLeft: "1%" }}>
-                                {elem}
+                                <TranslatedText text = {elem} lang = "hy"/>
                             </p>
                         );
                     })}
                 </div>
                 <div style = {{ minHeight: "90%", width: "15%", marginLeft: "2.5%" }}>
                     <div style = {{ height: "20%", width: "100%", marginTop: "20%", backgroundColor: "whitesmoke" }} >
-                        Total: $ { total }
+                        <TranslatedText text = {"Total"} lang = "hy"/>
+                        : $ { total }
                     </div>
                     <div style = {{ height: "20%", width: "100%", marginTop: "20%", backgroundColor: "whitesmoke" }} >
-                        Employee ID: {(user.id ?? 'w')}
+                        <TranslatedText text = {"Employee ID"} lang = "hy"/>
+                        : {(user.id ?? 'w')}
                     </div>
                     <div style = {{ height: "20%", width: "100%", backgroundColor: "whitesmoke" }} >
-                        Employee Name: {(user.name ?? 'w')}
+                    <TranslatedText text = {"Employee Name"} lang = "hy"/>
+                        : {(user.name ?? 'w')}
                     </div>
                 </div>
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "2.5%" }}>

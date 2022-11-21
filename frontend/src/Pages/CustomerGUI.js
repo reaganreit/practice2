@@ -5,6 +5,8 @@ import { createContext } from "react";
 import React, { useState } from 'react'
 import Checkout from './Checkout'
 import { UserContext } from "../contexts/total";
+import TranslatedText from "./TranslatedText";
+
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},

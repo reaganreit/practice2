@@ -8,6 +8,8 @@ import { DataGrid } from '@mui/x-data-grid';
 
 import { createTheme, ThemeProvider } from "@mui/material";
 import FiveColRow from "../Components/FiveColRow";
+import TranslatedText from "./TranslatedText";
+
 
 
 

@@ -4,6 +4,8 @@ import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid'; 
 import ThreeColRow from "../Components/ThreeColRow";
+import TranslatedText from "./TranslatedText";
+
 
 const columns = [
     {field: 'id', headerName: 'ID', flex: 1, hide:true},

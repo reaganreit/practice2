@@ -7,6 +7,7 @@ import Header from "../Components/Header"
 import { createTheme, ThemeProvider, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { UserContext } from "../contexts/user";
+import TranslatedText from "./TranslatedText";
 
 const numbers = [ 0,
             1, 2, 3,
@@ -18,6 +19,15 @@ const Pinpad = ()=> {
   const navigate = useNavigate()
   const {user,setUser } = useContext(UserContext)
   const [ passcode, setPasscode ] = useState("Enter Passcode")
+
+
+  // async function translate(text, lang){
+  //   axios.post("http://localhost:5000/translateText", { text: text, lang:lang})
+  //     .then(res => {
+  //       console.log(res.data)
+  //       return res.data
+  //     })
+  // }
 
   async function logIn(code){
     let role = "yoink"
@@ -61,7 +71,9 @@ const Pinpad = ()=> {
     <div style={{ height: "100%"}}>
 
       <div style={{width:"100%",display:"flex", justifyContent:"center", alignItems:"center", marginTop:"3%"}}>
-        <h1 style = {{textAlign: "center"}}>Log In</h1>
+        <h1 style = {{textAlign: "center"}}>
+          <TranslatedText text = "Log in" lang = "fr"/>
+        </h1>
       </div>
       
 

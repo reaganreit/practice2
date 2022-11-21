@@ -4,6 +4,8 @@ import axios from 'axios'
 
 import { useState, useEffect } from "react";
 import translate, { setCORS } from "google-translate-api-browser";
+import TranslatedText from "./TranslatedText";
+
 // setting up cors-anywhere server address
 // const translate = setCORS("http://cors-anywhere.herokuapp.com/");
 // setCORS("http://cors-anywhere.herokuapp.com/");

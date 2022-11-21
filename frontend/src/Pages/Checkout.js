@@ -11,6 +11,8 @@ import { createContext } from "react";
 import { globalTotal } from './CustomerGUI'
 import React, {useContext} from 'react';
 import { UserContext } from "../contexts/total";
+import TranslatedText from "./TranslatedText";
+
 
 const Checkout = ()=> {
 
