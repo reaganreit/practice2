@@ -193,13 +193,13 @@ async function addMenu(itemName, itemPrice, itemIngreds) {
     for(let i = 0; i < individuals.length; i++){
         let name = individuals[i];
         let exists;
-        pool.query("SELECT EXISTS(SELECT FROM ingredients where name = '" + name + "');").then(query_res => {
+        await pool.query("SELECT EXISTS(SELECT FROM ingredients where name = '" + name + "');").then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
                 exists = query_res.rows[i];
                 console.log(query_res.rows[i]);
             }
             if(!exists.exists){
-                //addInventoryItem(name);
+                addInventoryItem(name);
             }
         });
     }
@@ -211,12 +211,13 @@ async function addInventoryItem(name){
     await pool.query("SELECT max(ingredient_id) FROM ingredients;")
     .then(query_res => {
         for(let i = 0; i < query_res.rowCount; i++){
-            ID = query_res.rows[i];
+            ID = query_res.rows[i].max;
+            console.log(ID);
         }
     }).then(()=>{
-        let newID = ID.ingredient_id + 1;
+        let newID = ID + 1;
         console.log("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
-        //pool.query("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
+        pool.query("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
     });
 }
 
