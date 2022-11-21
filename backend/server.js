@@ -417,6 +417,8 @@ async function popCombos(date1, date2) {
     let valueList = [];
     let topTenItems = [];
     const matchCounter = new Map();
+    console.log("before");
+    
     await pool.query("SELECT * FROM receipts where timestamp between '" + date1 + " " +"00:00:00' and '" + date2 + " 00:00:00';")
     .then(query_res => {
         for (let row = 0; row < query_res.rowCount; ++row) {
@@ -426,7 +428,7 @@ async function popCombos(date1, date2) {
             //create all possible pairs and use hashmap to keep track of counts
             for(let i = 0; i < orderItems.length; ++i) {
                 for (let j = i + 1; j < orderItems.length; ++j) {
-                    let word = orderItems.get(i) + "," + orderItems.get(j);
+                    let word = orderItems[i] + "," + orderItems[j];
                     keyList.push(word);
                     if (matchCounter.has(word)) {
                         matchCounter.set(word, matchCounter.get(word) + 1);
@@ -440,7 +442,7 @@ async function popCombos(date1, date2) {
     
     //creating list of counts for the combos
     for (let i = 0; i < keyList.length; ++i) {
-        valueList.push(matchCounter.get(keyList.at(i)));
+        valueList.push(matchCounter.get(keyList[i]));
     }
     //sorting valueList in descending order
     valueList.sort(function(a, b){return (b - a)});
@@ -458,6 +460,9 @@ async function popCombos(date1, date2) {
         if (counter == 10) {
             break;
         }
+    }
+    for (let i = 0; i < 10; ++i) {
+        console.log(topTenItems.at(i));
     }
     return topTenItems;
 }
@@ -912,4 +917,5 @@ async function main(){
     app.listen(port,()=> console.log(`Listening to port ${port}`));
 }
 console.log("TESTING");
+popCombos("10/10/2022", "10/20/2022");
 main();
