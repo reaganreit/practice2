@@ -1,9 +1,9 @@
 
 import Header from "../Components/Header"
-
-import { useState } from "react";
+import axios from 'axios'
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
+import { useEffect, useState } from "react";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 import FiveColRow from "../Components/FiveColRow";
@@ -30,6 +30,15 @@ const rows = [
 const PopularCombos = ()=> {
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
+  const [combos, setCombos] = useState([])
+
+  useEffect(() => {
+    axios.post("http://localhost:5000/popCombos", { startDate: startDate, endDate:endDate})
+      .then(data => {
+        setCombos(data.data)
+        console.log(data.data)
+      })
+  },[startDate,endDate])
 
   return (
     <div style={{ height: "100%"}}>
@@ -80,9 +89,9 @@ const PopularCombos = ()=> {
             </div>
             
 
-            {rows.map( (row) =>{
+            {(combos ?? []).map( (row) =>{
               return (
-                <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.price} />
+                <ThreeColRow item = {row.first} quantity = {row.second} price = {row.value} />
               )
             })}
 
