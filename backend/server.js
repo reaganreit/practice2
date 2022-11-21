@@ -341,8 +341,19 @@ function drinksContent(){
 }
 
 //array of extras
-function extrasContent(){
-    extras=["2 Meatballs", "2 Falafels", "Fries", "Garlic Fries", "Hummus & Pita", "Extra Dressing", "Extra Hummus", "Extra Protein", "Pita Bread"];
+async function extrasContent(){
+    //extras=["2 Meatballs", "2 Falafels", "Fries", "Garlic Fries", "Hummus & Pita", "Extra Dressing", "Extra Hummus", "Extra Protein", "Pita Bread"];
+    let extra;
+    extras=[];
+    await pool
+            .query("SELECT item_name FROM menu WHERE item_name not like '%Gyro%' and item_name not like '%Bowl%' and item_name not like 'Bottled Water' and item_name not like 'Fountain Drinks';")
+            .then(query_res => {
+                for (let i = 0; i < query_res.rowCount; i++){
+                    extra=query_res.rows[i];
+                    console.log(query_res.rows[i]);
+                    extras.push(extra.item_name);
+                }});
+    //console.log(extras[0])
     return extras;
 }
 
