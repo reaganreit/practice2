@@ -28,7 +28,7 @@ const columns = [
 const ExcessReport = () => {
     return (
         <div style = {{ height: "100%" }}>
-            <Header title = "Excess Report"></Header>   
+            <Header title = "Excess Report" path = "/statistics"></Header>   
             <div style = {{ height: "90%" }}>
                 <div style={{display:"flex", marginTop: "2.5%", justifyContent:"space-evenly"}}>
                     <TextField size="small" label="Start Date" variant="outlined"/>

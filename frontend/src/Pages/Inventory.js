@@ -42,7 +42,7 @@ const Inventory = ()=> {
 
   return (
     <div style={{ height: "100%"}}>
-      <Header title = "Inventory"/>
+      <Header title = "Inventory" path = "/cashiergui"/>
       
 
       {/* A div which will have slight margins on both sides

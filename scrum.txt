@@ -43,8 +43,43 @@ Sprint 1 - Meeting 3:
         - Implement all HTTP requests to display data on frontend
     Minutes
         We discussed any issues with our assigned tasks and finalized what needed to be done as a minimal viable product 
-        for the first sprint. We ended up determining that some tasks previously assigned to the first sprint were not necessary 
-        due to the time constraint we are on for the upcoming deadline. As a result, those tasks are assigned to the second sprint. 
-        One issue discussed was Alex’s task where the postman server request would send back data before the function completed and 
-        update the variables that would be returned to frontend. We brainstormed possible solutions such as waiting on threads but none 
-        have worked so far.
+        for the first sprint. We ended up determining that some tasks previously assigned to the first sprint were not 
+        necessary due to the time constraint we are on for the upcoming deadline. As a result, those tasks are assigned to 
+        the second sprint. One issue discussed was Alex’s task where the postman server request would send back data before 
+        the function completed and update the variables that would be returned to frontend. We brainstormed possible solutions 
+        such as waiting on threads but none have worked so far.
+
+Sprint 2 - Meeting 1: 11/13/22
+    Agenda
+        - Figuring out the tasks for sprint 2
+        - Assigning tasks to members depending on time constraint
+    Plans
+        - Adding ability to cancel an order
+        - Collecting analytical information to display on pages for front end
+        - Creating HTTP request for the manager's statistics and adding new menu item
+        - Adding functionality for adding new menu item for inventory
+        - Checking for low stock for inventory items
+    Minutes
+        From the previous meeting, we discussed any remaining tasks before the sprint ended and what we have created for the 
+        minimal viable product. We also did a mock demo in preparation for the demo during the lab. We discussed pushing some 
+        tasks from sprint 1 onto sprint 2 as well due to time constraints.
+
+Sprint 2 - Meetng 3: 11/18/22
+    Agenda
+        - Any challenges so far for members with their current tasks
+        - Any tasks that everyone has completed since the last meeting
+    Accomplishments
+        - Creating HTTP request for adding new menu items
+        - Function for checking for low stock for inventory items
+        - Collecting analytical information for itemized receipt
+    Plans
+        - Collecting analytical information for the rest of the displays for UI
+        - Implementing the google APIs such as translation, maps, and OAuth
+        - Creating HTTP request for the rest of the functions
+    Minutes
+        During the previous meeting, we discussed any tasks that were completed. After learning that everyone was working 
+        on a big assignment from another course and did not have the time to work on this project, we had no completed tasks 
+        at the moment. This is not a big deal as we completed the bulk of our entire project during sprint 1. We also discussed 
+        any questions we had for the team overall such as specifics regarding a task.
+
+

@@ -1,7 +1,7 @@
 
 import Header from "../Components/Header"
-
-import { useState } from "react";
+import axios from 'axios'
+import { useEffect, useState } from "react";
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
@@ -29,10 +29,19 @@ const rows = [
 const POSReport = ()=> {
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
+  const [posData, setPosData] = useState([])
+
+  useEffect(() => {
+    axios.post("http://localhost:5000/posreport", { startDate: startDate, endDate:endDate})
+      .then(data => {
+        setPosData(data.data)
+        console.log(data.data)
+      })
+  },[startDate,endDate])
 
   return (
     <div style={{ height: "100%"}}>
-      <Header title = "Point of Sales Report"/>
+      <Header title = "Point of Sales Report" path = "/statistics"/>
       
 
       {/* A div which will have slight margins on both sides
@@ -78,9 +87,9 @@ const POSReport = ()=> {
             </div>
             
 
-            {rows.map( (row) =>{
+            {(posData ?? []).map( (row) =>{
               return (
-                <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.sales}/>
+                <ThreeColRow item = {row.itemName} quantity = {row.quantity} price = {'$'+row.sales}/>
               )
             })}
 

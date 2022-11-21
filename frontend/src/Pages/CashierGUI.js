@@ -1,7 +1,8 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { UserContext } from "../contexts/user";
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -37,7 +38,8 @@ const drinkList = [
 
 const managerButtonList = [
     {id: 1, buttonName: "Statistics", linkName: "/statistics"},
-    {id: 2, buttonName: "Inventory", linkName: "/inventory"}
+    {id: 2, buttonName: "Inventory", linkName: "/inventory"},
+    {id: 3, buttonName: "Edit Menu", linkName: "/editMenu"}
 ]
 
 function extraMenu() {
@@ -50,9 +52,9 @@ function drinkMenu() {
 
 
 const CashierGUI = () => {
-    const location = useLocation()
     
-    const [results, setResults] = useState([])
+    const {user,setUser} = useContext(UserContext)
+    const [results, setResults] = useState([...bowlList])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState([])
     const [isLoading, setIsLoading] = useState(false);
@@ -177,16 +179,18 @@ const CashierGUI = () => {
                         Total: $ { total }
                     </div>
                     <div style = {{ height: "20%", width: "100%", marginTop: "20%", backgroundColor: "whitesmoke" }} >
-                        Employee ID: 12345
+                        Employee ID: {(user.id ?? 'w')}
+                    </div>
+                    <div style = {{ height: "20%", width: "100%", backgroundColor: "whitesmoke" }} >
+                        Employee Name: {(user.name ?? 'w')}
                     </div>
                 </div>
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "2.5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "2.5%", backgroundColor: "whitesmoke" }}>
                         <div className="checkoutButtons" style = {{ width:"80%", marginLeft: "10%" }}>
-                            <Button onClick = {event => handleCheckout("Credit", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Credit</Button>
-                            <Button onClick = {event => handleCheckout("Dining Dollars", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Dining Dollars</Button>
+                            <Button onClick = {event => handleCheckout("Credit Card", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Credit</Button>
+                            <Button onClick = {event => handleCheckout("Debit Card", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Debit</Button>
                             <Button onClick = {event => handleCheckout("Retail Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Retail Swipes</Button>
-                            <Button onClick = {event => handleCheckout("Employee Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}>Employee Swipes</Button>
                             {managerButtons.map( elem => {
                                 return (
                                         <Link to={elem.linkName} style={{ textDecoration:"none" }}>

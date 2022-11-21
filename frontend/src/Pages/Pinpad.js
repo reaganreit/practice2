@@ -1,15 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from 'axios';
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../Components/Header"
 
-import { TextField } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid'; 
-
 import { createTheme, ThemeProvider, Button } from "@mui/material";
-import ThreeColRow from "../Components/ThreeColRow";
 import { Link } from "react-router-dom";
+import { UserContext } from "../contexts/user";
 
 const numbers = [ 0,
             1, 2, 3,
@@ -19,6 +16,7 @@ const numbers = [ 0,
 
 const Pinpad = ()=> {
   const navigate = useNavigate()
+  const {user,setUser } = useContext(UserContext)
   const [ passcode, setPasscode ] = useState("Enter Passcode")
 
   async function logIn(code){
@@ -28,11 +26,9 @@ const Pinpad = ()=> {
     })
         
       .then(res => {
-        console.log(res.data.role)
-        role = res.data.role
-        console.log(res.data.name)
+        setUser({name: res.data.name, id: res.data.id, role: res.data.role})
         if (res.data.name !== undefined){
-          navigate('/cashiergui', {state:{person: res.data}})
+          navigate('/cashiergui')
         }
         else {
           navigate('/customergui')
@@ -63,8 +59,11 @@ const Pinpad = ()=> {
 
   return (
     <div style={{ height: "100%"}}>
-      <Header title = "Log in"/>
 
+      <div style={{width:"100%",display:"flex", justifyContent:"center", alignItems:"center", marginTop:"3%"}}>
+        <h1 style = {{textAlign: "center"}}>Log In</h1>
+      </div>
+      
 
       {/* Start pinpad here */}
       <div style = {{width:"100%", display:"flex", justifyContent:"center", marginTop:"15vh"}}>
