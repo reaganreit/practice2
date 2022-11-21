@@ -75,7 +75,6 @@ const CustomerGUI = () => {
     }
 
     const handleClick = async (item) => {
-        
         setReceipt([...receipt,{id:counter, name:item}]);
         counter++;
         setIsLoading(true);
@@ -142,7 +141,7 @@ const CustomerGUI = () => {
             (receipt) => receipt.id != id
         );
         setReceipt(newReceipt);
-
+            console.log(receipt);
         try {
             const response = await fetch('http://localhost:5000/removeItem', {
                 method: 'POST',
@@ -160,7 +159,7 @@ const CustomerGUI = () => {
             const result = await response.json();
             console.log(result);
             setTotal(result.totalPrice);
-            
+
         } catch (err) {
             setErr(err.message);
         } finally {
