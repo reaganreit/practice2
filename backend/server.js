@@ -78,10 +78,11 @@ let lowStock = [];
         });
     }
 
-    async function removeItem(itemName){
+    async function removeItem(itemID){
         // get the price of the item
         let itemPrice = 0.00;
-        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
+        let splitItems = orderItems.split(",");
+        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + splitItems[itemID] + "';")
         .then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
                 itemPrice = query_res.rows[i].item_price;
@@ -95,19 +96,10 @@ let lowStock = [];
             roundTotal(tax);
         })
 
-        let splitItems = orderItems.split(",");
-        let index = -1;
-        // find item in list
-        for(let i = 0; i < splitItems.length; i++){
-            if(splitItems[i] == itemName){
-                index = i;
-                break;
-            }
-        }
         orderItems = "";
         // add every item back into the string
         for(let i = 0; i < splitItems.length; i++){
-            if(i != index){
+            if(i != itemID){
                 addItem(splitItems[i]);
             }
         }
@@ -201,13 +193,13 @@ async function addMenu(itemName, itemPrice, itemIngreds) {
     for(let i = 0; i < individuals.length; i++){
         let name = individuals[i];
         let exists;
-        pool.query("SELECT EXISTS(SELECT FROM ingredients where name = '" + name + "');").then(query_res => {
+        await pool.query("SELECT EXISTS(SELECT FROM ingredients where name = '" + name + "');").then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
                 exists = query_res.rows[i];
                 console.log(query_res.rows[i]);
             }
             if(!exists.exists){
-                //addInventoryItem(name);
+                addInventoryItem(name);
             }
         });
     }
@@ -219,12 +211,13 @@ async function addInventoryItem(name){
     await pool.query("SELECT max(ingredient_id) FROM ingredients;")
     .then(query_res => {
         for(let i = 0; i < query_res.rowCount; i++){
-            ID = query_res.rows[i];
+            ID = query_res.rows[i].max;
+            console.log(ID);
         }
     }).then(()=>{
-        let newID = ID.ingredient_id + 1;
+        let newID = ID + 1;
         console.log("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
-        //pool.query("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
+        pool.query("INSERT INTO ingredients VALUES(" + newID + ",'" + name + "', 150, 'servings', '2022-10-01');");
     });
 }
 
@@ -416,6 +409,69 @@ async function reportContent(date1, date2){ //params are item name the first dat
         
     })
     return data     
+}
+
+//the popular combos ordered in a time frame
+async function popCombos(date1, date2) {
+    let keyList = [];
+    let valueList = [];
+    let topTenItems = [];
+    const matchCounter = new Map();
+    
+    await pool.query("SELECT * FROM receipts where timestamp between '" + date1 + " " +"00:00:00' and '" + date2 + " 00:00:00';")
+    .then(query_res => {
+        for (let row = 0; row < query_res.rowCount; ++row) {
+            //create list of all ordered items in that one order
+            let orderItems = [];
+            if (query_res.rows[row].order_items == "") {
+                continue;
+            }
+            orderItems = query_res.rows[row].order_items.split(",");
+
+            //create all possible pairs and use hashmap to keep track of counts
+            if (orderItems.length == 1) {
+                continue;
+            }
+
+            for(let i = 0; i < orderItems.length; ++i) {
+                for (let j = i + 1; j < orderItems.length; ++j) {
+                    let word = orderItems[i] + "," + orderItems[j];
+                    keyList.push(word);
+                    if (matchCounter.has(word)) {
+                        matchCounter.set(word, matchCounter.get(word) + 1);
+                    } else {
+                        matchCounter.set(word, 1);
+                    }
+                }
+            }
+        }
+    })
+    //creating list of counts for the combos
+    for (let i = 0; i < keyList.length; ++i) {
+        valueList.push(matchCounter.get(keyList[i]));
+    }
+    //sorting valueList in descending order
+    valueList.sort(function(a, b){return (b - a)});
+    //removing duplicates in list
+    let uniqueList = [...new Set(valueList)];
+    //creating top10 list of combos
+    let matchingList = [];
+    for (let i = 0; i < uniqueList.length; ++i) {
+        //list of the pairs with value given
+        for (let [key, value] of matchCounter.entries()) {
+            if (value === uniqueList[i]) {
+                let pair = key.split(",");
+                let one = pair[0];
+                let two = pair[1];
+                matchingList.push({first: one, second: two, value: uniqueList[i]});
+            }
+        }
+    }
+    for (let i = 0; i < 10; ++i) {
+        topTenItems.push(matchingList[i]);
+    }
+
+    return topTenItems;
 }
 
 
@@ -711,7 +767,7 @@ async function main(){
         (async() => {
             console.log("totalPrice b4: " + totalPrice);
             console.log("orderItems b4: " + orderItems);
-            await removeItem(req.body.itemName);
+            await removeItem(req.body.itemID);
             console.log("totalPrice after: " + totalPrice);
             console.log("orderItems after: " + orderItems);
             res.json({"totalPrice" : totalPrice})
@@ -850,6 +906,14 @@ async function main(){
 
     })
 
+    //popular combos information
+    app.post("/popCombos", jsonParser, (req, res)=> {
+        popCombos(req.body.startDate, req.body.endDate).then( data => {
+            res.send(data)
+            console.log("data sent", data)
+        })
+    })
+
     // sends information for statistics table
     app.post("/statsTable",jsonParser,(req,res)=>{
         statisticsTable(req.body.startDate, req.body.endDate).then( data => {
@@ -863,6 +927,13 @@ async function main(){
             res.send(data)
             console.log("data sent", data)
         }) 
+    })
+
+    app.post("/excessReport",jsonParser,(req,res)=>{
+        (async ()=>{
+            let results = await excessReport(req.body.dateOne, req.body.dateTwo);
+            res.send(results);
+        })();
     })
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));

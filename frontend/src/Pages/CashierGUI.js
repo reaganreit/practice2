@@ -18,6 +18,7 @@ function drinkMenu() {
     console.log("drink button clicked");
 }
 
+var counter = 0;
 
 const CashierGUI = () => {
     const {user,setUser} = useContext(UserContext)
@@ -134,7 +135,8 @@ const CashierGUI = () => {
     }
 
     const handleClick = async (item) => {
-        setReceipt([...receipt,item]);
+        setReceipt([...receipt,{id:counter, name:item}]);
+        counter++;
         setIsLoading(true);
         try {
             const response = await fetch('http://localhost:5000/addItem', {
@@ -206,7 +208,40 @@ const CashierGUI = () => {
 
     const emptyReceipt = () => {
         setReceipt([]);
+        counter = 0;
     };
+
+    const removeItem = async (id) => {
+        const newReceipt = receipt.filter(
+            (receipt) => receipt.id !== id
+        );
+        setReceipt(newReceipt);
+            console.log(receipt);
+        try {
+            const response = await fetch('http://localhost:5000/removeItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemID : id }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setTotal(result.totalPrice);
+
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
@@ -234,10 +269,12 @@ const CashierGUI = () => {
                     </p>
                     {receipt.map( elem => {
                         return (
-                            <p style = {{ marginLeft: "1%" }}>
-                                {elem}
-                            </p>
-                        );
+                            <div key = { elem.id } onClick = {() => removeItem(elem.id)}>
+                                <p style = {{ marginLeft: "1%" }}> 
+                                    { elem.name } 
+                                </p>
+                            </div>
+                        )
                     })}
                 </div>
                 <div style = {{ minHeight: "90%", width: "15%", marginLeft: "2.5%" }}>
