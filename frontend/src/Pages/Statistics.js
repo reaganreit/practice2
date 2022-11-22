@@ -1,3 +1,4 @@
+import { useContext, useEffect } from "react";
 import Header from "../Components/Header";
 import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
@@ -9,6 +10,10 @@ import ExcessReport from "./ExcessReport";
 import PopularCombos from "./PopularCombos";
 import POSReport from "./POSReport";
 import TranslatedText from "./TranslatedText";
+
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 function createData(time, amount) {
@@ -28,6 +33,8 @@ const data = [
   ];
 
 const Statistics = () => {
+    const {lang, setLang} = useContext(LanguageContext)
+
   const theme = useTheme();
   return (
     <div style={{height: "100%"}}>
@@ -53,19 +60,19 @@ const Statistics = () => {
                     color: "white"
                 }}>
                     <tr>
-                        <td>Gross Revenue</td>
+                        <td><TranslatedText text = {"Gross Revenue"} key = {lang}/></td>
                         <td>$10,000</td>
                     </tr>
                     <tr>
-                        <td>Credit</td>
+                    <td><TranslatedText text = {"Credit"} key = {lang}/></td>
                         <td>$5,000</td>
                     </tr>
                     <tr>
-                        <td>Dining</td>
+                    <td><TranslatedText text = {"Dining"} key = {lang}/></td>
                         <td>$5,000</td>
                     </tr>
                     <tr>
-                        <td>Orders</td>
+                    <td><TranslatedText text = {"Orders"} key = {lang}/></td>
                         <td>1000</td>
                     </tr>
                 </table>
@@ -74,13 +81,13 @@ const Statistics = () => {
                     marginTop: "15%",
                 }}>
                     <Link to="/posreport" style={{ textDecoration:"none" }}>
-                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> Report</Button>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> <TranslatedText  text = {"Report"} key = {lang}/></Button>
                     </Link>
                     <Link to="/popularcombos" style={{ textDecoration:"none" }}>
-                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Popular Combos</Button>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" ><TranslatedText  text = {"Popular Combos"} key = {lang}/></Button>
                     </Link>
                     <Link to="/excessreport" style={{ textDecoration:"none" }}>
-                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Excess Report</Button>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" ><TranslatedText  text = {"Excess Report"} key = {lang}/></Button>
                     </Link>
                 </div>
 

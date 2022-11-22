@@ -2,7 +2,7 @@
 import Header from "../Components/Header"
 import axios from 'axios'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
@@ -10,6 +10,9 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import FiveColRow from "../Components/FiveColRow";
 import TranslatedText from "./TranslatedText";
 
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 
@@ -30,6 +33,8 @@ const rows = [
 
 
 const Inventory = ()=> {
+  const {lang, setLang} = useContext(LanguageContext)
+
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
   const[data, setData] = useState([])
@@ -41,6 +46,8 @@ const Inventory = ()=> {
         setData(res.data)
       })
   },[startDate, endDate])
+
+ 
 
   return (
     <div style={{ height: "100%"}}>

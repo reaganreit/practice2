@@ -1,11 +1,15 @@
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
 import { Link } from "react-router-dom";
-import { createContext } from "react";
-import React, { useState } from 'react'
+import React, { createContext, useContext, useState } from "react";
 import Checkout from './Checkout'
-import { UserContext } from "../contexts/total";
+
+import LanguagePicker from "../Components/LanguagePicker";
 import TranslatedText from "./TranslatedText";
+
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 const bowlList = [
@@ -52,6 +56,9 @@ function drinkMenu() {
 export const globalTotal = React.createContext()
 
 const CustomerGUI = () => {
+    const {lang, setLang} = useContext(LanguageContext)
+
+
     const [results, setResults] = useState([])
     const [receipt, setReceipt] = useState([])
     const [total, setTotal] = useState(0)
@@ -137,12 +144,15 @@ const CustomerGUI = () => {
 
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
+            <div style={{width:"100%", display:"flex", justifyContent:"right"}}>
+                <LanguagePicker/>
+            </div>
 
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
-                <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Bowls"} lang = "hy"/></Button>
-                <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Gyro"} lang = "hy"/></Button>
-                <Button onClick={extraMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Extra"} lang = "hy"/></Button>
-                <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Drink"} lang = "hy"/></Button>
+                <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Bowls"} key = {lang}/></Button>
+                <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Gyro"} key = {lang}/></Button>
+                <Button onClick={extraMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Extra"} key = {lang}/></Button>
+                <Button onClick={drinkMenu} style = {{ height: "100%", width: "17.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Drink"} key = {lang}/></Button>
             </div>
             <div style = {{ minHeight: "80%", marginTop: "2.5%", padding: "2.5%", backgroundColor: "lightgrey" }}>
                 {/* <BowlMenuGrid /> */}
@@ -150,7 +160,7 @@ const CustomerGUI = () => {
                 {results.map( elem => {
                      return (
                             <Grid item xs = {3} style={{ height: "20vw" }}>
-                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}><TranslatedText key = {elem.itemName} text = {elem.itemName} lang = "hy"/></Button>
+                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}><TranslatedText key = {elem.itemName + lang} text = {elem.itemName} /></Button>
                             </Grid>
                         );
                     })}
@@ -159,12 +169,12 @@ const CustomerGUI = () => {
             <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ minHeight: "90%", width: "60%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
                     <p style = {{ fontWeight: "bold", marginBottom: "1%", marginLeft: "1%", marginTop: "1%" }}>
-                    <TranslatedText text = {"Itemized Receipt"} lang = "hy"/>
+                    <TranslatedText text = {"Itemized Receipt"} key = {lang}/>
                     </p>
                     {receipt.map( elem => {
                         return (
                             <p style = {{ marginLeft: "1%" }}>
-                                <TranslatedText text = {elem} lang = "hy"/>
+                                <TranslatedText text = {elem} key = {lang}/>
                             </p>
                         );
                     })}
@@ -173,19 +183,25 @@ const CustomerGUI = () => {
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "5%", backgroundColor: "whitesmoke" }}>
                         <div style = {{ height: "25%", width: "80%", marginLeft: "10%", backgroundColor: "lightgrey" }} >
                             <p> 
-                            <TranslatedText text = {"Total"} lang = "hy"/>: $ { total }
+                            <TranslatedText text = {"Total"} key = {lang}/>: $ { total }
                             </p>
                         </div>
                         <div className="checkoutButtons" style = {{ width:"80%", marginLeft: "10%" }}>
-                            <Button onClick = {event => handleCheckout("Credit", "customer")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Credit"} lang = "hy"/></Button>
-                            <Button onClick = {event => handleCheckout("Dining Dollars", "customer")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Drining Dollars"} lang = "hy"/></Button>
+                            <Button onClick = {event => handleCheckout("Credit", "customer")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Credit"} key = {lang}/></Button>
+                            <Button onClick = {event => handleCheckout("Dining Dollars", "customer")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Drining Dollars"} key = {lang}/></Button>
                         </div>
                     </div>
                     
                     <Link to="/pinpad" style={{ textDecoration:"none" }}>
-                        <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}><TranslatedText text = {"Sign In"} lang = "hy"/></Button>
+                        <Button style = {{ maxHeight: "25%", width: "60%", marginTop: "2.5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}><TranslatedText text = {"Sign In"} key = {lang}/></Button>
                     </Link>
                 </div>
+            </div>
+
+            <div style = {{width:"100%", display:"flex", justifyContent:"center"}}>
+                <Link to = "/map" style={{textDecoration:"none"}}>
+                    <Button variant = "contained"><TranslatedText text = "Find us on the map" key = {lang}/>!!</Button>
+                </Link>
             </div>
         </div>
     )

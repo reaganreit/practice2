@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {useState, useContext} from 'react'
 
  import { UserContext } from "./contexts/user";
+ import { LanguageContext } from "./contexts/language";
 
 import Checkout from "./Pages/Checkout";
 import Inventory from "./Pages/Inventory";
@@ -16,14 +17,16 @@ import ExcessReport from "./Pages/ExcessReport";
 import CashierGUI from "./Pages/CashierGUI";
 import Statistics from "./Pages/Statistics";
 import Map from "./Pages/Map";
+import TranslatedText from "./Pages/TranslatedText";
 
 const App= ()=> {
   const [ user,setUser ] = useState({})
+  const [lang, setLang] = useState("en")
 
   return (
     <BrowserRouter>
         <UserContext.Provider value = {{user,setUser}}>
-
+        <LanguageContext.Provider value = {{lang, setLang}}>
           <Routes>
 
             <Route path="/" element={<Pinpad />} />
@@ -39,6 +42,8 @@ const App= ()=> {
             <Route path="/map" element={<Map />} />
 
           </Routes>
+
+        </LanguageContext.Provider>
         </UserContext.Provider>
 
       </BrowserRouter>
