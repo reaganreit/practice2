@@ -1,13 +1,17 @@
 
 import Header from "../Components/Header"
 import axios from 'axios'
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
 
 import { createTheme, ThemeProvider } from "@mui/material";
 import ThreeColRow from "../Components/ThreeColRow";
+import TranslatedText from "./TranslatedText";
 
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 
@@ -27,6 +31,8 @@ const rows = [
 
 
 const POSReport = ()=> {
+  const {lang, setLang} = useContext(LanguageContext)
+
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
   const [posData, setPosData] = useState([])

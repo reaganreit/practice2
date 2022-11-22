@@ -1,9 +1,17 @@
+import { useContext } from "react";
+
 import Header from "../Components/Header";
 import { TextField } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid'; 
 import ThreeColRow from "../Components/ThreeColRow";
+import TranslatedText from "./TranslatedText";
+
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
+
 
 const columns = [
     {field: 'id', headerName: 'ID', flex: 1, hide:true},
@@ -24,8 +32,11 @@ const columns = [
     {id:9, item: "Butter Chicken", quantity: 20, sales: 40},
     {id:10, item: "Butter Chicken", quantity: 20, sales: 30}
   ]
+  
 
 const ExcessReport = () => {
+    const {lang, setLang} = useContext(LanguageContext)
+
     return (
         <div style = {{ height: "100%" }}>
             <Header title = "Excess Report" path = "/statistics"></Header>   

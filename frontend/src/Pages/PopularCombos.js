@@ -1,13 +1,19 @@
 
 import Header from "../Components/Header"
+
+import { useState, useContext, useEffect } from "react";
 import axios from 'axios'
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
-import { useEffect, useState } from "react";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 import FiveColRow from "../Components/FiveColRow";
 import ThreeColRow from "../Components/ThreeColRow";
+import TranslatedText from "./TranslatedText";
+
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 
@@ -28,6 +34,8 @@ const rows = [
 
 
 const PopularCombos = ()=> {
+  const {lang, setLang} = useContext(LanguageContext)
+
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05")
   const [combos, setCombos] = useState([])
@@ -85,7 +93,7 @@ const PopularCombos = ()=> {
           <div style={{height:"500px", overflowY:"scroll", border:"solid", borderWidth:2, borderColor:"blue", backgroundColor:"blue", marginTop:20}}>
 
             <div style={{borderBottom:'solid white 3px', position:"sticky",  top:0}}>
-              <ThreeColRow item = {"Item 1 "} quantity = {"Item 2"} price = {"Times Ordered Together"}/>
+              <ThreeColRow item = {"Item 1 "} quantity = {"Item 2"} price = {"Number of matches"}/>
             </div>
             
 

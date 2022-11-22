@@ -6,8 +6,12 @@ import Header from "../Components/Header"
 
 import { createTheme, ThemeProvider, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import { UserContext } from "../contexts/user";
+import TranslatedText from "./TranslatedText";
 
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
+import LanguagePicker from "../Components/LanguagePicker";
 const numbers = [ 0,
             1, 2, 3,
             4, 5, 6, 
@@ -17,12 +21,27 @@ const numbers = [ 0,
 const Pinpad = ()=> {
   const navigate = useNavigate()
   const {user,setUser } = useContext(UserContext)
-  const [ passcode, setPasscode ] = useState("Enter Passcode")
+  const {lang, setLang} = useContext(LanguageContext)
+
+  const [ passcode, setPasscode ] = useState("")
+
+
+  // async function translate(text, lang){
+  //   axios.post("http://localhost:5000/translateText", { text: text, lang:lang})
+  //     .then(res => {
+  //       console.log(res.data)
+  //       return res.data
+  //     })
+  // }
 
   async function logIn(code){
+    if (code === "Enter Passcode"){
+      code = "1"
+    }
+
     let role = "yoink"
     await axios.post('http://localhost:5000/employeeType',{
-      pin: code
+      pin: code 
     })
         
       .then(res => {
@@ -38,7 +57,7 @@ const Pinpad = ()=> {
   }
 
   function addToCode(digit){
-    if (passcode === "Enter Passcode"){
+    if (passcode === ""){
       setPasscode( String(digit) )
     }
     else {
@@ -48,10 +67,10 @@ const Pinpad = ()=> {
 
   function removeDigit(){
     if (passcode.length === 1){
-      setPasscode("Enter Passcode")
+      setPasscode("")
     }
     else {
-      if (passcode !== "Enter Passcode"){
+      if (passcode !== ""){
         setPasscode(passcode.slice(0, passcode.length - 1))
       }
     }
@@ -59,9 +78,14 @@ const Pinpad = ()=> {
 
   return (
     <div style={{ height: "100%"}}>
+      <div style={{width:"100%", display:"flex", justifyContent:"right"}}>
+        <LanguagePicker/>
+      </div>
 
       <div style={{width:"100%",display:"flex", justifyContent:"center", alignItems:"center", marginTop:"3%"}}>
-        <h1 style = {{textAlign: "center"}}>Log In</h1>
+        <h1 style = {{textAlign: "center"}}>
+          <TranslatedText text = "Log in" key = {lang}/>
+        </h1>
       </div>
       
 
@@ -70,9 +94,9 @@ const Pinpad = ()=> {
 
         <div style={{border:"solid", paddingTop:"4px"}}>
           
-          <h1 style={{textAlign:"center"}}> {passcode} </h1>
+          <h1 style={{textAlign:"center", overflow:"hidden", height:"40px"}}> {passcode} </h1>
 
-          <div style = {{height:"370px", width:"370px", backgroundColor:"blue",color:"white", marginTop:"2vh"}}>
+          <div style = {{height:"370px", idth:"370px", backgroundColor:"blue",color:"white", marginTop:"2vh"}}>
 
             {/* start rows here */}
 
@@ -145,7 +169,7 @@ const Pinpad = ()=> {
                   onClick = {() => removeDigit()}
                   className = "hoverOpacity"
                   style = {{justifyContent:"center", border:"solid", width:"50%", height:"50%", display:"flex", alignItems:"center"}}>
-                    Delete
+                    <TranslatedText text = {"Delete"} key = {lang}/>
                 </Button>
               </div>
 
@@ -173,7 +197,7 @@ const Pinpad = ()=> {
                     className = "hoverOpacity"
                     onClick = {() => console.log(logIn(passcode))}
                     style = {{justifyContent:"center", border:"solid", width:"60%", height:"60%", display:"flex", alignItems:"center"}}>
-                      LOG IN
+                      <TranslatedText text = {"LOG IN"} key = {lang}/>
                   </Button>
                 {/* </Link> */}
                 

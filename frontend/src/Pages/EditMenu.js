@@ -2,10 +2,17 @@ import Header from "../Components/Header";
 import { TextField } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import {Button} from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+
+import TranslatedText from "./TranslatedText";
+
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 const EditMenu = () => {
+    const {lang, setLang} = useContext(LanguageContext)
 
     const [newItemName, setNewItemName] = useState();
     const [newItemPrice, setNewItemPrice] = useState();
@@ -95,7 +102,7 @@ const EditMenu = () => {
             <div style = {{ height: "90%", paddingBottom: "2.5%" }}>
 
                 <div className="addItem" style = {{ height: "30%", width: "80%", marginLeft: "10%", marginTop: "2.5%", backgroundColor: "lightgrey"}}>
-                    <h2 style = {{ paddingTop: ".75%", textAlign: "center" }}>Add Item</h2>
+                    <h2 style = {{ paddingTop: ".75%", textAlign: "center" }}><TranslatedText text = "Add Item" key = {lang}/></h2>
                     <span style = {{ display: "flex"}}>
                         <div style = {{ width: "60%", height: "70%", marginLeft: "10%"}}>
                             <article style = {{ marginTop: "3%", marginBottom: "2%" }}>
@@ -110,22 +117,22 @@ const EditMenu = () => {
                             </article>
                             <TextField onChange = { ( event ) => setNewItemIngredients(event.target.value)} value={newItemIngredients} size="small" label="Ingredients of Item" variant="filled" style = {{ width: "95%", marginRight: "5%", backgroundColor: "white"}}/>
                         </div>
-                        <Button onClick = {event => {addNewItem(newItemName, newItemPrice, newItemIngredients); setNewItemName(""); setNewItemPrice(""); setNewItemIngredients("")}} style = {{ height: "7.5%", width: "10%", marginLeft: "5%", marginTop: "4%", color: "white", backgroundColor: "blue" }}>Add Item</Button>
+                        <Button onClick = {event => {addNewItem(newItemName, newItemPrice, newItemIngredients); setNewItemName(""); setNewItemPrice(""); setNewItemIngredients("")}} style = {{ height: "7.5%", width: "10%", marginLeft: "5%", marginTop: "4%", color: "white", backgroundColor: "blue" }}><TranslatedText text = "Add Item" key = {lang}/></Button>
                     </span>
                 </div>
 
 
                 <div className="deleteItem" style = {{ height: "30%", width: "80%", marginLeft: "10%", marginTop: "2.5%", backgroundColor: "lightgrey", textAlign: "center" }}>
-                    <h2 style = {{ paddingTop: ".75%" }}>Delete Item</h2>
+                    <h2 style = {{ paddingTop: ".75%" }}><TranslatedText text = "Delete Item" key = {lang}/></h2>
                     <div>
                         <TextField onChange = { ( event ) => setItemToDelete(event.target.value)} value={itemToDelete} size="small" label="Name of Item" variant="filled" style = {{ width: "50%", marginTop: "4%", marginRight: "5%", backgroundColor: "white"}}/>
-                        <Button onClick = {event => {deleteItem(itemToDelete); setItemToDelete("");}} style = {{ height: "10%", width: "10%", marginLeft: "3.5%", marginTop: "4.5%", color: "white", backgroundColor: "blue" }}>Delete Item</Button>
+                        <Button onClick = {event => {deleteItem(itemToDelete); setItemToDelete("");}} style = {{ height: "10%", width: "10%", marginLeft: "3.5%", marginTop: "4.5%", color: "white", backgroundColor: "blue" }}><TranslatedText text = "Delete Item" key = {lang}/></Button>
                     </div>
                 </div>
 
 
                 <div className="editItem" style = {{ height: "30%", width: "80%", marginLeft: "10%", marginTop: "2.5%", backgroundColor: "lightgrey", textAlign: "center" }}>
-                    <h2 style = {{ paddingTop: ".75%" }}>Edit Item</h2>
+                    <h2 style = {{ paddingTop: ".75%" }}><TranslatedText text = "Edit Item" key = {lang}/></h2>
                     <div>
                         <TextField onChange = { ( event ) => setItemToChange(event.target.value)} value={itemToChange} size="small" label="Name of Item" variant="filled" style = {{ width: "40%", marginTop: "4%", marginRight: "3.5%", backgroundColor: "white"}}/>
                         <TextField onChange = { ( event ) => setNewPrice(event.target.value)} value={newPrice} size="small" label="New Price" variant="filled" 
@@ -133,7 +140,7 @@ const EditMenu = () => {
                                 startAdornment: <InputAdornment position="start">$</InputAdornment>,
                             }}
                             style = {{ width: "15%", marginTop: "4%", backgroundColor: "white"}} />
-                        <Button onClick = {event => {changePrice(itemToChange, newPrice); setItemToChange(""); setNewPrice("")}} style = {{ height: "10%", width: "10%", marginLeft: "3.5%", marginTop: "4.5%", color: "white", backgroundColor: "blue" }}>Change Price</Button>
+                        <Button onClick = {event => {changePrice(itemToChange, newPrice); setItemToChange(""); setNewPrice("")}} style = {{ height: "10%", width: "10%", marginLeft: "3.5%", marginTop: "4.5%", color: "white", backgroundColor: "blue" }}><TranslatedText text = "Change Price" key = {lang}/></Button>
                     </div>
                 </div>
 

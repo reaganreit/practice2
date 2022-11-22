@@ -11,6 +11,10 @@ const port = 5000;
 const cors = require("cors");
 const { json } = require('body-parser');
 app.use(cors());
+
+
+const { generateRequestUrl, normaliseResponse } = require('google-translate-api-browser');
+const https = require('https');
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -934,6 +938,28 @@ async function main(){
             let results = await excessReport(req.body.dateOne, req.body.dateTwo);
             res.send(results);
         })();
+    })
+
+    app.post("/translateText",jsonParser,(req,res)=>{
+        console.log(req.body.lang)
+        console.log(req.body.text)
+
+        const url = generateRequestUrl(req.body.text, { to: req.body.lang });
+
+        https.get(url, (resp) => {
+        let data = '';
+
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        resp.on('end', () => {
+            res.send(normaliseResponse(JSON.parse(data)).text);
+        });
+        }).on("error", (err) => {
+            console.log("Error: " + err.message);
+        });
+        // res.send(employeeType(req.body.pin) );  
     })
 
     app.listen(port,()=> console.log(`Listening to port ${port}`));

@@ -20,10 +20,7 @@ root.render(
       <App/>
     </div>
 
-  {/* <div style={{height:"100vh", margin: 0}}>
-    <App />
-    <CustomerGUI />
-  </div> */}
+
     
   </>
 );

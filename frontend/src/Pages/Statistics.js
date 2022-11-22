@@ -1,3 +1,4 @@
+import { useContext, useEffect, useState } from "react";
 import Header from "../Components/Header";
 import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
@@ -5,9 +6,17 @@ import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recha
 import { margin, width } from "@mui/system";
 import { Link } from "react-router-dom";
 import { TextField } from "@mui/material";
-import { useEffect, useState } from "react";
 import axios from 'axios'
 
+
+import ExcessReport from "./ExcessReport";
+import PopularCombos from "./PopularCombos";
+import POSReport from "./POSReport";
+import TranslatedText from "./TranslatedText";
+
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 function createData(time, amount) {
@@ -15,6 +24,8 @@ function createData(time, amount) {
 }
 
 const Statistics = () => {
+    const {lang, setLang} = useContext(LanguageContext)
+
   const theme = useTheme();
   const [startDate, setStartDate] = useState("2022-09-20");
   const [endDate, setEndDate] = useState("2022-10-05");
@@ -37,28 +48,28 @@ const Statistics = () => {
     axios.post("http://localhost:5000/statsGraph", { startDate: startDate, endDate:endDate})
       .then(retrievedData => {
         console.log(retrievedData);
-        setGraphData([]);
-        let numElements = retrievedData.data.length-1; 
-        console.log("numElements: ", numElements);
+        // setGraphData([]);
+        // let numElements = retrievedData.data.length-1; 
+        // console.log("numElements: ", numElements);
 
-        if (numElements >= 5) {
-            let elementsPerBreakpoint = numElements/5;
-            let breakpointTotal; 
-            let elemIndex = 0;
-            for (var breakpoint = 0; breakpoint < 5; breakpoint++) {
-                breakpointTotal = 0;
-                for (var i = 0; i < elementsPerBreakpoint; i++) {
-                    breakpointTotal += retrievedData.data[elemIndex].total;
-                    elemIndex++;
-                }
-                console.log("timestamp: ", retrievedData.data[elemIndex].timestamp);
-                console.log("total: ", breakpointTotal);
-                setGraphData(graphData => [...graphData, createData(retrievedData.data[elemIndex].timestamp, breakpointTotal)]);
-            }
-        }
-        // {(retrievedData.data ?? []).map( (elem) => {
-        //     setGraphData(graphData => [...graphData, createData(elem.timestamp, elem.total)]);
-        // })}
+        // if (numElements >= 5) {
+        //     let elementsPerBreakpoint = numElements/5;
+        //     let breakpointTotal; 
+        //     let elemIndex = 0;
+        //     for (var breakpoint = 0; breakpoint < 5; breakpoint++) {
+        //         breakpointTotal = 0;
+        //         for (var i = 0; i < elementsPerBreakpoint; i++) {
+        //             breakpointTotal += retrievedData.data[elemIndex].total;
+        //             elemIndex++;
+        //         }
+        //         console.log("timestamp: ", retrievedData.data[elemIndex].timestamp);
+        //         console.log("total: ", breakpointTotal);
+        //         setGraphData(graphData => [...graphData, createData(retrievedData.data[elemIndex].timestamp, breakpointTotal)]);
+        //     }
+        // }
+        // // {(retrievedData.data ?? []).map( (elem) => {
+        // //     setGraphData(graphData => [...graphData, createData(elem.timestamp, elem.total)]);
+        // // })}
       })
   },[startDate,endDate])
 
@@ -124,19 +135,19 @@ const Statistics = () => {
                     color: "white"
                 }}>
                     <tr>
-                        <td>Gross Revenue</td>
+                        <td><TranslatedText text = "Gross Revenue" key = {lang}/></td>
                         <td>$ {revenue}</td>
                     </tr>
                     <tr>
-                        <td>Credit</td>
+                        <td><TranslatedText text = "Credit" key = {lang}/></td>
                         <td>$ {credit}</td>
                     </tr>
                     <tr>
-                        <td>Dining</td>
+                        <td><TranslatedText text = "Dining" key = {lang}/></td>
                         <td>$ {dining}</td>
                     </tr>
                     <tr>
-                        <td>Orders</td>
+                        <td><TranslatedText text = "Orders" key = {lang}/></td>
                         <td>{orders}</td>
                     </tr>
                 </table>
@@ -145,13 +156,13 @@ const Statistics = () => {
                     marginTop: "5%",
                 }}>
                     <Link to="/posreport" style={{ textDecoration:"none" }}>
-                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> Report</Button>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%"}} variant = "contained" >POS <br /> <TranslatedText  text = {"Report"} key = {lang}/></Button>
                     </Link>
                     <Link to="/popularcombos" style={{ textDecoration:"none" }}>
-                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Popular Combos</Button>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" ><TranslatedText  text = {"Popular Combos"} key = {lang}/></Button>
                     </Link>
                     <Link to="/excessreport" style={{ textDecoration:"none" }}>
-                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" >Excess Report</Button>
+                        <Button className = "reportButtons" style ={{backgroundColor:"red", width: "25%", marginLeft: "12.5%"}} variant = "contained" ><TranslatedText  text = {"Excess Report"} key = {lang}/></Button>
                     </Link>
                 </div>
 
