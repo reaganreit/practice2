@@ -527,16 +527,16 @@ async function getMenu(){
 //get all the receipts between two dates
 async function combosData(date1, date2){
     query_str = "SELECT * FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00';";
-    receipts=[];
+    combosReceipts=[];
     await pool
             .query(query_str)
             .then(query_res => {
                 for (let i = 0; i < query_res.rowCount; i++){
-                    receipts.push(query_res.rows[i]);
+                    combosReceipts.push(query_res.rows[i]);
                     //console.log(query_res.rows[i]);
                 }});
-    //console.log(receipts[1])
-    return receipts;
+    //console.log(combosReceipts[1])
+    return combosReceipts;
 }
 
 //gets the quantity in the inventory of a particular item
@@ -633,7 +633,7 @@ async function employeeType(id){
 //function for the statistics table takes in 2 dates and returns an object with the attributes
 //orders for the number of orders, credit for the sales made in credit band debit cards, 
 //dining for the revenue in meal swipes and grossRevenue for the total revenue for those dates
-//statisticsTable("09-15-2022", "09-17-2022"); //example test run
+statisticsTable("09-15-2022", "09-17-2022"); //example test run
 async function statisticsTable(date1, date2){
     let stats={};
     totalRevenue = 0.0;
@@ -642,52 +642,52 @@ async function statisticsTable(date1, date2){
     orders = 0;
 
     query_str = "SELECT * FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00'";
-    receipts=[];
+    receiptsStats=[];
     await pool
             .query(query_str)
             .then(query_res => {
                 for (let i = 0; i < query_res.rowCount; i++){
-                    receipts.push(query_res.rows[i]);
+                    receiptsStats.push(query_res.rows[i]);
                     //console.log(query_res.rows[i]);
                 }});
 
-    for (let i = 0; i < receipts.length; i++){
-        if(receipts[i].payment_type == "Debit Card" || receipts[i].payment_type == "Credit Card"){
-            creditRevenue+=receipts[i].total;
-            totalRevenue+=receipts[i].total;
-        }else if(receipts[i].payment_type == "Meal Swipes"){
-            diningRevenue+=receipts[i].total;
-            totalRevenue+=receipts[i].total;
+    for (let i = 0; i < receiptsStats.length; i++){
+        if(receiptsStats[i].payment_type == "Debit Card" || receiptsStats[i].payment_type == "Credit Card"){
+            creditRevenue+=receiptsStats[i].total;
+            totalRevenue+=receiptsStats[i].total;
+        }else if(receiptsStats[i].payment_type == "Meal Swipes"){
+            diningRevenue+=receiptsStats[i].total;
+            totalRevenue+=receiptsStats[i].total;
         }
     }
-    console.log(receipts[3]);
-    orders=receipts.length;
+    console.log(receiptsStats[3]);
+    orders=receiptsStats.length;
     stats.orders=orders;
     stats.credit=roundTotal(creditRevenue);
     stats.grossRevenue=roundTotal(totalRevenue);
     stats.dining=roundTotal(diningRevenue);
     console.log(stats.orders);
-    console.log(stats.credit);
-    console.log(stats.dining);
-    console.log(stats.grossRevenue);
+   // console.log(stats.credit);
+   // console.log(stats.dining);
+    //console.log(stats.grossRevenue);
     return stats;
 }
 
 //returns array of the receipts in a specified timeframe
 //use receipts[index].total to get the revenue of each order
-//statisticsGraph("09-15-2022", "09-17-2022"); //example test run
+statisticsGraph("09-15-2022", "09-17-2022"); //example test run
 async function statisticsGraph(date1,date2){
     query_str = "SELECT * FROM receipts where timestamp between '"+date1+" "+"00:00:00' and '"+date2+" "+"00:00:00'";
-    receipts=[];
+    receiptsForGraph=[];
     await pool
             .query(query_str)
             .then(query_res => {
                 for (let i = 0; i < query_res.rowCount; i++){
-                    receipts.push(query_res.rows[i]);
+                    receiptsForGraph.push(query_res.rows[i]);
                     //console.log(query_res.rows[i]);
                 }});
-    //console.log(receipts[1]); //use receipts[index].total to get the revenue of the order
-    return receipts;
+    console.log(receiptsForGraph.length); //use receipts[index].total to get the revenue of the order
+    return receiptsForGraph;
 }
 
 async function excessReport(dateOne, dateTwo){
