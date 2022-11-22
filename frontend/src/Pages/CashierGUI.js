@@ -45,7 +45,8 @@ const drinkList = [
 
 const managerButtonList = [
     {id: 1, buttonName: "Statistics", linkName: "/statistics"},
-    {id: 2, buttonName: "Inventory", linkName: "/inventory"}
+    {id: 2, buttonName: "Inventory", linkName: "/inventory"},
+    {id: 3, buttonName: "Edit Menu", linkName: "/editMenu"}
 ]
 
 function extraMenu() {
@@ -56,6 +57,7 @@ function drinkMenu() {
     console.log("drink button clicked");
 }
 
+var counter = 0;
 
 const CashierGUI = () => {
     
@@ -97,7 +99,8 @@ const CashierGUI = () => {
     }
 
     const handleClick = async (item) => {
-        setReceipt([...receipt,item]);
+        setReceipt([...receipt,{id:counter, name:item}]);
+        counter++;
         setIsLoading(true);
         try {
             const response = await fetch('http://localhost:5000/addItem', {
@@ -153,7 +156,40 @@ const CashierGUI = () => {
 
     const emptyReceipt = () => {
         setReceipt([]);
+        counter = 0;
     };
+
+    const removeItem = async (id) => {
+        const newReceipt = receipt.filter(
+            (receipt) => receipt.id !== id
+        );
+        setReceipt(newReceipt);
+            console.log(receipt);
+        try {
+            const response = await fetch('http://localhost:5000/removeItem', {
+                method: 'POST',
+                body: JSON.stringify({ itemID : id }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log(result);
+            setTotal(result.totalPrice);
+
+        } catch (err) {
+            setErr(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     return (
         
@@ -187,10 +223,12 @@ const CashierGUI = () => {
                     </p>
                     {receipt.map( elem => {
                         return (
-                            <p style = {{ marginLeft: "1%" }}>
-                                <TranslatedText text = {elem} key = {lang}/>
-                            </p>
-                        );
+                            <div key = { elem.id } onClick = {() => removeItem(elem.id)}>
+                                <p style = {{ marginLeft: "1%" }}> 
+                                    { elem.name } 
+                                </p>
+                            </div>
+                        )
                     })}
                 </div>
                 <div style = {{ minHeight: "90%", width: "15%", marginLeft: "2.5%" }}>
@@ -210,10 +248,9 @@ const CashierGUI = () => {
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "2.5%" }}>
                     <div style = {{ minHeight: "60%", width: "100%", paddingTop: "2.5%", backgroundColor: "whitesmoke" }}>
                         <div className="checkoutButtons" style = {{ width:"80%", marginLeft: "10%" }}>
-                            <Button onClick = {event => handleCheckout("Credit", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Credit"} key = {lang}/></Button>
-                            <Button onClick = {event => handleCheckout("Dining Dollars", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Dining Dollars"} key = {lang}/></Button>
-                            <Button onClick = {event => handleCheckout("Retail Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Retail Swipes"} key = {lang}/></Button>
-                            <Button onClick = {event => handleCheckout("Employee Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Employee Swipes"} key = {lang}/></Button>
+                            <Button onClick = {event => handleCheckout("Credit Card", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = "Credit" key={lang}/></Button>
+                            <Button onClick = {event => handleCheckout("Debit Card", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = "Debit" key={lang}/></Button>
+                            <Button onClick = {event => handleCheckout("Retail Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = "Retail Swipes" key={lang}/></Button>
                             {managerButtons.map( elem => {
                                 return (
                                         <Link to={elem.linkName} style={{ textDecoration:"none" }}>

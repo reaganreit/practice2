@@ -15,14 +15,13 @@ const LanguagePicker = (props) => {
 
     const changeLanguage = (event) =>{
       setLang(event.target.value)
-      console.log("lang is", lang)
     }
 
     return (
         
           
     <div style={{display:"flex", alignItems:"center"}}>
-            <h3 style={{marginRight:5}}>Language:</h3>
+            <h3 style={{marginRight:5}}><TranslatedText text="Language" key = {lang}/>:</h3>
             <FormControl variant = "standard">
             <Select
               labelId="demo-simple-select-label"

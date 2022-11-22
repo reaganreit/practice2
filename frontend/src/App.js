@@ -18,6 +18,7 @@ import CashierGUI from "./Pages/CashierGUI";
 import Statistics from "./Pages/Statistics";
 import Map from "./Pages/Map";
 import TranslatedText from "./Pages/TranslatedText";
+import EditMenu from "./Pages/EditMenu";
 
 const App= ()=> {
   const [ user,setUser ] = useState({})
@@ -41,6 +42,7 @@ const App= ()=> {
             <Route path="/statistics" element={<Statistics />} />
             <Route path="/map" element={<Map />} />
 
+            <Route path="/editMenu" element = {<EditMenu />} />
           </Routes>
 
         </LanguageContext.Provider>
