@@ -41,24 +41,24 @@ const Statistics = () => {
         let numElements = retrievedData.data.length-1; 
         console.log("numElements: ", numElements);
 
-        if (numElements >= 5) {
-            let elementsPerBreakpoint = numElements/5;
-            let breakpointTotal; 
-            let elemIndex = 0;
-            for (var breakpoint = 0; breakpoint < 5; breakpoint++) {
-                breakpointTotal = 0;
-                for (var i = 0; i < elementsPerBreakpoint; i++) {
-                    breakpointTotal += retrievedData.data[elemIndex].total;
-                    elemIndex++;
-                }
-                console.log("timestamp: ", retrievedData.data[elemIndex].timestamp);
-                console.log("total: ", breakpointTotal);
-                setGraphData(graphData => [...graphData, createData(retrievedData.data[elemIndex].timestamp, breakpointTotal)]);
-            }
-        }
-        // {(retrievedData.data ?? []).map( (elem) => {
-        //     setGraphData(graphData => [...graphData, createData(elem.timestamp, elem.total)]);
-        // })}
+        // if (numElements >= 5) {
+        //     let elementsPerBreakpoint = numElements/5;
+        //     let breakpointTotal; 
+        //     let elemIndex = 0;
+        //     for (var breakpoint = 0; breakpoint < 5; breakpoint++) {
+        //         breakpointTotal = 0;
+        //         for (var i = 0; i < elementsPerBreakpoint; i++) {
+        //             breakpointTotal += retrievedData.data[elemIndex].total;
+        //             elemIndex++;
+        //         }
+        //         console.log("timestamp: ", retrievedData.data[elemIndex].timestamp);
+        //         console.log("total: ", breakpointTotal);
+        //         setGraphData(graphData => [...graphData, createData(retrievedData.data[elemIndex].timestamp, breakpointTotal)]);
+        //     }
+        // }
+        {(retrievedData.data ?? []).map( (elem) => {
+            setGraphData(graphData => [...graphData, createData(elem.timestamp, elem.total)]);
+        })}
       })
   },[startDate,endDate])
 
