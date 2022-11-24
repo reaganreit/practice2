@@ -1,15 +1,21 @@
-import { Button, TextField } from "@mui/material"
-import { Grid } from '@mui/material';
+// react
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
-// custom components
-import TranslatedText from "./TranslatedText";
+// external imports
+import { Button, TextField } from "@mui/material"
+import { Grid } from '@mui/material';
+
+// components
+import TranslatedText from "../Components/TranslatedText";
 import LanguagePicker from "../Components/LanguagePicker";
 
-// context
+// pages
+
+// contexts
 import { UserContext } from "../contexts/user";
 import { LanguageContext } from '../contexts/language';
+
 
 const bowlList = [
     {id: 1, itemName: "Butter Chicken Bowl"},
@@ -207,7 +213,7 @@ const CashierGUI = () => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
-                            <Grid item xs = {3} style={{ height: "20vw" }}>
+                            <Grid key = {elem.id} item xs = {3} style={{ height: "20vw" }}>
                                 <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}><TranslatedText key = {elem.itemName + lang} text = {elem.itemName} /></Button>
                                 {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
                             </Grid>
@@ -253,7 +259,7 @@ const CashierGUI = () => {
                             <Button onClick = {event => handleCheckout("Retail Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = "Retail Swipes" key={lang}/></Button>
                             {managerButtons.map( elem => {
                                 return (
-                                        <Link to={elem.linkName} style={{ textDecoration:"none" }}>
+                                        <Link key = {elem.id} to={elem.linkName} style={{ textDecoration:"none" }}>
                                             <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {elem.buttonName} key = {lang}/></Button>
                                         </Link>
                                     );

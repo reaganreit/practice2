@@ -1,12 +1,15 @@
-import { Button } from "@mui/material";
-import { Link } from "react-router-dom";
-import Header from "./Components/Header"
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// react
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import {useState, useContext} from 'react'
 
- import { UserContext } from "./contexts/user";
- import { LanguageContext } from "./contexts/language";
+// external imports
+import { Button } from "@mui/material";
 
+// components
+import Header from "./Components/Header"
+import TranslatedText from "./Components/TranslatedText"
+
+// pages
 import Checkout from "./Pages/Checkout";
 import Inventory from "./Pages/Inventory";
 import Pinpad from "./Pages/Pinpad";
@@ -17,8 +20,13 @@ import ExcessReport from "./Pages/ExcessReport";
 import CashierGUI from "./Pages/CashierGUI";
 import Statistics from "./Pages/Statistics";
 import Map from "./Pages/Map";
-import TranslatedText from "./Pages/TranslatedText";
 import EditMenu from "./Pages/EditMenu";
+
+// contexts
+ import { UserContext } from "./contexts/user";
+ import { LanguageContext } from "./contexts/language";
+
+
 
 const App= ()=> {
   const [ user,setUser ] = useState({})

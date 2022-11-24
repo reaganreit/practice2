@@ -1,15 +1,23 @@
-import { Button, TextField } from "@mui/material"
-import { Grid } from '@mui/material';
+// react
 import { Link } from "react-router-dom";
 import React, { createContext, useContext, useState } from "react";
-import Checkout from './Checkout'
 
+// external imports
+import { Button, TextField } from "@mui/material"
+import { Grid } from '@mui/material';
+
+// components
 import LanguagePicker from "../Components/LanguagePicker";
-import TranslatedText from "./TranslatedText";
+import TranslatedText from "../Components/TranslatedText";
+
+// pages
+import Checkout from './Checkout'
 
 // contexts
 import { UserContext } from "../contexts/user";
 import { LanguageContext } from '../contexts/language';
+
+
 
 
 const bowlList = [

@@ -5,7 +5,7 @@ import { Button, Select, FormControl, MenuItem } from "@mui/material"
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import LanguagePicker from "./LanguagePicker";
-import TranslatedText from "../Pages/TranslatedText";
+import TranslatedText from "./TranslatedText";
 
 import { LanguageContext } from "../contexts/language";
 
