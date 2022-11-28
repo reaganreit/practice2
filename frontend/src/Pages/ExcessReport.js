@@ -1,9 +1,10 @@
-import { useContext } from "react";
-
 import Header from "../Components/Header";
 import { TextField } from "@mui/material";
 import ThreeColRow from "../Components/ThreeColRow";
 import TranslatedText from "./TranslatedText";
+import { useContext, useEffect, useState } from "react";
+import axios from 'axios'
+
 
 // contexts
 import { UserContext } from "../contexts/user";
@@ -37,7 +38,7 @@ const ExcessReport = () => {
     const [excessReportData, setExcessReportData] = useState([]);
 
     useEffect(() => {
-      axios.post("http://localhost:5000/excessReport", { startDate: startDate, endDate:endDate})
+      axios.post("http://localhost:5000/excessReport", { dateOne: startDate, dateTwo:endDate})
         .then(data => {
           setExcessReportData(data.data)
           console.log(data.data)
@@ -83,11 +84,11 @@ const ExcessReport = () => {
                     </div>
 
 
-                    {/* {excessReportData.map( (row) =>{
+                    {(excessReportData ?? []).map( (row) =>{
                     return (
                         <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.sales}/>
                     )
-                    })} */}
+                    })}
 
                 </div>
 
