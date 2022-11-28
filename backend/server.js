@@ -752,7 +752,6 @@ async function excessReport(dateOne, dateTwo){
 
 async function main(){
     // updates price and orderitems
-
     app.post("/addItem",jsonParser,(req,res)=>{
         console.log("Price Before: " + totalPrice);
         (async() => {
@@ -922,6 +921,7 @@ async function main(){
         }) 
     })
 
+    // sends information for statistics graph
     app.post("/statsGraph",jsonParser,(req,res)=>{
         statisticsGraph(req.body.startDate, req.body.endDate).then( data => {
             res.send(data)

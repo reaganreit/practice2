@@ -36,10 +36,10 @@ const Statistics = () => {
 
     axios.post("http://localhost:5000/statsGraph", { startDate: startDate, endDate:endDate})
       .then(retrievedData => {
-        console.log(retrievedData);
-        setGraphData([]);
-        let numElements = retrievedData.data.length-1; 
-        console.log("numElements: ", numElements);
+        console.log("retrieved data: ", retrievedData);
+        // setGraphData([]);
+        // let numElements = retrievedData.data.length-1; 
+        // console.log("numElements: ", numElements);
 
         // if (numElements >= 5) {
         //     let elementsPerBreakpoint = numElements/5;
