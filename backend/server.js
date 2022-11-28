@@ -347,7 +347,10 @@ async function updateInventory(orderItems){
                 }});
             quant=quant_str.quantity; //int
             quant-=1; //update
-            console.log(quant);
+            if(quant<0){
+                quant=0;
+            }
+            console.log("quant: "+quant);
             // Update value of that item
             query_str = "UPDATE ingredients SET quantity = " + quant+ " WHERE name = '" + ingred[j] + "';";
             console.log(query_str);
