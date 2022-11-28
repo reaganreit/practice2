@@ -10,11 +10,18 @@ import { useState } from "react";
 import { createContext } from "react";
 import { globalTotal } from './CustomerGUI'
 import React, {useContext} from 'react';
-import { UserContext } from "../contexts/total";
+
+import TranslatedText from "./TranslatedText";
+
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 const Checkout = ()=> {
 
     const totalPrice = useContext(UserContext);
+    const {lang, setLang} = useContext(LanguageContext)
+
 
     return (
         

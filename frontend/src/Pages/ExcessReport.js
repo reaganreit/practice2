@@ -1,9 +1,13 @@
+import { useContext } from "react";
+
 import Header from "../Components/Header";
 import { TextField } from "@mui/material";
 import ThreeColRow from "../Components/ThreeColRow";
-import { useEffect, useState } from "react";
-import axios from 'axios'
+import TranslatedText from "./TranslatedText";
 
+// contexts
+import { UserContext } from "../contexts/user";
+import { LanguageContext } from '../contexts/language';
 
 
 const columns = [
@@ -25,6 +29,7 @@ const columns = [
     {id:9, item: "Butter Chicken", quantity: 20, sales: 40},
     {id:10, item: "Butter Chicken", quantity: 20, sales: 30}
   ]
+  
 
 const ExcessReport = () => {
     const [startDate, setStartDate] = useState("2022-09-20");
@@ -38,6 +43,8 @@ const ExcessReport = () => {
           console.log(data.data)
         })
     },[startDate,endDate])
+
+    const {lang, setLang} = useContext(LanguageContext)
 
     return (
         <div style = {{ height: "100%" }}>
