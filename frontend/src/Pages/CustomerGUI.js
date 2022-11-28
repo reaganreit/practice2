@@ -1,14 +1,16 @@
 // react
-import { Link } from "react-router-dom";
-import React, { createContext, useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 // external imports
 import { Button, TextField } from "@mui/material"
 import { Grid } from '@mui/material';
+import { useAuth0 } from "@auth0/auth0-react";
 
 // components
 import LanguagePicker from "../Components/LanguagePicker";
 import TranslatedText from "../Components/TranslatedText";
+import Header from "../Components/Header";
 
 // pages
 import Checkout from './Checkout'
@@ -74,6 +76,16 @@ const CustomerGUI = () => {
     const [total, setTotal] = useState(0)
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
+
+    const { isAuthenticated } = useAuth0()
+    const navigate = useNavigate()
+
+    useEffect(() =>{
+        console.log("isauth is ", isAuthenticated)
+        if (isAuthenticated){
+            navigate('/cashiergui')
+        }
+    },[isAuthenticated])
 
     function bowlMenu() {
         setResults([...bowlList]);
@@ -186,9 +198,7 @@ const CustomerGUI = () => {
 
     return (
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
-            <div style={{width:"100%", display:"flex", justifyContent:"right"}}>
-                <LanguagePicker/>
-            </div>
+            <Header title = "Pom & Honey" path = "/"/>
 
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
                 <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Bowls"} key = {lang}/></Button>

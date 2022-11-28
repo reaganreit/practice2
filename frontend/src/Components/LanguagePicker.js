@@ -21,7 +21,8 @@ const LanguagePicker = (props) => {
         
           
     <div style={{display:"flex", alignItems:"center"}}>
-            <h3 style={{marginRight:5}}><TranslatedText text="Language" key = {lang}/>:</h3>
+            
+
             <FormControl variant = "standard">
             <Select
               labelId="demo-simple-select-label"
