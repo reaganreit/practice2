@@ -71,15 +71,15 @@ let allOrdered = [];
         .then(()=>{
             console.log("Finished Query");
             itemPrice = price.item_price;
-            rawPrice += roundTotal(itemPrice);
+            rawPrice += itemPrice;
             // calculate tax
             //console.log("itemPrice: " + itemPrice);
-            let taxPrice = roundTotal(itemPrice * 0.0825);
+            let taxPrice = itemPrice * 0.0825;
             // Update amount being paid in taxes
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
-            roundTotal(totalPrice);
+            totalPrice = roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
@@ -287,6 +287,7 @@ async function checkStock(){
 
 function roundTotal(num){
     num.toFixed(2);
+    console.log("number before: " + num);
     let newNum = "";
     let currNum = "";
     currNum += num;
@@ -308,11 +309,29 @@ function roundTotal(num){
             break;
         }
     }
+    console.log("newNum b4 round: " + newNum);
     // Rounds if necessary
     newNum = parseFloat(newNum);
     if(big){
-        newNum += 0.01;
+        num += 0.01;
+        newNum = "";
+        currNum = "";
+        currNum += num;
+        numDigs = 0;
+        hitDeci = false;
+        big = false;
+        for(let char of currNum){
+            newNum += char;
+            if(char == '.'){
+                hitDeci = true;
+            }
+            if(hitDeci){
+                numDigs++;
+            }
+        }
     }
+    console.log("newNum after round: " + newNum);
+    console.log("rounded number: " + parseFloat(newNum) + "\n");
     return parseFloat(newNum);
 }
 
