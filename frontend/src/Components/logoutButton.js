@@ -6,6 +6,8 @@ const LogoutButton = () =>{
     const { logout } = useAuth0()
     return (
         <Button 
+            style={{backgroundColor:"blue"}}
+
             onClick = {() => logout()}
             id = "qsLoginBtn"
             variant = "contained"

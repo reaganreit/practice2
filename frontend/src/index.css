@@ -41,3 +41,11 @@ th, td {
   opacity: 80%;
 }
 
+.hoverCard{
+  transition: all .5s ease-in-out;
+}
+
+.hoverCard :hover{
+  transform: scale(1.1);
+  cursor: pointer;
+}

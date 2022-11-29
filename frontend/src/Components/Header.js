@@ -17,7 +17,7 @@ const AuthNav = () => {
   const { isAuthenticated } = useAuth0()
 
   return (
-    <div>
+    <div >
       {isAuthenticated ? <LogoutButton/> : <LoginButton/>}
     </div>
   )
@@ -38,18 +38,26 @@ const Header = (props) => {
           
           
           <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <Link to = {(props.path ?? '/')} style={{textDecoration:"none"}}>
-              <Button style ={{backgroundColor:"blue"}} variant = "contained" ><TranslatedText key = {lang} text = "Back" /></Button>
-            </Link>
+            {props.path !== "none" && 
+              <Link to = {(props.path ?? '/')} style={{textDecoration:"none"}}>
+                <Button style ={{backgroundColor:"blue"}} variant = "contained" ><TranslatedText key = {lang} text = "Back" /></Button>
+              </Link>
+            }
+            
           </div>
 
           <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <h1 style = {{textAlign: "center"}}><TranslatedText key = {lang} text = {props.title} /></h1>
+            <div>
+              <h1 style = {{textAlign: "center"}}><TranslatedText key = {lang} text = {props.title} /></h1>
+              <div style={{display:"flex", justifyContent:"center"}}>
+              <LanguagePicker/>
+              </div>
+            </div>
+
           </div>
           
-          <div>
+          <div style={{display:"flex", alignItems:"center"}}>
             <AuthNav/>
-            <LanguagePicker/>
           </div>
 
             

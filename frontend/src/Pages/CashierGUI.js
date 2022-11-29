@@ -213,7 +213,7 @@ const CashierGUI = () => {
     return (
         
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
-            <Header title = "Pom & Honey" path = "/"/>
+            <Header title = "Pom & Honey" path = "none"/>
 
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
                 <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}><TranslatedText key = {lang} text = {"Bowls"}/></Button>
@@ -225,13 +225,14 @@ const CashierGUI = () => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
-                            <Grid  item xs = {3} style={{ height: "40vh" }}>
+                            <Grid  item xs = {3} style={{ height: "40vh", transition:"all .5s ease-in-out" , "&:hover": { transform: "scale(1.1)", cursor: "pointer" } }} >
                                 {/* menu item goes here */}
-                                <Card  key = {elem.id} onClick = {event => handleClick(elem.itemName)} style={{height:"80%"}}>
+                                <Card  key = {elem.id} onClick = {event => handleClick(elem.itemName)} style={{height:"95%"}} >
                                     <CardMedia
                                         component = {"img"}
-                                        style ={{height:"75%",backgroundImage: elem.url, backgroundPosition:"center center" }}
+                                        style ={{height:"75%",backgroundImage: elem.url, backgroundPosition:"top center", backgroundSize:"120%" }}
                                     />
+
                                     <CardContent style={{textAlign:"center"}}>
                                         <TranslatedText text = {elem.itemName} key = {lang + elem.url}/>
                                     </CardContent>
