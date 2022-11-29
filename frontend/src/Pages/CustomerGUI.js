@@ -199,6 +199,12 @@ const CustomerGUI = () => {
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
             <Header title = "Pom & Honey" path = "none"/>
 
+            <div style = {{width:"100%", display:"flex", justifyContent:"center"}}>
+                <Link to = "/map" style={{textDecoration:"none"}}>
+                    <Button variant = "contained" style={{backgroundColor:"blue"}}><TranslatedText text = "Find us on the map" key = {lang}/>!</Button>
+                </Link>
+            </div>
+
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
                 <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Bowls"} key = {lang}/></Button>
                 <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Gyro"} key = {lang}/></Button>
@@ -209,22 +215,23 @@ const CustomerGUI = () => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
-                        <Grid  item xs = {3} style={{ height: "40vh" }}>
-                        {/* menu item goes here */}
-                        <Card  key = {elem.id} onClick = {event => handleClick(elem.itemName)} style={{height:"95%", cursos:"pointer"}} className = "hoverCard">
-                            <CardMedia
-                                component = {"img"}
-                                style ={{height:"75%",backgroundImage: elem.url, backgroundPosition:"top center", backgroundSize:"120%" }}
-                            />
-                            <CardContent style={{textAlign:"center"}}>
-                                <TranslatedText text = {elem.itemName} key = {lang + elem.url}/>
-                            </CardContent>
-                        </Card>
-                        {/* <Button key = {elem.url} onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%", backgroundSize: "160%",backgroundImage: elem.url, backgroundPosition:"top center" }}>
-                            <TranslatedText text = {elem.itemName} key = {lang}/>
-                        </Button> */}
-                        {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
-                    </Grid>
+                        <Grid  item xs = {3}  style = {{height:"40vh"}}>
+                            
+                            {/* menu item goes here */}
+                            <Card  className = "hoverCard" key = {elem.id} onClick = {event => handleClick(elem.itemName)} >
+                                <CardMedia
+                                    component = {"img"}
+                                    style ={{height:"75%",backgroundImage: elem.url, backgroundPosition:"top center", backgroundSize:"120%" }}
+                                /> 
+                                <CardContent style={{textAlign:"center", height:"25%"}}>
+                                    <TranslatedText text = {elem.itemName} key = {lang + elem.url}/>
+                                </CardContent>
+                            </Card>
+                            {/* <Button key = {elem.url} onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%", backgroundSize: "160%",backgroundImage: elem.url, backgroundPosition:"top center" }}>
+                                <TranslatedText text = {elem.itemName} key = {lang}/>
+                            </Button> */}
+                            {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
+                        </Grid>
                         );
                     })}
                 </Grid>
@@ -263,11 +270,7 @@ const CustomerGUI = () => {
                 </div>
             </div>
 
-            <div style = {{width:"100%", display:"flex", justifyContent:"center"}}>
-                <Link to = "/map" style={{textDecoration:"none"}}>
-                    <Button variant = "contained"><TranslatedText text = "Find us on the map" key = {lang}/>!!</Button>
-                </Link>
-            </div>
+            
         </div>
     )
 }

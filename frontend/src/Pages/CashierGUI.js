@@ -225,28 +225,28 @@ const CashierGUI = () => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
-                            <Grid  item xs = {3} style={{ height: "40vh", transition:"all .5s ease-in-out" , "&:hover": { transform: "scale(1.1)", cursor: "pointer" } }} >
-                                {/* menu item goes here */}
-                                <Card  key = {elem.id} onClick = {event => handleClick(elem.itemName)} style={{height:"95%"}} >
-                                    <CardMedia
-                                        component = {"img"}
-                                        style ={{height:"75%",backgroundImage: elem.url, backgroundPosition:"top center", backgroundSize:"120%" }}
-                                    />
-
-                                    <CardContent style={{textAlign:"center"}}>
-                                        <TranslatedText text = {elem.itemName} key = {lang + elem.url}/>
-                                    </CardContent>
-                                </Card>
-                                {/* <Button key = {elem.url} onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%", backgroundSize: "160%",backgroundImage: elem.url, backgroundPosition:"top center" }}>
-                                    <TranslatedText text = {elem.itemName} key = {lang}/>
-                                </Button> */}
-                                {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
-                            </Grid>
+                        <Grid  item xs = {3}  style = {{height:"40vh"}}>
+                            
+                            {/* menu item goes here */}
+                            <Card  className = "hoverCard" key = {elem.id} onClick = {event => handleClick(elem.itemName)} >
+                                <CardMedia
+                                    component = {"img"}
+                                    style ={{height:"75%",backgroundImage: elem.url, backgroundPosition:"top center", backgroundSize:"120%" }}
+                                /> 
+                                <CardContent style={{textAlign:"center", height:"25%"}}>
+                                    <TranslatedText text = {elem.itemName} key = {lang + elem.url}/>
+                                </CardContent>
+                            </Card>
+                            {/* <Button key = {elem.url} onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%", backgroundSize: "160%",backgroundImage: elem.url, backgroundPosition:"top center" }}>
+                                <TranslatedText text = {elem.itemName} key = {lang}/>
+                            </Button> */}
+                            {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
+                        </Grid>
                         );
                     })}
                 </Grid>
             </div>
-            <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", paddingBottom: "2.5%", backgroundColor: "lightgrey" }}>
+            <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "5%", paddingTop: "2.5%", paddingBottom: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ minHeight: "90%", width: "45%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
                     <p style = {{ fontWeight: "bold", marginBottom: "1%", marginLeft: "1%", marginTop: "1%" }}>
                         
@@ -291,12 +291,15 @@ const CashierGUI = () => {
                                 })}
                         </div>
                     </div>
-                    <Link to="/pinpad" style={{textDecoration:"none"}} >
-                        <Button onClick={buttonMenu} style = {{ maxHeight: "25%", width: "60%", marginTop: "5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}><TranslatedText text = {"Sign Out"} key = {lang}/></Button>
-                    </Link>
+                   
                 </div>
             </div>
 
+            <div style = {{width:"100%", display:"flex", justifyContent:"center"}}>
+                <Link to = "/map" style={{textDecoration:"none"}}>
+                    <Button variant = "contained"><TranslatedText text = "Find us on the map" key = {lang}/>!!</Button>
+                </Link>
+            </div>
         </div>
     )
 }
