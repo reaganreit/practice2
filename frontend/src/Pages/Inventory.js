@@ -41,7 +41,7 @@ const Inventory = ()=> {
     setIsLoading(true);
     try {
       const response = await fetch('http://localhost:5000/lowStock', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
