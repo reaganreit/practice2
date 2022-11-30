@@ -1,16 +1,23 @@
+// react
 import { useContext } from "react";
 
-import Header from "../Components/Header";
+// external imports
 import { TextField } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
-import { DataGrid } from '@mui/x-data-grid'; 
+import { DataGrid } from '@mui/x-data-grid';
+
+// components
+import Header from "../Components/Header";
 import ThreeColRow from "../Components/ThreeColRow";
-import TranslatedText from "./TranslatedText";
+import TranslatedText from "../Components/TranslatedText";
+
+// pages
 
 // contexts
 import { UserContext } from "../contexts/user";
 import { LanguageContext } from '../contexts/language';
+
 
 
 const columns = [

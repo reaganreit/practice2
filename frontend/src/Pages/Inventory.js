@@ -1,35 +1,22 @@
-
-import Header from "../Components/Header"
-import axios from 'axios'
-
+// react
 import { useState, useEffect, useContext } from "react";
+
+// external imports
+import axios from 'axios'
 import { TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid'; 
-
 import { createTheme, ThemeProvider } from "@mui/material";
+
+// components
+import Header from "../Components/Header"
 import FiveColRow from "../Components/FiveColRow";
-import TranslatedText from "./TranslatedText";
+import TranslatedText from "../Components/TranslatedText";
+
+// pages
 
 // contexts
 import { UserContext } from "../contexts/user";
 import { LanguageContext } from '../contexts/language';
-
-
-
-
-const rows = [
-  {id:1, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "2022/09/12", nextShipment: "2022/10/01"},
-  {id:2, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:3, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:4, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:5, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:6, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:7, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:8, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:9, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"},
-  {id:10, item: "Butter Chicken", quantity: 20, prevQuantity: 30, lasthipment: "date 1", nextShipment: "date 2"}
-]
-
 
 
 const Inventory = ()=> {
@@ -99,7 +86,7 @@ const Inventory = ()=> {
 
             { (data ?? []).map( (row) =>{
               return (
-                <FiveColRow item = {row.ingredient_id} quantity = {row.name} prevQuantity = {row.quantity} lastShipment = {row.ingredient_unit} nextShipment = {row.last_shipment.slice(0,10)} />
+                <FiveColRow key = {row.ingredient_id} item = {row.ingredient_id} quantity = {row.name} prevQuantity = {row.quantity} lastShipment = {row.ingredient_unit} nextShipment = {row.last_shipment.slice(0,10)} />
               )
             }) }
             

@@ -71,15 +71,15 @@ let allOrdered = [];
         .then(()=>{
             console.log("Finished Query");
             itemPrice = price.item_price;
-            rawPrice += roundTotal(itemPrice);
+            rawPrice += itemPrice;
             // calculate tax
             //console.log("itemPrice: " + itemPrice);
-            let taxPrice = roundTotal(itemPrice * 0.0825);
+            let taxPrice = itemPrice * 0.0825;
             // Update amount being paid in taxes
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
-            roundTotal(totalPrice);
+            totalPrice = roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
@@ -287,6 +287,7 @@ async function checkStock(){
 
 function roundTotal(num){
     num.toFixed(2);
+    console.log("number before: " + num);
     let newNum = "";
     let currNum = "";
     currNum += num;
@@ -308,11 +309,29 @@ function roundTotal(num){
             break;
         }
     }
+    console.log("newNum b4 round: " + newNum);
     // Rounds if necessary
     newNum = parseFloat(newNum);
     if(big){
-        newNum += 0.01;
+        num += 0.01;
+        newNum = "";
+        currNum = "";
+        currNum += num;
+        numDigs = 0;
+        hitDeci = false;
+        big = false;
+        for(let char of currNum){
+            newNum += char;
+            if(char == '.'){
+                hitDeci = true;
+            }
+            if(hitDeci){
+                numDigs++;
+            }
+        }
     }
+    console.log("newNum after round: " + newNum);
+    console.log("rounded number: " + parseFloat(newNum) + "\n");
     return parseFloat(newNum);
 }
 
@@ -489,6 +508,7 @@ async function popCombos(date1, date2) {
     }
     for (let i = 0; i < 10; ++i) {
         topTenItems.push(matchingList[i]);
+        topTenItems[i].id = i
     }
 
     return topTenItems;
@@ -763,7 +783,11 @@ async function excessReport(dateOne, dateTwo){
         })
         let percentage = numSold / (numSold + numLeft);
         if(percentage <= 0.10){
-            returnItems.push(invItems[i].name);
+            let object ={};
+            object.name = invItems[i].name;
+            object.quantity = numLeft;
+            object.sales = numSold;
+            returnItems.push(object);
         }
     }
     // return the list
@@ -904,7 +928,7 @@ async function main(){
                 console.log(menuData)
 
 
-
+                let counterPOS = 0
                 for (let [key, value] of itemMap){
                     console.log(key,value)
 
@@ -917,7 +941,8 @@ async function main(){
                             price = Math.floor(menuData[j].item_price * value * 100) / 100
                         }
                     }
-                    returnData.push({itemName: key, quantity: value, sales: price})
+                    returnData.push({id: counterPOS, itemName: key, quantity: value, sales: price})
+                    counterPOS += 1
                 }
 
                 res.send(returnData)
