@@ -1,46 +1,54 @@
-import { Button, TextField } from "@mui/material"
+// react
+import { useContext, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+
+// external imports
+import { Button, TextField, Card, CardMedia, CardContent } from "@mui/material"
 import { Grid } from '@mui/material';
-import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
-// custom components
-import TranslatedText from "./TranslatedText";
+// components
+import TranslatedText from "../Components/TranslatedText";
 import LanguagePicker from "../Components/LanguagePicker";
+import Header from "../Components/Header";
 
-// context
+// pages
+
+// contexts
 import { UserContext } from "../contexts/user";
 import { LanguageContext } from '../contexts/language';
 
+
 const bowlList = [
-    {id: 1, itemName: "Butter Chicken Bowl"},
-    {id: 2, itemName: "Lemon Chicken Bowl"},
-    {id: 3, itemName: "Veggie Bowl"},
-    {id: 4, itemName: "Seasoned Meat Bowl"},
-    {id: 5, itemName: "Meatball Bowl"}
+    {id: 1, itemName: "Butter Chicken Bowl", url:`url("https://www.shutterstock.com/image-photo/chicken-over-rice-new-york-600w-2214082787.jpg")`},
+    {id: 2, itemName: "Lemon Chicken Bowl", url:`url("https://www.shutterstock.com/image-photo/mediterranean-chicken-shawarma-rice-bowl-600w-1198272178.jpg")`},
+    {id: 3, itemName: "Veggie Bowl", url:`url("https://www.shutterstock.com/image-photo/healthy-quinoa-bowl-duck-avocado-600w-1934068175.jpg")`},
+    {id: 4, itemName: "Seasoned Meat Bowl", url: `url("https://www.shutterstock.com/image-photo/halal-food-gyro-chicken-platter-600w-1108805390.jpg")`},
+    {id: 5, itemName: "Meatball Bowl", url:`url("https://www.shutterstock.com/image-photo/baked-quinoa-meatballs-vegetable-salad-600w-543170401.jpg")`}
 ]
 
 const gyroList = [
-    {id: 1, itemName: "Seasoned Meat Gyro"},
-    {id: 2, itemName: "Lemon Chicken Gyro"},
-    {id: 3, itemName: "Veggie Gyro"},
-    {id: 4, itemName: "Meatball Gyro"},
+    {id: 1, itemName: "Seasoned Meat Gyro", url:`url("https://www.shutterstock.com/image-photo/greek-lamb-meat-gyros-tzatziki-600w-650180254.jpg")`},
+    {id: 2, itemName: "Lemon Chicken Gyro", url:`url("https://www.shutterstock.com/image-photo/greek-gyros-wrapped-pita-breads-600w-625236380.jpg")`},
+    {id: 3, itemName: "Veggie Gyro", url:`url("https://www.shutterstock.com/image-photo/pita-roasted-chicken-vegetables-cucumber-600w-2020615118.jpg")`},
+    {id: 4, itemName: "Meatball Gyro", url:`url("https://www.shutterstock.com/image-photo/meatballs-cabbage-pita-bread-on-600w-1737029006.jpg")`},
 ]
 
 const extraList = [
-    {id: 1, itemName: "Hummus & Pita"},
-    {id: 2, itemName: "Pita Bread"},
-    {id: 3, itemName: "2 Falafels"},
-    {id: 4, itemName: "2 Meatballs"},
-    {id: 5, itemName: "Fries"},
-    {id: 6, itemName: "Garlic Fries"},
-    {id: 7, itemName: "Extra Dressing"},
-    {id: 8, itemName: "Extra Hummus"},
-    {id: 9, itemName: "Extra Protein"},
+    {id: 1, itemName: "Hummus & Pita", url:`url("https://www.shutterstock.com/image-photo/hummus-plate-pita-bread-middle-600w-1737528299.jpg")`},
+    {id: 2, itemName: "Pita Bread", url:`url("https://www.shutterstock.com/image-photo/pita-bread-on-wooden-board-600w-257018629.jpg")`},
+    {id: 3, itemName: "2 Falafels", url:`url("https://www.shutterstock.com/image-photo/falafel-sandwich-on-black-background-600w-1544891525.jpg")`},
+    {id: 4, itemName: "2 Meatballs", url:`url("https://www.shutterstock.com/image-photo/baked-homemade-meatballs-isolated-on-600w-1800790381.jpg")`},
+    {id: 5, itemName: "Fries", url:`url("https://www.shutterstock.com/image-photo/french-fries-600w-510881971.jpg")`},
+    {id: 6, itemName: "Garlic Fries", url:`url("https://www.shutterstock.com/image-photo/garlic-parsley-french-fries-ketchup-600w-163845740.jpg")`},
+    {id: 7, itemName: "Extra Dressing", url:`url("https://www.shutterstock.com/image-photo/variety-homemade-sauces-salad-dressings-600w-571747333.jpg")`},
+    {id: 8, itemName: "Extra Hummus", url:`url("https://www.shutterstock.com/image-photo/hummus-olive-oil-paprika-lemon-600w-1412942363.jpg")`},
+    {id: 9, itemName: "Extra Protein", url:`url("https://www.shutterstock.com/image-photo/partially-sliced-grilled-chicken-breast-600w-504699331.jpg")`},
 ]
 
 const drinkList = [
-    {id: 1, itemName: "Bottled Water"},
-    {id: 2, itemName: "Fountain Drinks"},
+    {id: 1, itemName: "Bottled Water", url:`url("https://www.shutterstock.com/image-photo/plastic-water-bottle-big-small-600w-1907885707.jpg")`},
+    {id: 2, itemName: "Fountain Drinks", url:`url("https://www.shutterstock.com/image-photo/soda-fountain-cup-isolated-on-600w-445209874.jpg")`},
 ]
 
 const managerButtonList = [
@@ -61,7 +69,7 @@ var counter = 0;
 
 const CashierGUI = () => {
     
-    const {user,setUser} = useContext(UserContext)
+   // const {user,setUser} = useContext(UserContext)
     const {lang, setLang} = useContext(LanguageContext)
 
     
@@ -74,27 +82,38 @@ const CashierGUI = () => {
     // TODO: IMPLEMENT LOGIC FOR SERVER VS MANAGER
     const [managerButtons, setManagerButtons] = useState([...managerButtonList])
 
+    const { isAuthenticated } = useAuth0()
+    const { user } = useAuth0()
+    const { name, email } = user || {}
+
+    const navigate = useNavigate()
+
+    useEffect(() =>{
+        
+        if (!isAuthenticated){
+            navigate("/")
+        }
+        //console.log(name, email)
+    },[isAuthenticated])
+
     function buttonMenu() {
         setManagerButtons([...managerButtonList]);
     }
 
     function bowlMenu() {
-        setResults([])
         setResults([...bowlList]);
     }
 
     function gyroMenu() {
-        setResults(prevState => [])
+        
         setResults([...gyroList]);
     }
 
     function extraMenu() {
-        setResults(prevState => [])
         setResults([...extraList]);
     }
 
     function drinkMenu() {
-        setResults([])
         setResults([...drinkList]);
     }
 
@@ -194,9 +213,8 @@ const CashierGUI = () => {
     return (
         
         <div style = {{ width: "90%", height: "100%", marginLeft: "5%" }}>
-            <div style={{width:"100%", display:"flex", justifyContent:"right"}}>
-                <LanguagePicker/>
-            </div>
+            <Header title = "Pom & Honey" path = "none"/>
+
             <div className="menuOptions" style={{ height: "7.5%", marginTop: "2.5%" }}>
                 <Button onClick={bowlMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", marginLeft: "4.5%", backgroundColor: "blue", color: "white" }}><TranslatedText key = {lang} text = {"Bowls"}/></Button>
                 <Button onClick={gyroMenu} style = {{ height: "100%", width: "17.5%", marginRight: "7%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {"Gyro"} key = {lang}/></Button>
@@ -207,15 +225,28 @@ const CashierGUI = () => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ height: "100%" }}>
                 {results.map( elem => {
                      return (
-                            <Grid item xs = {3} style={{ height: "20vw" }}>
-                                <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}><TranslatedText key = {elem.itemName + lang} text = {elem.itemName} /></Button>
-                                {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
-                            </Grid>
+                        <Grid  item xs = {3}  style = {{height:"40vh"}}>
+                            
+                            {/* menu item goes here */}
+                            <Card  className = "hoverCard" key = {elem.id} onClick = {event => handleClick(elem.itemName)} >
+                                <CardMedia
+                                    component = {"img"}
+                                    style ={{height:"75%",backgroundImage: elem.url, backgroundPosition:"top center", backgroundSize:"120%" }}
+                                /> 
+                                <CardContent style={{textAlign:"center", height:"25%"}}>
+                                    <TranslatedText text = {elem.itemName} key = {lang + elem.url}/>
+                                </CardContent>
+                            </Card>
+                            {/* <Button key = {elem.url} onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%", backgroundSize: "160%",backgroundImage: elem.url, backgroundPosition:"top center" }}>
+                                <TranslatedText text = {elem.itemName} key = {lang}/>
+                            </Button> */}
+                            {/* <Button onClick = {event => handleClick(elem.itemName)} style = {{ backgroundColor: "blue", color: "white", width: "100%", height: "100%" }}>{elem.itemName}</Button> */}
+                        </Grid>
                         );
                     })}
                 </Grid>
             </div>
-            <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "10%", paddingTop: "2.5%", paddingBottom: "2.5%", backgroundColor: "lightgrey" }}>
+            <div style = {{ display: "flex", minHeight: "30%", marginTop: "2.5%", marginBottom: "5%", paddingTop: "2.5%", paddingBottom: "2.5%", backgroundColor: "lightgrey" }}>
                 <div style = {{ minHeight: "90%", width: "45%", marginLeft: "2.5%", backgroundColor: "whitesmoke" }}>
                     <p style = {{ fontWeight: "bold", marginBottom: "1%", marginLeft: "1%", marginTop: "1%" }}>
                         
@@ -236,13 +267,13 @@ const CashierGUI = () => {
                         <TranslatedText text = {"Total"} key = {lang}/>
                         : $ { total }
                     </div>
-                    <div style = {{ height: "20%", width: "100%", marginTop: "20%", backgroundColor: "whitesmoke" }} >
+                    {/* <div style = {{ height: "20%", width: "100%", marginTop: "20%", backgroundColor: "whitesmoke" }} >
                         <TranslatedText text = {"Employee ID"} key = {lang}/>
                         : {(user.id ?? 'w')}
-                    </div>
-                    <div style = {{ height: "20%", width: "100%", backgroundColor: "whitesmoke" }} >
-                    <TranslatedText text = {"Employee Name"} key = {lang}/>
-                        : {(user.name ?? 'w')}
+                    </div> */}
+                    <div style = {{ height: "20%", width: "100%", backgroundColor: "whitesmoke" , paddingBottom:20}} >
+                        <TranslatedText text = {"Employee Name"} key = {lang}/>
+                        : {( user?.name ?? 'w')}
                     </div>
                 </div>
                 <div style = {{ minHeight: "90%", width: "30%", marginLeft: "2.5%" }}>
@@ -253,17 +284,21 @@ const CashierGUI = () => {
                             <Button onClick = {event => handleCheckout("Retail Swipes", "Sry")} style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = "Retail Swipes" key={lang}/></Button>
                             {managerButtons.map( elem => {
                                 return (
-                                        <Link to={elem.linkName} style={{ textDecoration:"none" }}>
+                                        <Link key = {elem.id} to={elem.linkName} style={{ textDecoration:"none" }}>
                                             <Button style = {{ height: "47.5%", width: "47.5%", marginTop: "2.5%", marginLeft: "1.66%", backgroundColor: "blue", color: "white" }}><TranslatedText text = {elem.buttonName} key = {lang}/></Button>
                                         </Link>
                                     );
                                 })}
                         </div>
                     </div>
-                    <Link to="/pinpad" style={{textDecoration:"none"}} >
-                        <Button onClick={buttonMenu} style = {{ maxHeight: "25%", width: "60%", marginTop: "5%", marginLeft: "20%", backgroundColor: "red", color: "white" }}><TranslatedText text = {"Sign Out"} key = {lang}/></Button>
-                    </Link>
+                   
                 </div>
+            </div>
+
+            <div style = {{width:"100%", display:"flex", justifyContent:"center"}}>
+                <Link to = "/map" style={{textDecoration:"none"}}>
+                    <Button variant = "contained"><TranslatedText text = "Find us on the map" key = {lang}/>!!</Button>
+                </Link>
             </div>
         </div>
     )

@@ -366,7 +366,10 @@ async function updateInventory(orderItems){
                 }});
             quant=quant_str.quantity; //int
             quant-=1; //update
-            console.log(quant);
+            if(quant<0){
+                quant=0;
+            }
+            console.log("quant: "+quant);
             // Update value of that item
             query_str = "UPDATE ingredients SET quantity = " + quant+ " WHERE name = '" + ingred[j] + "';";
             console.log(query_str);
@@ -505,6 +508,7 @@ async function popCombos(date1, date2) {
     }
     for (let i = 0; i < 10; ++i) {
         topTenItems.push(matchingList[i]);
+        topTenItems[i].id = i
     }
 
     return topTenItems;
@@ -924,7 +928,7 @@ async function main(){
                 console.log(menuData)
 
 
-
+                let counterPOS = 0
                 for (let [key, value] of itemMap){
                     console.log(key,value)
 
@@ -937,7 +941,8 @@ async function main(){
                             price = Math.floor(menuData[j].item_price * value * 100) / 100
                         }
                     }
-                    returnData.push({itemName: key, quantity: value, sales: price})
+                    returnData.push({id: counterPOS, itemName: key, quantity: value, sales: price})
+                    counterPOS += 1
                 }
 
                 res.send(returnData)
