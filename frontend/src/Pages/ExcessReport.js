@@ -96,7 +96,7 @@ const ExcessReport = () => {
 
                     {(excessReportData ?? []).map( (row) =>{
                     return (
-                        <ThreeColRow item = {row.item} quantity = {row.quantity} price = {row.sales}/>
+                        <ThreeColRow item = {row.name} quantity = {row.quantity} price = {row.sales}/>
                     )
                     })}
 
