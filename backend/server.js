@@ -640,12 +640,13 @@ async function getQuantity(item){
     return quantity;
 }
 
-//gets the pinpad entry and returns a person with its name, id(pinpad), and role(manager or employee)
-// manager IDs: 45678, 67890
-async function employeeType(id){
+//gets the email and returns a person with its name, email, and role(manager or employee)
+// manager emails: reaganreitmeyer@tamu.edu,davitasatr@tamu.edu 
+//employeeType("reaganreitmeyer@tamu.edu");
+async function employeeType(email){
     let person ={};
     employee_name="";
-    query_str="SELECT employee_name from employees where employee_id = "+ id +";";
+    query_str="SELECT employee_name from employees where employee_id = '"+ email +"';";
     await pool
             .query(query_str)
             .then(query_res => {
@@ -654,15 +655,15 @@ async function employeeType(id){
                     console.log(query_res.rows[i]);
                     person.name=employee_name.employee_name;
                 }});
-    person.id=id;
-    if(person.name =="Reagan R" || person.name =="Lightfoot" ){
+    person.email=email;
+    if(person.name =="Reagan R" || person.name =="David A" ){
         person.role="Manager";
     }else{
         person.role="Employee";
     }
-    // console.log(person.name);
-    // console.log(person.id);
-    // console.log(person.role);
+    //  console.log(person.name);
+    //  console.log(person.email);
+    //  console.log(person.role);
     return person;
 }
 
