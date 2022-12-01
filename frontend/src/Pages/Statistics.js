@@ -1,18 +1,23 @@
+// react
 import { useContext, useEffect, useState } from "react";
-import Header from "../Components/Header";
+import { Link } from "react-router-dom";
+
+// external imports
 import { useTheme } from '@mui/material/styles';
 import { Button } from "@mui/material"
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import { margin, width } from "@mui/system";
-import { Link } from "react-router-dom";
 import { TextField } from "@mui/material";
 import axios from 'axios'
 
+// components
+import Header from "../Components/Header";
+import TranslatedText from "../Components/TranslatedText";
 
+// pages
 import ExcessReport from "./ExcessReport";
 import PopularCombos from "./PopularCombos";
 import POSReport from "./POSReport";
-import TranslatedText from "./TranslatedText";
 
 // contexts
 import { UserContext } from "../contexts/user";

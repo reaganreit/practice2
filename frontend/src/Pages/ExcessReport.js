@@ -1,7 +1,16 @@
-import Header from "../Components/Header";
+// react
+// external imports
 import { TextField } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+import { Button } from "@mui/material"
+import { DataGrid } from '@mui/x-data-grid';
+
+// components
+import Header from "../Components/Header";
 import ThreeColRow from "../Components/ThreeColRow";
-import TranslatedText from "./TranslatedText";
+import TranslatedText from "../Components/TranslatedText";
+
+// pages
 import { useContext, useEffect, useState } from "react";
 import axios from 'axios'
 
@@ -9,6 +18,7 @@ import axios from 'axios'
 // contexts
 import { UserContext } from "../contexts/user";
 import { LanguageContext } from '../contexts/language';
+
 
 
 const columns = [

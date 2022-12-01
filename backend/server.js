@@ -41,9 +41,13 @@ lastName =  ["Smith\'","Williams\'","Lopez\'","Keener\'","Petras\'","Brown\'","A
 // items low on stock
 let lowStock = [];
 
+// all items ordered
+let allOrdered = [];
+
 
 // ***************** Functions directly related to the current Order *****************
     async function addItem(itemName){
+        allOrdered.push(itemName);
         if(orderItems == ""){
             orderItems += itemName;
         }else{
@@ -53,12 +57,10 @@ let lowStock = [];
 
     // get price and tax details
     async function updatePrice(itemName) {
-        console.log("Inside updatePrice");
         // calculate item total
         let itemPrice = 0.00;
         // get new order item's price from database
         let price;
-        console.log("Query Time");
        await pool
         .query("SELECT item_price FROM menu WHERE item_name ='" + itemName + "';")
         .then(query_res => {
@@ -69,15 +71,15 @@ let lowStock = [];
         .then(()=>{
             console.log("Finished Query");
             itemPrice = price.item_price;
-            rawPrice += roundTotal(itemPrice);
+            rawPrice += itemPrice;
             // calculate tax
             //console.log("itemPrice: " + itemPrice);
-            let taxPrice = roundTotal(itemPrice * 0.0825);
+            let taxPrice = itemPrice * 0.0825;
             // Update amount being paid in taxes
             tax += taxPrice;
             // calculate order total
             totalPrice += roundTotal(parseFloat(itemPrice) + parseFloat(taxPrice));
-            roundTotal(totalPrice);
+            totalPrice = roundTotal(totalPrice);
             console.log("totalPrice: " + totalPrice + "\n tax: " + tax);
         });
     }
@@ -85,8 +87,7 @@ let lowStock = [];
     async function removeItem(itemID){
         // get the price of the item
         let itemPrice = 0.00;
-        let splitItems = orderItems.split(",");
-        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + splitItems[itemID] + "';")
+        await pool.query("SELECT item_price FROM menu WHERE item_name ='" + allOrdered[itemID] + "';")
         .then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
                 itemPrice = query_res.rows[i].item_price;
@@ -102,10 +103,20 @@ let lowStock = [];
 
         orderItems = "";
         // add every item back into the string
-        for(let i = 0; i < splitItems.length; i++){
-            if(i != itemID){
-                addItem(splitItems[i]);
+        for(let i = 0; i < allOrdered.length; i++){
+            if(i != itemID && allOrdered[i] != ""){
+                if(orderItems == ""){
+                    orderItems += allOrdered[i];
+                }else{
+                    orderItems += "," + allOrdered[i];
+                }
+            }else{
+                allOrdered[i] = "";
             }
+        }
+        if(orderItems == ""){
+            totalPrice = 0.00;
+            tax = 0.00;
         }
     }
 
@@ -125,6 +136,8 @@ let lowStock = [];
         let updatedDate = date + " " + time;
         cardNum = cardNumberGenerator(12);
         custName = getName();
+        // resets allOrdered
+        allOrdered = [];
 
         await getID().then(()=>{
             let query = "INSERT INTO receipts values(" + orderID + ",'" + paymentType + "'," + totalPrice + ",'" + updatedDate + "','" + orderItems + "'," 
@@ -274,6 +287,7 @@ async function checkStock(){
 
 function roundTotal(num){
     num.toFixed(2);
+    console.log("number before: " + num);
     let newNum = "";
     let currNum = "";
     currNum += num;
@@ -295,11 +309,29 @@ function roundTotal(num){
             break;
         }
     }
+    console.log("newNum b4 round: " + newNum);
     // Rounds if necessary
     newNum = parseFloat(newNum);
     if(big){
-        newNum += 0.01;
+        num += 0.01;
+        newNum = "";
+        currNum = "";
+        currNum += num;
+        numDigs = 0;
+        hitDeci = false;
+        big = false;
+        for(let char of currNum){
+            newNum += char;
+            if(char == '.'){
+                hitDeci = true;
+            }
+            if(hitDeci){
+                numDigs++;
+            }
+        }
     }
+    console.log("newNum after round: " + newNum);
+    console.log("rounded number: " + parseFloat(newNum) + "\n");
     return parseFloat(newNum);
 }
 
@@ -334,7 +366,10 @@ async function updateInventory(orderItems){
                 }});
             quant=quant_str.quantity; //int
             quant-=1; //update
-            console.log(quant);
+            if(quant<0){
+                quant=0;
+            }
+            console.log("quant: "+quant);
             // Update value of that item
             query_str = "UPDATE ingredients SET quantity = " + quant+ " WHERE name = '" + ingred[j] + "';";
             console.log(query_str);
@@ -473,6 +508,7 @@ async function popCombos(date1, date2) {
     }
     for (let i = 0; i < 10; ++i) {
         topTenItems.push(matchingList[i]);
+        topTenItems[i].id = i
     }
 
     return topTenItems;
@@ -604,12 +640,13 @@ async function getQuantity(item){
     return quantity;
 }
 
-//gets the pinpad entry and returns a person with its name, id(pinpad), and role(manager or employee)
-// manager IDs: 45678, 67890
-async function employeeType(id){
+//gets the email and returns a person with its name, email, and role(manager or employee)
+// manager emails: reaganreitmeyer@tamu.edu,davitasatr@tamu.edu 
+//employeeType("reaganreitmeyer@tamu.edu");
+async function employeeType(email){
     let person ={};
     employee_name="";
-    query_str="SELECT employee_name from employees where employee_id = "+ id +";";
+    query_str="SELECT employee_name from employees where employee_id = '"+ email +"';";
     await pool
             .query(query_str)
             .then(query_res => {
@@ -618,15 +655,15 @@ async function employeeType(id){
                     console.log(query_res.rows[i]);
                     person.name=employee_name.employee_name;
                 }});
-    person.id=id;
-    if(person.name =="Reagan R" || person.name =="Lightfoot" ){
+    person.email=email;
+    if(person.name =="Reagan R" || person.name =="David A" ){
         person.role="Manager";
     }else{
         person.role="Employee";
     }
-    // console.log(person.name);
-    // console.log(person.id);
-    // console.log(person.role);
+    //  console.log(person.name);
+    //  console.log(person.email);
+    //  console.log(person.role);
     return person;
 }
 
@@ -747,7 +784,11 @@ async function excessReport(dateOne, dateTwo){
         })
         let percentage = numSold / (numSold + numLeft);
         if(percentage <= 0.10){
-            returnItems.push(invItems[i].name);
+            let object ={};
+            object.name = invItems[i].name;
+            object.quantity = numLeft;
+            object.sales = numSold;
+            returnItems.push(object);
         }
     }
     // return the list
@@ -887,7 +928,7 @@ async function main(){
                 console.log(menuData)
 
 
-
+                let counterPOS = 0
                 for (let [key, value] of itemMap){
                     console.log(key,value)
 
@@ -900,7 +941,8 @@ async function main(){
                             price = Math.floor(menuData[j].item_price * value * 100) / 100
                         }
                     }
-                    returnData.push({itemName: key, quantity: value, sales: price})
+                    returnData.push({id: counterPOS, itemName: key, quantity: value, sales: price})
+                    counterPOS += 1
                 }
 
                 res.send(returnData)
